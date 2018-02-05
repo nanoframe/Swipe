@@ -1,8 +1,8 @@
 package com.paperatus.swipe
 
 import com.badlogic.gdx.ApplicationAdapter
-import com.paperatus.swipe.scene.GameScene
-import com.paperatus.swipe.scene.SceneController
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.utils.ObjectMap
 
 class Game : ApplicationAdapter() {
 
@@ -14,4 +14,18 @@ class Game : ApplicationAdapter() {
 
     override fun dispose() {
     }
+}
+
+class Assets {
+    private val assetMap = ObjectMap<String, Any>()
+
+    private val manager = AssetManager()
+
+    fun <T : Any> get(asset: String) : T? {
+        @Suppress("UNCHECKED_CAST")
+        return assetMap[asset] as T?
+    }
+
+    fun isLoaded(asset: String) : Boolean = assetMap[asset] != null
+
 }
