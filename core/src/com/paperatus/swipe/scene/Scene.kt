@@ -7,11 +7,33 @@ import com.badlogic.gdx.utils.Disposable
 import com.paperatus.swipe.objects.GameObject
 import ktx.collections.GdxArray
 
+/**
+ * Contains game components for updating and rendering.
+ *
+ * @property gameObjects contains GameObjects that will be rendered every frame
+ */
 abstract class Scene : Disposable {
     lateinit var sceneController: SceneController
     var gameObjects = GdxArray<GameObject>()
 
+    /**
+     * Updates the Scene
+     *
+     * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
+     */
     abstract fun update(delta: Float)
+
+    /**
+     * Renders every GameObject in [gameObjects].
+     *
+     * Calling [render] will retrieve the [GameObject.spriteName] of the object
+     * and render the image onto the screen. The asset should be loaded in
+     * [com.paperatus.swipe.Game.assets].
+     *
+     * Overriding this method allows for custom rendering.
+     *
+     * @param batch the SpriteBatch to render onto.
+     */
     open fun render(batch: SpriteBatch) {
         gameObjects.forEach {
             assert(it.spriteName != "")
@@ -43,6 +65,12 @@ abstract class Scene : Disposable {
         }
     }
 
+    /**
+     * Resets the Scene before display.
+     *
+     * Called every time [SceneController.setScene] is called to reset the Scene
+     * to start a new gameplay.
+     */
     abstract fun reset()
 
     inline fun<T : Any> GdxArray<T>.operate(action: GdxArray<T>.() -> Unit) = action()

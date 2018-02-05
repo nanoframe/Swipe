@@ -11,7 +11,11 @@ import kotlin.reflect.KClass
 
 
 /**
- * Created by vianney on 2018-01-29.
+ * Provides a way to manage, update, and render Scenes.
+ *
+ * @param assets default asset manager of the game.
+ *
+ * @property paused determines if [Scene.render] should be called.
  */
 
 class SceneController(var assets: Assets) : Disposable {
@@ -44,7 +48,9 @@ class SceneController(var assets: Assets) : Disposable {
     }
 
     /**
-     * Performs an operate + render step on the SceneController
+     * Performs a [Scene.update]* and [Scene.render] step on the Scene.
+     *
+     * The update method will not be called if [paused] is set to true.
      */
     internal fun step() {
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
@@ -61,6 +67,6 @@ class SceneController(var assets: Assets) : Disposable {
 
     override fun dispose() {
         batch.dispose()
-        activeScene?.dispose()
+        scenes.values().forEach { it.dispose() }
     }
 }
