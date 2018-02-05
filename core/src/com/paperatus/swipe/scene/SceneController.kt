@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.ObjectMap
+import com.paperatus.swipe.Assets
 import kotlin.math.max
 import kotlin.reflect.KClass
 
@@ -13,7 +14,7 @@ import kotlin.reflect.KClass
  * Created by vianney on 2018-01-29.
  */
 
-class SceneController : Disposable {
+class SceneController(var assets: Assets) : Disposable {
 
     var paused = false
 
