@@ -41,9 +41,9 @@ abstract class Scene(protected val game: Game) : Disposable {
     open fun render(batch: SpriteBatch) {
         gameObjects.forEach {
             assert(it.spriteName != "")
-            assert(!game.assets.isLoaded(it.spriteName))
+            assert(game.assets.isLoaded(it.spriteName))
 
-            val image: Any = game.assets.get(it.spriteName)!!
+            val image: Any = game.assets[it.spriteName]
 
             when (image) {
                 is Texture -> batch.draw(image,

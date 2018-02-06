@@ -28,6 +28,7 @@ class GameScene(game: Game) : Scene(game) {
     }
 
     override fun update(delta: Float) {
+        camera.position.set(0.0f, 0.0f, 0.0f)
         player.update(delta)
     }
 

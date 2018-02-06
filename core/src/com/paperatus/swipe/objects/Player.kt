@@ -11,13 +11,13 @@ import com.paperatus.swipe.handlers.Subject
  * @param inputComponent component that handles the input and controls the Player.
  */
 class Player(private val inputComponent: InputComponent) : GameObject, Subject() {
-    override val spriteName = ""
+    override val spriteName = "player.png"
 
     override val position = Vector2()
     override val velocity = Vector2()
     override val acceleration = Vector2()
-    override val rotation = 5.0f
-    override val bounds = Rectangle()
+    override val rotation = 0.0f
+    override val bounds = Rectangle(0.0f, 0.0f, 1.5f, 1.5f)
 
     override fun update(delta: Float) {
         inputComponent.updateInput(this)
