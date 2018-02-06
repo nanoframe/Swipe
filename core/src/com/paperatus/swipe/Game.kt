@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.assets.AssetManager
 import com.paperatus.swipe.scene.GameScene
 import com.paperatus.swipe.scene.SceneController
+import com.paperatus.swipe.scene.SplashScene
 
 class Game : ApplicationAdapter() {
 
@@ -11,10 +12,11 @@ class Game : ApplicationAdapter() {
     val assets = AssetManager()
 
     override fun create() {
+        // Initialize the Scene
         sceneController.init()
-
         sceneController.addScene(GameScene(this))
-        sceneController.setScene<GameScene>()
+
+        sceneController.showSceneOnce(SplashScene(this))
     }
 
     override fun render() {
