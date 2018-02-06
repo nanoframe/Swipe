@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Disposable
+import com.paperatus.swipe.Game
 import com.paperatus.swipe.objects.GameObject
 import ktx.collections.GdxArray
 
@@ -12,9 +13,8 @@ import ktx.collections.GdxArray
  *
  * @property gameObjects contains GameObjects that will be rendered every frame
  */
-abstract class Scene : Disposable {
-    lateinit var sceneController: SceneController
-    var gameObjects = GdxArray<GameObject>()
+abstract class Scene(private val game: Game) : Disposable {
+    val gameObjects = GdxArray<GameObject>()
 
     /**
      * Updates the Scene
@@ -37,9 +37,9 @@ abstract class Scene : Disposable {
     open fun render(batch: SpriteBatch) {
         gameObjects.forEach {
             assert(it.spriteName != "")
-            assert(!sceneController.assets.isLoaded(it.spriteName))
+            assert(!game.assets.isLoaded(it.spriteName))
 
-            val image: Any = sceneController.assets.get(it.spriteName)!!
+            val image: Any = game.assets.get(it.spriteName)!!
 
             when (image) {
                 is Texture -> batch.draw(image,

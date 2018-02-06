@@ -15,7 +15,7 @@ interface Observer {
  * @property observers listeners that will observe for events.
  */
 open class Subject {
-    private var observers = GdxArray<Observer>()
+    private val observers = GdxArray<Observer>()
 
     /**
      * Adds an [observer] to the object.

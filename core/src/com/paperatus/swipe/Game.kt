@@ -8,14 +8,13 @@ import com.paperatus.swipe.scene.SceneController
 
 class Game : ApplicationAdapter() {
 
-    private lateinit var sceneController: SceneController
-    private lateinit var assets: Assets
+    val sceneController = SceneController()
+    val assets = Assets()
 
     override fun create() {
-        assets = Assets()
+        sceneController.init()
 
-        sceneController = SceneController(assets)
-        sceneController.addScene(GameScene())
+        sceneController.addScene(GameScene(this))
         sceneController.setScene<GameScene>()
     }
 
