@@ -37,7 +37,7 @@ abstract class Scene : Disposable {
     open fun render(batch: SpriteBatch) {
         gameObjects.forEach {
             assert(it.spriteName != "")
-            assert(sceneController.assets.isLoaded(it.spriteName))
+            assert(!sceneController.assets.isLoaded(it.spriteName))
 
             val image: Any = sceneController.assets.get(it.spriteName)!!
 
