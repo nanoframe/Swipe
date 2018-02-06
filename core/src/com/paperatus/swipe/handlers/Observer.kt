@@ -1,15 +1,12 @@
 package com.paperatus.swipe.handlers
 
-import com.paperatus.swipe.Game
 import ktx.collections.GdxArray
 
 /**
  * Allows a class to receive events without coupling code together.
- *
- * @param game the main game instance.
  */
-abstract class Observer(var game: Game) {
-    abstract fun receive(what: Int)
+interface Observer {
+    fun receive(what: Int)
 }
 
 /**
