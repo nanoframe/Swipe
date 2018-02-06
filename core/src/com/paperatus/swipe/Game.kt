@@ -6,6 +6,8 @@ import com.paperatus.swipe.scene.GameScene
 import com.paperatus.swipe.scene.SceneController
 import com.paperatus.swipe.scene.SplashScene
 
+const val VIEWPORT_HEIGHT: Float = 15.0f
+
 class Game : ApplicationAdapter() {
 
     val sceneController = SceneController()
