@@ -13,9 +13,9 @@ abstract class InputComponent {
 }
 
 /**
- * Provides a way for users to control the Player.
+ * Provides touch-event based input to control the Player
  */
-class PlayerInput : InputComponent() {
+class PlayerTouchInput : InputComponent() {
     override fun updateInput(character: Player) {
 
     }

@@ -1,12 +1,12 @@
 package com.paperatus.swipe.scene
 
 import com.paperatus.swipe.Game
-import com.paperatus.swipe.handlers.PlayerInput
+import com.paperatus.swipe.handlers.PlayerTouchInput
 import com.paperatus.swipe.objects.Player
 
 class GameScene(game: Game) : Scene(game) {
 
-    val player: Player = Player(PlayerInput())
+    val player: Player = Player(PlayerTouchInput())
 
     init {
         gameObjects.operate {
