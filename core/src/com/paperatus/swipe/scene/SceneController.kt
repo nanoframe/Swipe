@@ -51,6 +51,7 @@ class SceneController : Disposable {
 
     fun showSceneOnce(scene: Scene) {
         activeScene = scene
+        scene.create()
         scene.reset()
     }
 
