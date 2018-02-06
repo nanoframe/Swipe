@@ -72,9 +72,11 @@ class SceneController : Disposable {
         if (!paused) activeScene?.update(max(Gdx.graphics.deltaTime, maxDeltaTime))
 
         activeScene?.let {
+            it.preRender(batch)
             batch.begin()
             it.render(batch)
             batch.end()
+            it.postRender(batch)
         }
     }
 

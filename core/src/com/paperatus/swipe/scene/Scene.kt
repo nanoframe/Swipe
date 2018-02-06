@@ -25,6 +25,8 @@ abstract class Scene(private val game: Game) : Disposable {
      */
     abstract fun update(delta: Float)
 
+    open fun preRender(batch: SpriteBatch) = Unit
+
     /**
      * Renders every GameObject in [gameObjects].
      *
@@ -66,6 +68,8 @@ abstract class Scene(private val game: Game) : Disposable {
             }
         }
     }
+
+    open fun postRender(batch: SpriteBatch) = Unit
 
     /**
      * Resets the Scene before display.
