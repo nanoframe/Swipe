@@ -37,6 +37,7 @@ class SceneController : Disposable {
 
     fun addScene(scene: Scene, type: KClass<out Scene>) {
         scenes.put(type, scene)
+        scene.create()
     }
 
     inline fun <reified T : Scene> addScene(scene: T) {
@@ -46,6 +47,11 @@ class SceneController : Disposable {
     fun setScene(type: KClass<out Scene>) {
         activeScene = scenes[type]
         activeScene!!.reset()
+    }
+
+    fun showSceneOnce(scene: Scene) {
+        activeScene = scene
+        scene.reset()
     }
 
     inline fun <reified T : Scene> setScene() {

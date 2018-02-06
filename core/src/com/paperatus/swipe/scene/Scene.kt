@@ -16,6 +16,8 @@ import ktx.collections.GdxArray
 abstract class Scene(private val game: Game) : Disposable {
     val gameObjects = GdxArray<GameObject>()
 
+    open fun create() = Unit
+
     /**
      * Updates the Scene
      *
