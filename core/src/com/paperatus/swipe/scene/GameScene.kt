@@ -6,7 +6,7 @@ import com.paperatus.swipe.objects.Player
 
 class GameScene(game: Game) : Scene(game) {
 
-    val player: Player = Player(PlayerTouchInput())
+    private val player: Player = Player(PlayerTouchInput())
 
     init {
         gameObjects.operate {
