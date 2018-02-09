@@ -2,6 +2,7 @@ package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.paperatus.swipe.handlers.Subject
 
 /**
  * Interface for objects that can be rendered onto the scene.
@@ -9,14 +10,12 @@ import com.badlogic.gdx.math.Vector2
  * @property spriteName the filename of the image of the object.
  * An empty string or a nonexistent file will throw an exception.
  */
-interface GameObject {
-    val spriteName: String
+abstract class GameObject : Subject() {
+    var spriteName: String = ""
 
-    val position: Vector2
-    val velocity: Vector2
-    val acceleration: Vector2
-    val rotation: Float
-    val bounds: Rectangle
+    val position = Vector2()
+    var rotation: Float = 0.0f
+    val bounds = Rectangle()
 
-    fun update(delta: Float)
+    abstract fun update(delta: Float)
 }
