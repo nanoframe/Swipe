@@ -3,6 +3,7 @@ package com.paperatus.swipe.scene
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.ScalingViewport
@@ -11,7 +12,7 @@ import com.paperatus.swipe.VIEWPORT_HEIGHT
 import com.paperatus.swipe.handlers.PlayerTouchInput
 import com.paperatus.swipe.objects.Player
 
-class GameScene(game: Game) : Scene(game) {
+class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val camera = OrthographicCamera()
     val viewport = ExtendViewport(0.0f, VIEWPORT_HEIGHT, camera)
@@ -28,6 +29,8 @@ class GameScene(game: Game) : Scene(game) {
     }
 
     override fun update(delta: Float) {
+        super.update(delta)
+
         camera.position.set(0.0f, 0.0f, 0.0f)
         player.update(delta)
     }
