@@ -40,8 +40,12 @@ abstract class Scene(protected val game: Game) : Disposable {
      */
     open fun render(batch: SpriteBatch) {
         gameObjects.forEach {
-            assert(it.spriteName != "")
-            assert(game.assets.isLoaded(it.spriteName))
+            assert(it.spriteName != "") {
+                "The sprite name cannot be empty!"
+            }
+            assert(game.assets.isLoaded(it.spriteName)) {
+                "Asset \"${it.spriteName}\" doesn't exist!"
+            }
 
             val image: Any = game.assets[it.spriteName]
 
