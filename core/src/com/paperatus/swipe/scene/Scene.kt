@@ -78,9 +78,9 @@ abstract class Scene(protected val game: Game) : Disposable {
 
     open fun postRender(batch: SpriteBatch) = updateComponents(Component.Order.POST_RENDER)
 
-    fun addObject(gameObject: GameObject) = gameObjects.add(gameObject)
+    open fun addObject(gameObject: GameObject) = gameObjects.add(gameObject)
 
-    fun removeObject(gameObject: GameObject, identity: Boolean = true) =
+    open fun removeObject(gameObject: GameObject, identity: Boolean = true) =
             gameObjects.removeValue(gameObject, identity)
 
     // TODO: Implement a map for each order for faster updates

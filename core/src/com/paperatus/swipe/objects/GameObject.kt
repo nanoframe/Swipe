@@ -24,20 +24,17 @@ abstract class GameObject : Subject() {
 
     abstract fun update(delta: Float)
 
-    inline fun<reified T : Component> attachComponent(component: T) {
-        attachComponent(component, T::class)
-    }
+    inline fun<reified T : Component> attachComponent(component: T) =
+            attachComponent(component, T::class)
 
     fun attachComponent(component: Component, type: KClass<out Component>) {
+        assert(!components.containsKey(type)) {
+            "A component of type ${type.java.simpleName} is currently attached to this instance!"
+        }
         components.put(type, component)
     }
 
-    inline fun<reified T : Component> detachComponent() {
-        detachComponent(T::class)
-    }
+    inline fun<reified T : Component> detachComponent() = detachComponent(T::class)
 
-    fun detachComponent(type: KClass<out Component>) {
-        components.remove(type)
-    }
-
+    fun detachComponent(type: KClass<out Component>) = components.remove(type)
 }
