@@ -12,4 +12,6 @@ abstract class PhysicsScene(game: Game,
     override fun update(delta: Float) {
         physicsWorld.step(delta, 6, 2)
     }
+
+
 }

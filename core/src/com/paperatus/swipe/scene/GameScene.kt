@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.ScalingViewport
 import com.paperatus.swipe.Game
 import com.paperatus.swipe.VIEWPORT_HEIGHT
+import com.paperatus.swipe.handlers.PlayerPhysicsComponent
 import com.paperatus.swipe.handlers.PlayerTouchInput
 import com.paperatus.swipe.objects.Player
 
@@ -17,15 +18,17 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     private val camera = OrthographicCamera()
     val viewport = ExtendViewport(0.0f, VIEWPORT_HEIGHT, camera)
 
-    private val player: Player = Player(PlayerTouchInput())
+    private val player: Player = Player()
+
+    init {
+        player.attachComponent(PlayerTouchInput())
+        player.attachComponent(PlayerPhysicsComponent())
+        addObject(player)
+    }
 
     init {
         viewport.maxWorldHeight = VIEWPORT_HEIGHT
         viewport.update(Gdx.graphics.width, Gdx.graphics.height)
-
-        gameObjects.operate {
-            add(player)
-        }
     }
 
     override fun update(delta: Float) {

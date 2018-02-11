@@ -14,7 +14,7 @@ import ktx.collections.GdxArray
  * @property gameObjects contains GameObjects that will be rendered every frame
  */
 abstract class Scene(protected val game: Game) : Disposable {
-    val gameObjects = GdxArray<GameObject>()
+    private val gameObjects = GdxArray<GameObject>()
 
     open fun create() = Unit
 
@@ -70,6 +70,12 @@ abstract class Scene(protected val game: Game) : Disposable {
     }
 
     open fun postRender(batch: SpriteBatch) = Unit
+
+    fun addObject(gameObject: GameObject) = gameObjects.add(gameObject)
+
+    fun removeObject(gameObject: GameObject, identity: Boolean = true) =
+            gameObjects.removeValue(gameObject, identity)
+
 
     /**
      * Resets the Scene before display.
