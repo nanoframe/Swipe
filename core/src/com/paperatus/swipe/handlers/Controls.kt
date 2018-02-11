@@ -1,18 +1,16 @@
 package com.paperatus.swipe.handlers
 
-import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.objects.GameObject
 
 interface Component {
-    enum class Update {
+    enum class Order {
         PRE_UPDATE, UPDATE, POST_UPDATE,
         PRE_RENDER, RENDER, POST_RENDER,
         MANUAL
     }
 
-    val update: Update
+    val order: Order
 
     fun update(character: GameObject)
 }
@@ -21,7 +19,7 @@ interface Component {
  * The Input component of the Player class.
  */
 abstract class InputComponent : Component {
-    override val update = Component.Update.PRE_UPDATE
+    override val order = Component.Order.PRE_UPDATE
 }
 
 /**
@@ -35,7 +33,7 @@ class PlayerTouchInput : InputComponent() {
 }
 
 abstract class PhysicsComponent : Component {
-    override val update = Component.Update.PRE_UPDATE
+    override val order = Component.Order.PRE_UPDATE
 
     abstract fun initBody(world: World)
 }

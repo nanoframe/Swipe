@@ -20,7 +20,7 @@ abstract class GameObject : Subject() {
     var rotation: Float = 0.0f
     val bounds = Rectangle()
 
-    private val components = ObjectMap<KClass<out Component>, Component>()
+    val components = ObjectMap<KClass<out Component>, Component>()
 
     abstract fun update(delta: Float)
 
