@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Disposable
 import com.paperatus.swipe.Game
+import com.paperatus.swipe.handlers.Component
 import com.paperatus.swipe.objects.GameObject
 import ktx.collections.GdxArray
 
@@ -14,18 +15,22 @@ import ktx.collections.GdxArray
  * @property gameObjects contains GameObjects that will be rendered every frame
  */
 abstract class Scene(protected val game: Game) : Disposable {
-    val gameObjects = GdxArray<GameObject>()
+    private val gameObjects = GdxArray<GameObject>()
 
     open fun create() = Unit
+
+    open fun preUpdate(delta: Float) = updateComponents(Component.Order.PRE_UPDATE)
 
     /**
      * Updates the Scene
      *
      * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
      */
-    abstract fun update(delta: Float)
+    open fun update(delta: Float) = updateComponents(Component.Order.UPDATE)
 
-    open fun preRender(batch: SpriteBatch) = Unit
+    open fun postUpdate(delta: Float) = updateComponents(Component.Order.POST_UPDATE)
+
+    open fun preRender(batch: SpriteBatch) = updateComponents(Component.Order.PRE_RENDER)
 
     /**
      * Renders every GameObject in [gameObjects].
@@ -39,6 +44,8 @@ abstract class Scene(protected val game: Game) : Disposable {
      * @param batch the SpriteBatch to render onto.
      */
     open fun render(batch: SpriteBatch) {
+        updateComponents(Component.Order.RENDER)
+
         gameObjects.forEach {
             assert(it.spriteName != "") {
                 "The sprite name cannot be empty!"
@@ -73,7 +80,22 @@ abstract class Scene(protected val game: Game) : Disposable {
         }
     }
 
-    open fun postRender(batch: SpriteBatch) = Unit
+    open fun postRender(batch: SpriteBatch) = updateComponents(Component.Order.POST_RENDER)
+
+    open fun addObject(gameObject: GameObject) = gameObjects.add(gameObject)
+
+    open fun removeObject(gameObject: GameObject, identity: Boolean = true) =
+            gameObjects.removeValue(gameObject, identity)
+
+    // TODO: Implement a map for each order for faster updates
+    private fun updateComponents(order: Component.Order) {
+        gameObjects.forEach {gameObject ->
+            gameObject.components.values().forEach {component ->
+                if (component.order == order) component.update(gameObject)
+            }
+        }
+    }
+
 
     /**
      * Resets the Scene before display.

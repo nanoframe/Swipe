@@ -2,7 +2,10 @@ package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.ObjectMap
+import com.paperatus.swipe.handlers.Component
 import com.paperatus.swipe.handlers.Subject
+import kotlin.reflect.KClass
 
 /**
  * Interface for objects that can be rendered onto the scene.
@@ -17,5 +20,27 @@ abstract class GameObject : Subject() {
     var rotation: Float = 0.0f
     val bounds = Rectangle()
 
+    val components = ObjectMap<KClass<out Component>, Component>()
+
     abstract fun update(delta: Float)
+
+    inline fun<reified T : Component> attachComponent(component: T) =
+            attachComponent(component, T::class)
+
+    fun attachComponent(component: Component, type: KClass<out Component>) {
+        assert(!components.containsKey(type)) {
+            "A component of type ${type.java.simpleName} is currently attached to this instance!"
+        }
+        components.put(type, component)
+    }
+
+    inline fun<reified T : Component> detachComponent() = detachComponent(T::class)
+
+    fun detachComponent(type: KClass<out Component>) = components.remove(type)
+
+    fun messageComponent(what: Component.Message, payload: Any? = null) {
+        components.keys().forEach {
+            components[it].receive(what, payload)
+        }
+    }
 }
