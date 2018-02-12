@@ -49,9 +49,8 @@ class PlayerTouchInput : InputComponent() {
         if (Gdx.input.justTouched()) {
             // Begin touch events
             lastTouchTime = System.currentTimeMillis()
-        }
 
-        if (Gdx.input.isTouched) {
+        } else if (Gdx.input.isTouched) {
             val deltaTime = (System.currentTimeMillis() - lastTouchTime).toFloat()
 
             // Speed based on the change in the touch position to the change in time
