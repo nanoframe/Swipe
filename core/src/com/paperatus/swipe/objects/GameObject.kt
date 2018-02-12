@@ -37,4 +37,10 @@ abstract class GameObject : Subject() {
     inline fun<reified T : Component> detachComponent() = detachComponent(T::class)
 
     fun detachComponent(type: KClass<out Component>) = components.remove(type)
+
+    fun messageComponent(what: Component.Message, payload: Any? = null) {
+        components.keys().forEach {
+            components[it].receive(what, payload)
+        }
+    }
 }

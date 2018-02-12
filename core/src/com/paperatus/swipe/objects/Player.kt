@@ -9,6 +9,7 @@ class Player : GameObject() {
 
     init {
         bounds.set(0.0f, 0.0f, 1.5f, 1.5f)
+        spriteName = "player.png"
     }
 
     override fun update(delta: Float) {
