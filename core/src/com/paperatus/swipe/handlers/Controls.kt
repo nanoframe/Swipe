@@ -75,7 +75,7 @@ class PlayerTouchInput : InputComponent() {
 }
 
 abstract class PhysicsComponent : Component {
-    override val order = Component.Order.PRE_UPDATE
+    override val order = Component.Order.POST_UPDATE
 
     abstract fun initBody(world: World)
 }
