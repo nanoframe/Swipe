@@ -15,6 +15,8 @@ abstract class PhysicsScene(game: Game,
     private val debugRenderer = Box2DDebugRenderer()
 
     override fun update(delta: Float) {
+        super.update(delta)
+
         physicsWorld.step(delta, 6, 2)
     }
 
