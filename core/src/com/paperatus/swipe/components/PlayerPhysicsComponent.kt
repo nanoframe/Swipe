@@ -1,5 +1,6 @@
 package com.paperatus.swipe.components
 
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -16,7 +17,10 @@ class PlayerPhysicsComponent : PhysicsComponent() {
     override fun init(world: World) {
         body = world.body(BodyDef.BodyType.DynamicBody) {
             // TODO: Dispose created shape
-            circle(radius)
+            circle(radius) {
+                density = 0.3f / (MathUtils.PI * radius * radius)
+            }
+            linearDamping = 2.0f
         }
     }
 

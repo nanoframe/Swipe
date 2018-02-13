@@ -12,6 +12,7 @@ import ktx.math.times
  */
 class TouchInputComponent : InputComponent() {
     companion object {
+        const val SPEED_MULTIPLIER = 15.0f
         const val MAX_SPEED = 12.0f
     }
 
@@ -29,7 +30,7 @@ class TouchInputComponent : InputComponent() {
             // Speed based on the change in the touch position to the change in time
             // Similar to y=1/t where y is the speed
             direction.set(Gdx.input.deltaX.toFloat(), Gdx.input.deltaY.toFloat()) *
-                    (MAX_SPEED / deltaTime)
+                    (SPEED_MULTIPLIER / deltaTime)
 
             direction.y = -direction.y // y-down to y-up
 
