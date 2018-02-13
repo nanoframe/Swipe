@@ -1,12 +1,12 @@
 package com.paperatus.swipe.scenes
 
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ScalingViewport
-import com.badlogic.gdx.utils.viewport.StretchViewport
-import com.badlogic.gdx.utils.viewport.Viewport
 
 import com.paperatus.swipe.Game
 import com.paperatus.swipe.components.PlayerPhysicsComponent
@@ -23,7 +23,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val camera = OrthographicCamera(WORLD_SIZE, WORLD_SIZE)
     private val viewport = ScalingViewport(
-            Scaling.none,
+            Scaling.fit,
             0.0f,
             0.0f,
             camera)
@@ -47,7 +47,6 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     override fun preRender(batch: SpriteBatch) {
         camera.update()
-        debug{"${camera.viewportWidth}, ${camera.viewportHeight}, ${camera.position}"}
         batch.projectionMatrix = camera.combined
     }
 
@@ -68,9 +67,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         val WORLD_WIDTH = (width.toFloat() / height.toFloat()) * WORLD_SIZE
         val WORLD_HEIGHT = WORLD_SIZE
 
-        viewport.setScreenSize(width, height)
         viewport.setWorldSize(WORLD_WIDTH, WORLD_HEIGHT)
-        viewport.apply()
+        viewport.update(width, height)
 
         debug { "World dimensions: ($WORLD_WIDTH, $WORLD_HEIGHT)" }
     }

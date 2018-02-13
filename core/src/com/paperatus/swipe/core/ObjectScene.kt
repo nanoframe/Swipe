@@ -3,7 +3,6 @@ package com.paperatus.swipe.core
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.utils.Disposable
 import com.paperatus.swipe.Game
 import ktx.collections.GdxArray
 
@@ -50,7 +49,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
             when (image) {
                 is Texture -> batch.draw(image,
                         it.position.x, it.position.y,
-                        0.5f, 0.5f,
+                        it.anchor.x, it.anchor.y,
                         it.bounds.width, it.bounds.height,
                         1.0f, 1.0f,
                         it.rotation,

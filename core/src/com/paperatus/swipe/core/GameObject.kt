@@ -17,6 +17,7 @@ abstract class GameObject : Subject() {
     val position = Vector2()
     var rotation: Float = 0.0f
     val bounds = Rectangle()
+    val anchor = Vector2()
 
     val components = ObjectMap<KClass<out Component>, Component>()
 
