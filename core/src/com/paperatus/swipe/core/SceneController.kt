@@ -28,6 +28,9 @@ class SceneController : Disposable {
 
     private var isInitialized = false
 
+    /**
+     * Initializes the SceneController
+     */
     fun init() = if (!isInitialized) {
         isInitialized = true
         batch = SpriteBatch()
@@ -35,21 +38,42 @@ class SceneController : Disposable {
         throw RuntimeException("SceneController is already initialized!")
     }
 
+    /**
+     * Adds a Scene to the SceneController.
+     *
+     * @param scene the Scene to add.
+     * @param type the class of the Scene to refer to when setting the Scene.
+     */
     fun addScene(scene: Scene, type: KClass<out Scene>) {
         scenes.put(type, scene)
         scene.create()
         scene.resize(Gdx.graphics.width, Gdx.graphics.height)
     }
 
+    /**
+     * Adds a Scene to the SceneController.
+     *
+     * @param scene the Scene to add.
+     */
     inline fun <reified T : Scene> addScene(scene: T) {
         addScene(scene, T::class)
     }
 
+    /**
+     * Sets the active Scene to the Scene of class [type].
+     *
+     * @param type the class of the Scene to display.
+     */
     fun setScene(type: KClass<out Scene>) {
         activeScene = scenes[type]
         activeScene!!.reset()
     }
 
+    /**
+     * Displays the Scene without adding the Scene to the SceneController.
+     *
+     * @param scene the Scene to display.
+     */
     fun showSceneOnce(scene: Scene) {
         activeScene = scene
         scene.create()
@@ -57,6 +81,9 @@ class SceneController : Disposable {
         scene.resize(Gdx.graphics.width, Gdx.graphics.height)
     }
 
+    /**
+     * Sets the active Scene to the Scene [T]
+     */
     inline fun <reified T : Scene> setScene() {
         setScene(T::class)
     }
@@ -88,6 +115,12 @@ class SceneController : Disposable {
         }
     }
 
+    /**
+     * Called when the game resolution has changed.
+     *
+     * @param width new screen width.
+     * @param height new screen height.
+     */
     fun resize(width: Int, height: Int) {
         activeScene?.resize(width, height)
     }

@@ -24,14 +24,15 @@ class PlayerPhysicsComponent : PhysicsComponent() {
         }
     }
 
-    override fun update(character: GameObject) {
-        character.position.set(
-                body!!.position.x - character.bounds.width / 2.0f,
-                body!!.position.y - character.bounds.height / 2.0f
+    override fun update(gameObject: GameObject) {
+        gameObject.position.set(
+                body!!.position.x - gameObject.bounds.width / 2.0f,
+                body!!.position.y - gameObject.bounds.height / 2.0f
         )
     }
 
     override fun receive(what: Component.Message, payload: Any?) {
+        // Receive input events from the InputComponent
         when (what) {
             Component.Message.MOVEMENT -> {
                 body!!.applyForceToCenter(

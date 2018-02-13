@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 interface Scene {
     fun create() = Unit
 
+
     fun preUpdate(delta: Float)
 
     /**
@@ -16,12 +17,33 @@ interface Scene {
 
     fun postUpdate(delta: Float)
 
+    /**
+     * Called before [SpriteBatch.begin].
+     *
+     * @param batch the SpriteBatch to modify.
+     */
     fun preRender(batch: SpriteBatch)
 
+    /**
+     * Renders the Scene.
+     *
+     * @param batch the SpriteBatch to render onto.
+     */
     fun render(batch: SpriteBatch)
 
+    /**
+     * Called after [SpriteBatch.end].
+     *
+     * @param batch the SpriteBatch to modify.
+     */
     fun postRender(batch: SpriteBatch)
 
+    /**
+     * Called when the game resolution is changed during gameplay.
+     *
+     * @param width screen width
+     * @param height screen height
+     */
     fun resize(width: Int, height: Int)
 
     /**
@@ -32,5 +54,8 @@ interface Scene {
      */
     fun reset()
 
+    /**
+     * Disposes the Scene.
+     */
     fun dispose()
 }

@@ -1,12 +1,11 @@
 package com.paperatus.swipe
 
 import com.badlogic.gdx.Application
-import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.paperatus.swipe.scenes.GameScene
 import com.paperatus.swipe.core.SceneController
+import com.paperatus.swipe.scenes.GameScene
 import com.paperatus.swipe.scenes.SplashScene
 
 class Game : ApplicationListener {

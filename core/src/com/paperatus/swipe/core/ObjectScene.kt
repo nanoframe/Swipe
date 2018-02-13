@@ -72,19 +72,30 @@ abstract class ObjectScene(protected val game: Game) : Scene {
 
     override fun postRender(batch: SpriteBatch) = updateComponents(Component.Order.POST_RENDER)
 
+    /**
+     * Adds a GameObject to the ObjectScene.
+     *
+     * @param gameObject the GameObject to add.
+     */
     open fun addObject(gameObject: GameObject) = gameObjects.add(gameObject)
 
+    /**
+     * Removes the GameObject from the ObjectScene.
+     *
+     * @param gameObject the GameObject to remove.
+     * @param identity true will use == to compare, false will use .equals().
+     */
     open fun removeObject(gameObject: GameObject, identity: Boolean = true) =
             gameObjects.removeValue(gameObject, identity)
 
     // TODO: Implement a map for each order for faster updates
     private fun updateComponents(order: Component.Order) {
-        gameObjects.forEach {gameObject ->
-            gameObject.components.values().forEach {component ->
+        gameObjects.forEach { gameObject ->
+            gameObject.components.values().forEach { component ->
                 if (component.order == order) component.update(gameObject)
             }
         }
     }
 
-    inline fun<T : Any> GdxArray<T>.operate(action: GdxArray<T>.() -> Unit) = action()
+    inline fun <T : Any> GdxArray<T>.operate(action: GdxArray<T>.() -> Unit) = action()
 }

@@ -18,7 +18,7 @@ open class Subject {
     private val observers = GdxArray<Observer>()
 
     /**
-     * Adds an [observer] to the object.
+     * Adds an observer to the object.
      *
      * @param observer the observer to attach to this object
      */

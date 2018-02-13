@@ -19,7 +19,7 @@ class TouchInputComponent : InputComponent() {
     val direction = Vector2()
     var lastTouchTime = System.currentTimeMillis()
 
-    override fun update(character: GameObject) {
+    override fun update(gameObject: GameObject) {
         if (Gdx.input.justTouched()) {
             // Begin touch events
             lastTouchTime = System.currentTimeMillis()
@@ -39,7 +39,8 @@ class TouchInputComponent : InputComponent() {
                 direction.nor().scl(MAX_SPEED)
             }
 
-            character.messageComponent(Component.Message.MOVEMENT, direction)
+            // Inform other components about the touch event
+            gameObject.messageComponent(Component.Message.MOVEMENT, direction)
 
         }
     }
