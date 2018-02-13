@@ -10,7 +10,9 @@ abstract class PhysicsScene(game: Game,
                             gravity: Vector2,
                             doSleep: Boolean = true) : ObjectScene(game) {
     private val physicsWorld = World(gravity, doSleep)
-    private val debugRenderer = Box2DDebugRenderer()
+    private val debugRenderer: Box2DDebugRenderer by lazy {
+        Box2DDebugRenderer()
+    }
 
     override fun update(delta: Float) {
         super.update(delta)

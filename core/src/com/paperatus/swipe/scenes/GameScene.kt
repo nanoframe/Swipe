@@ -42,7 +42,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     override fun postRender(batch: SpriteBatch) {
         super.postRender(batch)
-        debugRender(camera)
+        //debugRender(camera)
     }
 
     override fun resize(width: Int, height: Int) {

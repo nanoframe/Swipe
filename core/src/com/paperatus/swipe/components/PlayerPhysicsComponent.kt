@@ -29,6 +29,14 @@ class PlayerPhysicsComponent : PhysicsComponent() {
                 body!!.position.x - gameObject.bounds.width / 2.0f,
                 body!!.position.y - gameObject.bounds.height / 2.0f
         )
+
+        // Rotate in the direction of movement
+        val velocity = body!!.linearVelocity
+        if (!MathUtils.isEqual(velocity.len2(), 0.0f)) {
+            gameObject.rotation = (MathUtils.atan2(
+                    velocity.y, velocity.x) -
+                    MathUtils.PI / 2.0f) * MathUtils.radDeg
+        }
     }
 
     override fun receive(what: Component.Message, payload: Any?) {
