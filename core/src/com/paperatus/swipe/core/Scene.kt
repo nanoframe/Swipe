@@ -22,6 +22,8 @@ interface Scene {
 
     fun postRender(batch: SpriteBatch)
 
+    fun resize(width: Int, height: Int)
+
     /**
      * Resets the ObjectScene before display.
      *

@@ -38,6 +38,7 @@ class SceneController : Disposable {
     fun addScene(scene: Scene, type: KClass<out Scene>) {
         scenes.put(type, scene)
         scene.create()
+        scene.resize(Gdx.graphics.width, Gdx.graphics.height)
     }
 
     inline fun <reified T : Scene> addScene(scene: T) {
@@ -53,6 +54,7 @@ class SceneController : Disposable {
         activeScene = scene
         scene.create()
         scene.reset()
+        scene.resize(Gdx.graphics.width, Gdx.graphics.height)
     }
 
     inline fun <reified T : Scene> setScene() {
@@ -84,6 +86,10 @@ class SceneController : Disposable {
             batch.end()
             it.postRender(batch)
         }
+    }
+
+    fun resize(width: Int, height: Int) {
+        activeScene?.resize(width, height)
     }
 
     override fun dispose() {
