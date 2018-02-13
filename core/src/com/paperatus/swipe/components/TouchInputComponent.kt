@@ -14,18 +14,29 @@ class TouchInputComponent : InputComponent() {
     companion object {
         const val SPEED_MULTIPLIER = 55.0f
         const val MAX_SPEED = 50.0f
+        const val MAX_TOUCH_TIME = 1000.0f
     }
 
     val direction = Vector2()
     var lastTouchTime = System.currentTimeMillis()
 
     override fun update(gameObject: GameObject) {
-        if (Gdx.input.justTouched()) {
-            // Begin touch events
-            lastTouchTime = System.currentTimeMillis()
 
-        } else if (Gdx.input.isTouched) {
-            val deltaTime = (System.currentTimeMillis() - lastTouchTime).toFloat()
+        if (Gdx.input.isTouched) {
+            val currentTime = System.currentTimeMillis()
+
+            if (Gdx.input.justTouched()) {
+                // Begin touch events
+                lastTouchTime = currentTime
+
+                // Skip the first update as it uses the previous touch state
+                return
+            }
+
+            // Limit on the touch duration
+            if (currentTime - lastTouchTime >= MAX_TOUCH_TIME) return
+
+            val deltaTime = (currentTime - lastTouchTime).toFloat()
 
             // Speed based on the change in the touch position to the change in time
             // Similar to y=1/t where y is the speed
