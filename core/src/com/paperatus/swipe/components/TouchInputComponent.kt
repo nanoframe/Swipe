@@ -12,8 +12,8 @@ import ktx.math.times
  */
 class TouchInputComponent : InputComponent() {
     companion object {
-        const val SPEED_MULTIPLIER = 15.0f
-        const val MAX_SPEED = 12.0f
+        const val SPEED_MULTIPLIER = 55.0f
+        const val MAX_SPEED = 50.0f
     }
 
     val direction = Vector2()
