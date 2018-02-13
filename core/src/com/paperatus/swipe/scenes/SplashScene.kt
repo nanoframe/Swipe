@@ -1,9 +1,10 @@
-package com.paperatus.swipe.scene
+package com.paperatus.swipe.scenes
 
 import com.badlogic.gdx.graphics.Texture
 import com.paperatus.swipe.Game
+import com.paperatus.swipe.core.ObjectScene
 
-class SplashScene(game: Game) : Scene(game) {
+class SplashScene(game: Game) : ObjectScene(game) {
 
     override fun create() {
         game.assets.load("player.png", Texture::class.java)

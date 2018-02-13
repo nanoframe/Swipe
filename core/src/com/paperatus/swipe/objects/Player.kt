@@ -1,5 +1,7 @@
 package com.paperatus.swipe.objects
 
+import com.paperatus.swipe.core.GameObject
+
 /**
  * The Player of the game.
  *

@@ -2,9 +2,9 @@ package com.paperatus.swipe
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.assets.AssetManager
-import com.paperatus.swipe.scene.GameScene
-import com.paperatus.swipe.scene.SceneController
-import com.paperatus.swipe.scene.SplashScene
+import com.paperatus.swipe.scenes.GameScene
+import com.paperatus.swipe.core.SceneController
+import com.paperatus.swipe.scenes.SplashScene
 
 const val VIEWPORT_HEIGHT: Float = 15.0f
 
@@ -14,7 +14,7 @@ class Game : ApplicationAdapter() {
     val assets = AssetManager()
 
     override fun create() {
-        // Initialize the Scene
+        // Initialize the ObjectScene
         sceneController.init()
         sceneController.addScene(GameScene(this))
 

@@ -1,16 +1,14 @@
-package com.paperatus.swipe.scene
+package com.paperatus.swipe.core
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.Game
-import com.paperatus.swipe.handlers.PhysicsComponent
-import com.paperatus.swipe.objects.GameObject
 
 abstract class PhysicsScene(game: Game,
                             gravity: Vector2,
-                            doSleep: Boolean = true) : Scene(game) {
+                            doSleep: Boolean = true) : ObjectScene(game) {
     private val physicsWorld = World(gravity, doSleep)
     private val debugRenderer = Box2DDebugRenderer()
 
@@ -29,7 +27,7 @@ abstract class PhysicsScene(game: Game,
 
         if (gameObject.components.containsKey(PhysicsComponent::class)) {
             (gameObject.components[PhysicsComponent::class] as PhysicsComponent)
-                    .initBody(physicsWorld)
+                    .init(physicsWorld)
         }
     }
 

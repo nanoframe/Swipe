@@ -1,4 +1,4 @@
-package com.paperatus.swipe.handlers
+package com.paperatus.swipe.core
 
 import ktx.collections.GdxArray
 

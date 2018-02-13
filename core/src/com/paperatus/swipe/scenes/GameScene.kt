@@ -1,19 +1,18 @@
-package com.paperatus.swipe.scene
+package com.paperatus.swipe.scenes
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
-import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.badlogic.gdx.utils.viewport.ScalingViewport
+
 import com.paperatus.swipe.Game
 import com.paperatus.swipe.VIEWPORT_HEIGHT
-import com.paperatus.swipe.handlers.InputComponent
-import com.paperatus.swipe.handlers.PhysicsComponent
-import com.paperatus.swipe.handlers.PlayerPhysicsComponent
-import com.paperatus.swipe.handlers.PlayerTouchInput
+import com.paperatus.swipe.components.PlayerPhysicsComponent
+import com.paperatus.swipe.components.TouchInputComponent
+import com.paperatus.swipe.core.InputComponent
+import com.paperatus.swipe.core.PhysicsComponent
+import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.objects.Player
 
 class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
@@ -24,7 +23,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     private val player: Player = Player()
 
     init {
-        player.attachComponent<InputComponent>(PlayerTouchInput())
+        player.attachComponent<InputComponent>(TouchInputComponent())
         player.attachComponent<PhysicsComponent>(PlayerPhysicsComponent())
         addObject(player)
     }

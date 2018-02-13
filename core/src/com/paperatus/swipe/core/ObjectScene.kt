@@ -1,12 +1,10 @@
-package com.paperatus.swipe.scene
+package com.paperatus.swipe.core
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Disposable
 import com.paperatus.swipe.Game
-import com.paperatus.swipe.handlers.Component
-import com.paperatus.swipe.objects.GameObject
 import ktx.collections.GdxArray
 
 /**
@@ -14,23 +12,16 @@ import ktx.collections.GdxArray
  *
  * @property gameObjects contains GameObjects that will be rendered every frame
  */
-abstract class Scene(protected val game: Game) : Disposable {
+abstract class ObjectScene(protected val game: Game) : Scene {
     private val gameObjects = GdxArray<GameObject>()
 
-    open fun create() = Unit
+    override fun preUpdate(delta: Float) = updateComponents(Component.Order.PRE_UPDATE)
 
-    open fun preUpdate(delta: Float) = updateComponents(Component.Order.PRE_UPDATE)
+    override fun update(delta: Float) = updateComponents(Component.Order.UPDATE)
 
-    /**
-     * Updates the Scene
-     *
-     * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
-     */
-    open fun update(delta: Float) = updateComponents(Component.Order.UPDATE)
+    override fun postUpdate(delta: Float) = updateComponents(Component.Order.POST_UPDATE)
 
-    open fun postUpdate(delta: Float) = updateComponents(Component.Order.POST_UPDATE)
-
-    open fun preRender(batch: SpriteBatch) = updateComponents(Component.Order.PRE_RENDER)
+    override fun preRender(batch: SpriteBatch) = updateComponents(Component.Order.PRE_RENDER)
 
     /**
      * Renders every GameObject in [gameObjects].
@@ -43,7 +34,7 @@ abstract class Scene(protected val game: Game) : Disposable {
      *
      * @param batch the SpriteBatch to render onto.
      */
-    open fun render(batch: SpriteBatch) {
+    override fun render(batch: SpriteBatch) {
         updateComponents(Component.Order.RENDER)
 
         gameObjects.forEach {
@@ -80,7 +71,7 @@ abstract class Scene(protected val game: Game) : Disposable {
         }
     }
 
-    open fun postRender(batch: SpriteBatch) = updateComponents(Component.Order.POST_RENDER)
+    override fun postRender(batch: SpriteBatch) = updateComponents(Component.Order.POST_RENDER)
 
     open fun addObject(gameObject: GameObject) = gameObjects.add(gameObject)
 
@@ -95,15 +86,6 @@ abstract class Scene(protected val game: Game) : Disposable {
             }
         }
     }
-
-
-    /**
-     * Resets the Scene before display.
-     *
-     * Called every time [SceneController.setScene] is called to reset the Scene
-     * to start a new gameplay.
-     */
-    abstract fun reset()
 
     inline fun<T : Any> GdxArray<T>.operate(action: GdxArray<T>.() -> Unit) = action()
 }
