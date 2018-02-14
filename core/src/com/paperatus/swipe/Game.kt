@@ -35,5 +35,6 @@ class Game : ApplicationListener {
 
     override fun dispose() {
         sceneController.dispose()
+        assets.dispose()
     }
 }

@@ -27,6 +27,7 @@ class SceneController : Disposable {
     private lateinit var batch: SpriteBatch
 
     private var isInitialized = false
+    private var isSceneCreated = false
 
     /**
      * Initializes the SceneController
@@ -46,7 +47,6 @@ class SceneController : Disposable {
      */
     fun addScene(scene: Scene, type: KClass<out Scene>) {
         scenes.put(type, scene)
-        scene.create()
         scene.resize(Gdx.graphics.width, Gdx.graphics.height)
     }
 
@@ -87,6 +87,10 @@ class SceneController : Disposable {
     inline fun <reified T : Scene> setScene() {
         setScene(T::class)
     }
+
+    fun createScenes() = if (!isSceneCreated) {
+        scenes.forEach { it.value.create() }
+    } else throw RuntimeException("createScenes() has already been called!")
 
     /**
      * Performs a [Scene.update]* and [Scene.render] step on the Scene.

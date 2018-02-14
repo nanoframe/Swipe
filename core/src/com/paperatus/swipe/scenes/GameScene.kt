@@ -1,6 +1,7 @@
 package com.paperatus.swipe.scenes
 
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.Game
@@ -9,6 +10,7 @@ import com.paperatus.swipe.components.TouchInputComponent
 import com.paperatus.swipe.core.InputComponent
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
+import com.paperatus.swipe.core.TiledTexture
 import com.paperatus.swipe.objects.Player
 import ktx.log.debug
 
@@ -17,8 +19,9 @@ const val WORLD_SIZE = 50.0f // World height
 class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val camera = OrthographicCamera(WORLD_SIZE, WORLD_SIZE)
-
     private val player: Player = Player()
+
+    private lateinit var background: TiledTexture
 
     init {
         debug { "Created GameScene instance" }
@@ -29,6 +32,10 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     override fun create() {
+        background = TiledTexture(game.assets["background.png", Texture::class.java])
+        background.direction = TiledTexture.Direction.Y
+
+        background.repeatCount = 640.0f/50.0f
     }
 
     override fun update(delta: Float) {
@@ -36,6 +43,13 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         camera.position.set(0.0f, 0.0f, 0.0f)
         player.update(delta)
+
+        background.width = camera.viewportWidth
+        background.height = camera.viewportHeight
+        background.position.set(
+                camera.position.x - camera.viewportWidth / 2.0f,
+                camera.position.y - camera.viewportHeight / 2.0f
+        )
     }
 
     override fun preRender(batch: SpriteBatch) {
@@ -43,9 +57,15 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         batch.projectionMatrix = camera.combined
     }
 
+    override fun render(batch: SpriteBatch) {
+        background.draw(batch)
+
+        super.render(batch)
+    }
+
     override fun postRender(batch: SpriteBatch) {
         super.postRender(batch)
-        //debugRender(camera)
+        debugRender(camera)
     }
 
     override fun resize(width: Int, height: Int) {
