@@ -28,6 +28,9 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         addObject(player)
     }
 
+    override fun create() {
+    }
+
     override fun update(delta: Float) {
         super.update(delta)
 

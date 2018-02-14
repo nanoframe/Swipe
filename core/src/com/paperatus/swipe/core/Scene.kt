@@ -3,10 +3,10 @@ package com.paperatus.swipe.core
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
 interface Scene {
-    fun create() = Unit
+    fun create()
 
 
-    fun preUpdate(delta: Float)
+    fun preUpdate(delta: Float) = Unit
 
     /**
      * Updates the Scene
@@ -15,14 +15,14 @@ interface Scene {
      */
     fun update(delta: Float)
 
-    fun postUpdate(delta: Float)
+    fun postUpdate(delta: Float) = Unit
 
     /**
      * Called before [SpriteBatch.begin].
      *
      * @param batch the SpriteBatch to modify.
      */
-    fun preRender(batch: SpriteBatch)
+    fun preRender(batch: SpriteBatch) = Unit
 
     /**
      * Renders the Scene.
@@ -36,7 +36,7 @@ interface Scene {
      *
      * @param batch the SpriteBatch to modify.
      */
-    fun postRender(batch: SpriteBatch)
+    fun postRender(batch: SpriteBatch) = Unit
 
     /**
      * Called when the game resolution is changed during gameplay.
