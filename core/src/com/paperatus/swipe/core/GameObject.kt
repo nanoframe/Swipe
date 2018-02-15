@@ -11,6 +11,7 @@ import kotlin.reflect.KClass
  * @property spriteName the filename of the image of the object.
  * An empty string or a nonexistent file will throw an exception.
  * @property position position of the GameObject.
+ * @property size size of the GameObject to render
  * @property rotation rotation of the GameObject, in degrees CCW.
  * @property bounds the boundaries of the GameObject.
  * Provides the GameObject's size.
@@ -21,8 +22,13 @@ open class GameObject() : Subject() {
     var spriteName: String = ""
 
     val position = Vector2()
+    val size = Size()
     var rotation: Float = 0.0f
     val bounds = Rectangle()
+        get() {
+            field.set(position.x, position.y, size.width, size.height)
+            return field
+        }
     val anchor = Vector2()
 
     val components = ObjectMap<KClass<out Component>, Component>()
@@ -36,7 +42,8 @@ open class GameObject() : Subject() {
      *
      * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
      */
-    open fun update(delta: Float) = Unit
+    open fun update(delta: Float) {
+    }
 
     /**
      * Attaches a Component onto the GameObject instance.

@@ -49,7 +49,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
             when (image) {
                 is Texture -> batch.draw(image,
                         it.position.x, it.position.y,
-                        it.anchor.x * it.bounds.width, it.anchor.y * it.bounds.height,
+                        it.anchor.x * it.size.width, it.anchor.y * it.size.height,
                         it.bounds.width, it.bounds.height,
                         1.0f, 1.0f,
                         it.rotation,
@@ -59,7 +59,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
                 is TextureRegion -> batch.draw(image,
                         it.position.x, it.position.y,
                         0.5f, 0.5f,
-                        it.bounds.width, it.bounds.height,
+                        it.size.width, it.size.height,
                         1.0f, 1.0f,
                         it.rotation
                 )
