@@ -2,7 +2,6 @@ package com.paperatus.swipe.scenes
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.Game
@@ -83,13 +82,13 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         */
 
         // WORLD_WIDTH rearranged from the equation above
-        val WORLD_WIDTH = (width.toFloat() / height.toFloat()) * WORLD_SIZE
-        val WORLD_HEIGHT = WORLD_SIZE
+        val width = (width.toFloat() / height.toFloat()) * WORLD_SIZE
+        val height = WORLD_SIZE
 
-        camera.viewportWidth = WORLD_WIDTH
-        camera.viewportHeight = WORLD_HEIGHT
+        camera.viewportWidth = width
+        camera.viewportHeight = height
 
-        debug { "World dimensions: ($WORLD_WIDTH, $WORLD_HEIGHT)" }
+        debug { "World dimensions: ($width, $height)" }
     }
 
     override fun reset() {
