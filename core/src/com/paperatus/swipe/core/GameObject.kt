@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
  * @property anchor position where all transforms are relative to.
  * @property components Components that are attached to the GameObject
  */
-abstract class GameObject : Subject() {
+open class GameObject() : Subject() {
     var spriteName: String = ""
 
     val position = Vector2()
@@ -27,12 +27,16 @@ abstract class GameObject : Subject() {
 
     val components = ObjectMap<KClass<out Component>, Component>()
 
+    constructor(sprite: String) : this() {
+        spriteName = sprite
+    }
+
     /**
      * Updates the GameObject.
      *
      * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
      */
-    abstract fun update(delta: Float)
+    open fun update(delta: Float) = Unit
 
     /**
      * Attaches a Component onto the GameObject instance.

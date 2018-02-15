@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 interface Scene {
     fun create()
 
-
     fun preUpdate(delta: Float) = Unit
 
     /**
