@@ -26,12 +26,12 @@ class TiledTexture(val texture: Texture) {
     var direction = Direction.X
 
     fun draw(batch: Batch) {
-        val u: Float = when(direction) {
+        val u: Float = when (direction) {
             Direction.X -> repeatCount
             Direction.Y -> (width / height) * repeatCount
         }
 
-        val v: Float = when(direction) {
+        val v: Float = when (direction) {
             Direction.X -> (height / width) * repeatCount
             Direction.Y -> repeatCount
         }

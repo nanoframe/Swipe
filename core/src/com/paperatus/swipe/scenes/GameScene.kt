@@ -33,12 +33,12 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             anchor.set(0.5f, 0.5f)
             size.set(2.0f, 2.0f)
             attachComponent<InputComponent>(
-                    when(Gdx.app.type) {
+                    when (Gdx.app.type) {
                         Application.ApplicationType.Desktop -> KeyInputComponent()
                         Application.ApplicationType.Android -> TouchInputComponent()
                         Application.ApplicationType.iOS -> TouchInputComponent()
                         else -> TouchInputComponent()
-            })
+                    })
             attachComponent<PhysicsComponent>(PlayerPhysicsComponent())
         }
 
@@ -49,7 +49,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         background = TiledTexture(game.assets["background.png", Texture::class.java])
         background.direction = TiledTexture.Direction.Y
 
-        background.repeatCount = 640.0f/50.0f
+        background.repeatCount = 640.0f / 50.0f
     }
 
     override fun update(delta: Float) {
@@ -59,8 +59,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         background.width = camera.viewportWidth
         background.height = camera.viewportHeight
         background.position.set(
-                 - camera.viewportWidth / 2.0f,
-                 - camera.viewportHeight / 2.0f
+                -camera.viewportWidth / 2.0f,
+                -camera.viewportHeight / 2.0f
         )
 
         camera.update(delta, player)

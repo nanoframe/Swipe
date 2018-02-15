@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.core.Component
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.InputComponent
-import ktx.math.times
 
 class KeyInputComponent : InputComponent() {
 

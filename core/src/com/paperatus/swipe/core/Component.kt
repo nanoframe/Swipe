@@ -54,5 +54,5 @@ abstract class PhysicsComponent : Component {
      */
     abstract fun init(world: World)
 
-    abstract fun getBody() : Body
+    abstract fun getBody(): Body
 }
