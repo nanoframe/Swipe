@@ -1,11 +1,14 @@
 package com.paperatus.swipe.scenes
 
+import com.badlogic.gdx.Application
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.Game
 import com.paperatus.swipe.components.KeyInputComponent
 import com.paperatus.swipe.components.PlayerPhysicsComponent
+import com.paperatus.swipe.components.TouchInputComponent
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.InputComponent
 import com.paperatus.swipe.core.PhysicsComponent
@@ -29,7 +32,13 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         player.apply {
             anchor.set(0.5f, 0.5f)
             size.set(2.0f, 2.0f)
-            attachComponent<InputComponent>(KeyInputComponent())
+            attachComponent<InputComponent>(
+                    when(Gdx.app.type) {
+                        Application.ApplicationType.Desktop -> KeyInputComponent()
+                        Application.ApplicationType.Android -> TouchInputComponent()
+                        Application.ApplicationType.iOS -> TouchInputComponent()
+                        else -> TouchInputComponent()
+            })
             attachComponent<PhysicsComponent>(PlayerPhysicsComponent())
         }
 
@@ -50,8 +59,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         background.width = camera.viewportWidth
         background.height = camera.viewportHeight
         background.position.set(
-                camera.position.x - camera.viewportWidth / 2.0f,
-                camera.position.y - camera.viewportHeight / 2.0f
+                 - camera.viewportWidth / 2.0f,
+                 - camera.viewportHeight / 2.0f
         )
 
         camera.update(delta, player)
@@ -81,13 +90,13 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         */
 
         // WORLD_WIDTH rearranged from the equation above
-        val width = (width.toFloat() / height.toFloat()) * WORLD_SIZE
-        val height = WORLD_SIZE
+        val worldWidth = (width.toFloat() / height.toFloat()) * WORLD_SIZE
+        val worldHeight = WORLD_SIZE
 
-        camera.viewportWidth = width
-        camera.viewportHeight = height
+        camera.viewportWidth = worldWidth
+        camera.viewportHeight = worldHeight
 
-        debug { "World dimensions: ($width, $height)" }
+        debug { "World dimensions: ($worldWidth, $worldHeight)" }
     }
 
     override fun reset() {
