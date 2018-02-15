@@ -36,20 +36,25 @@ class GameCamera(width: Float, height: Float) :
 
     private fun updatePosition(delta: Float, player: GameObject) {
 
-        // x-position update
-        //position.x = player.position.x
-
-        // y-position updates
         tempPosition.apply {
+            // Calculate the amount to change per second relative to the
+            // difference between the player's position and the current position
             x = Math.abs(player.position.x - position.x)
             y = Math.abs(player.position.y - position.y)
 
             x = inverseLerpClamped(x, DISTANCE_X_MIN, DISTANCE_X_MAX)
             y = inverseLerpClamped(y, DISTANCE_Y_MIN, DISTANCE_Y_MAX)
 
-            x = positionInterpolation.apply(x) *
+            x = positionInterpolation
+                    // Interpolate
+                    .apply(x) *
+
+                    // Direction (|x| removes the negative direction)
                     Math.signum(player.position.x - position.x) *
+
+                    // Speed
                     POSITION_MAX_CHANGE_PER_SECOND * delta
+
             y = positionInterpolation.apply(y) *
                     Math.signum(player.position.y - position.y) *
                     POSITION_MAX_CHANGE_PER_SECOND * delta
@@ -64,16 +69,12 @@ class GameCamera(width: Float, height: Float) :
         val velocity = MathUtils.clamp(physicsComponent.getBody().linearVelocity.len(),
                 VELOCITY_MIN, VELOCITY_MAX)
 
-        // Inverse lerp between velocity min and max
+        // Project the value from the range [VELOCITY_MIN, VELOCITY_MAX] to
+        // [ZOOM_MIN, ZOOM_MAX] to calculate the expected zoom
         val velocityAlpha = inverseLerpClamped(velocity, VELOCITY_MIN, VELOCITY_MAX)
-
-        // Expected zoom based on the player's velocity
         val targetZoom = MathUtils.lerp(ZOOM_MIN, ZOOM_MAX, velocityAlpha)
 
-        /*
-         * Difference between the absolute value of the target zoom and the zoom.
-         * The higher the value, the farther away the zoom is from the target zoom.
-         */
+        // Determine how much change is needed to reach the target zoom
         val zoomDelta = Math.abs(targetZoom - zoom)
 
         // Interpolate to smooth out the changes in the camera zoom
