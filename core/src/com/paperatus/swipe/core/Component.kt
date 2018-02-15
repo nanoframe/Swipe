@@ -1,5 +1,6 @@
 package com.paperatus.swipe.core
 
+import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 
 /**
@@ -52,4 +53,6 @@ abstract class PhysicsComponent : Component {
      * @param world Box2D game world.
      */
     abstract fun init(world: World)
+
+    abstract fun getBody() : Body
 }

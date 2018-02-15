@@ -11,11 +11,12 @@ import com.paperatus.swipe.core.PhysicsComponent
 import ktx.box2d.body
 
 class PlayerPhysicsComponent : PhysicsComponent() {
-    var body: Body? = null
+
+    private var physicsBody: Body? = null
     val radius = 0.7f
 
     override fun init(world: World) {
-        body = world.body(BodyDef.BodyType.DynamicBody) {
+        physicsBody = world.body(BodyDef.BodyType.DynamicBody) {
             // TODO: Dispose created shape
             circle(radius) {
                 density = 0.3f / (MathUtils.PI * radius * radius)
@@ -24,14 +25,16 @@ class PlayerPhysicsComponent : PhysicsComponent() {
         }
     }
 
+    override fun getBody(): Body = physicsBody!!
+
     override fun update(gameObject: GameObject) {
         gameObject.position.set(
-                body!!.position.x - gameObject.bounds.width / 2.0f,
-                body!!.position.y - gameObject.bounds.height / 2.0f
+                physicsBody!!.position.x - gameObject.bounds.width / 2.0f,
+                physicsBody!!.position.y - gameObject.bounds.height / 2.0f
         )
 
         // Rotate in the direction of movement
-        val velocity = body!!.linearVelocity
+        val velocity = physicsBody!!.linearVelocity
         if (!MathUtils.isEqual(velocity.len2(), 0.0f)) {
             gameObject.rotation = (MathUtils.atan2(
                     velocity.y, velocity.x) -
@@ -43,7 +46,7 @@ class PlayerPhysicsComponent : PhysicsComponent() {
         // Receive input events from the InputComponent
         when (what) {
             Component.Message.MOVEMENT -> {
-                body!!.applyForceToCenter(
+                physicsBody!!.applyForceToCenter(
                         payload as Vector2,
                         true)
             }
