@@ -1,24 +1,24 @@
 package com.paperatus.swipe.scenes
 
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.Game
+import com.paperatus.swipe.components.KeyInputComponent
 import com.paperatus.swipe.components.PlayerPhysicsComponent
-import com.paperatus.swipe.components.TouchInputComponent
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.InputComponent
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.TiledTexture
+import com.paperatus.swipe.objects.GameCamera
 import ktx.log.debug
 
 const val WORLD_SIZE = 50.0f // World height
 
 class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
-    private val camera = OrthographicCamera(WORLD_SIZE, WORLD_SIZE)
+    private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private val player: GameObject = GameObject("player.png")
 
     private lateinit var background: TiledTexture
@@ -29,7 +29,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         player.apply {
             anchor.set(0.5f, 0.5f)
             size.set(2.0f, 2.0f)
-            attachComponent<InputComponent>(TouchInputComponent())
+            attachComponent<InputComponent>(KeyInputComponent())
             attachComponent<PhysicsComponent>(PlayerPhysicsComponent())
         }
 
@@ -46,19 +46,18 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     override fun update(delta: Float) {
         super.update(delta)
 
-        camera.position.set(0.0f, 0.0f, 0.0f)
-        player.update(delta)
-
+        // Background
         background.width = camera.viewportWidth
         background.height = camera.viewportHeight
         background.position.set(
                 camera.position.x - camera.viewportWidth / 2.0f,
                 camera.position.y - camera.viewportHeight / 2.0f
         )
+
+        camera.update(delta, player)
     }
 
     override fun preRender(batch: SpriteBatch) {
-        camera.update()
         batch.projectionMatrix = camera.combined
     }
 
