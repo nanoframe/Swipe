@@ -9,7 +9,9 @@ import com.paperatus.swipe.core.Component
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 import ktx.box2d.body
+import ktx.math.times
 
+const val MAX_VELOCITY = 21.0f
 class PlayerPhysicsComponent : PhysicsComponent() {
 
     private var physicsBody: Body? = null
@@ -37,10 +39,17 @@ class PlayerPhysicsComponent : PhysicsComponent() {
 
         // Rotate in the direction of movement
         val velocity = physicsBody!!.linearVelocity
-        if (!MathUtils.isEqual(velocity.len2(), 0.0f)) {
+        val velocityLen2 = velocity.len2()
+
+        if (!MathUtils.isEqual(velocityLen2, 0.0f)) {
             gameObject.rotation = (MathUtils.atan2(
                     velocity.y, velocity.x) -
                     MathUtils.PI / 2.0f) * MathUtils.radDeg
+        }
+
+        // Limit the max velocity
+        if (velocityLen2 > MAX_VELOCITY * MAX_VELOCITY) {
+            physicsBody!!.setLinearVelocity(velocity.nor() * MAX_VELOCITY)
         }
     }
 
