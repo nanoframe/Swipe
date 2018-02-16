@@ -29,8 +29,10 @@ class PlayerPhysicsComponent : PhysicsComponent() {
 
     override fun update(gameObject: GameObject) {
         gameObject.position.set(
-                physicsBody!!.position.x - gameObject.bounds.width / 2.0f,
-                physicsBody!!.position.y - gameObject.bounds.height / 2.0f
+                physicsBody!!.position.x + gameObject.size.width *
+                        (gameObject.anchor.x - 0.5f),
+                physicsBody!!.position.y + gameObject.size.height *
+                        (gameObject.anchor.y - 0.5f)
         )
 
         // Rotate in the direction of movement
