@@ -1,6 +1,8 @@
 package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.World
 import ktx.collections.GdxArray
@@ -29,6 +31,7 @@ class ProceduralMapData : MapData {
         })
     }
 
+    val renderer = ShapeRenderer()
     override fun update(world: World, camera: Camera) {
         val cameraTop = camera.position.y + camera.viewportHeight / 2.0f
 
@@ -50,9 +53,21 @@ class ProceduralMapData : MapData {
                 recentPoint = point
 
                 log.debug { "  Point created: (${point.x}, ${point.y})" }
+
             } while (recentPoint.y < currentChunk * CHUNK_SIZE)
         }
+    }
 
+    // TODO: Remove this upon completion of class
+    fun debugRender() {
+        renderer.color = Color.RED
+        renderer.begin(ShapeRenderer.ShapeType.Line)
+        for (i in 1 until points.size) {
+            val p1 = points[i-1]
+            val p2 = points[i]
+            renderer.line(p1.x, p1.y, p2.x, p2.y)
+        }
+        renderer.end()
     }
 
     private fun createNextPoint(leftBound: Float, rightBound: Float) : Point {
