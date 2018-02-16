@@ -49,18 +49,23 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         background = TiledTexture(game.assets["background.png", Texture::class.java])
         background.direction = TiledTexture.Direction.Y
 
-        background.repeatCount = 640.0f / 50.0f
+        background.repeatCount = 640.0f / 20.0f
     }
 
     override fun update(delta: Float) {
         super.update(delta)
 
         // Background
-        background.width = camera.viewportWidth
-        background.height = camera.viewportHeight
+        background.width = camera.viewportWidth * 1.5f
+        background.height = camera.viewportHeight * 1.5f
+
+        val backgroundTileSize: Float = background.height / background.repeatCount
+
         background.position.set(
-                -camera.viewportWidth / 2.0f,
-                -camera.viewportHeight / 2.0f
+                -background.width / 2.0f,
+                -background.height / 2.0f +
+                        (player.position.y / backgroundTileSize).toInt() *
+                                backgroundTileSize
         )
 
         camera.update(delta, player)
