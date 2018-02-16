@@ -12,8 +12,7 @@ import ktx.math.times
  */
 class TouchInputComponent : InputComponent() {
     companion object {
-        const val SPEED_MULTIPLIER = 55.0f
-        const val MAX_SPEED = 50.0f
+        const val SPEED_MULTIPLIER = 20.0f
         const val MAX_TOUCH_TIME = 1000.0f
     }
 
@@ -44,11 +43,6 @@ class TouchInputComponent : InputComponent() {
                     (SPEED_MULTIPLIER / deltaTime)
 
             direction.y = -direction.y // y-down to y-up
-
-            // Prevent the player from moving too fast
-            if (direction.len2() > MAX_SPEED * MAX_SPEED) {
-                direction.nor().scl(MAX_SPEED)
-            }
 
             // Inform other components about the touch event
             gameObject.messageComponent(Component.Message.MOVEMENT, direction)
