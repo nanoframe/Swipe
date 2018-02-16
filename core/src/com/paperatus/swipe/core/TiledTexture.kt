@@ -40,6 +40,6 @@ class TiledTexture(val texture: Texture) {
                 texture,
                 position.x, position.y,
                 width, height,
-                0.0f, 0.0f, u, v)
+                u, v, 0.0f, 0.0f)
     }
 }
