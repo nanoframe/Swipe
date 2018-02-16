@@ -2,8 +2,12 @@ package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.utils.Pool
 
-class Point internal constructor(var x: Float = 0.0f,
+class Point private constructor(var x: Float = 0.0f,
                                  var y: Float = 0.0f) : Pool.Poolable {
+
+    companion object : Pool<Point>() {
+        override fun newObject() = Point()
+    }
 
     override fun reset() {
         x = 0.0f
@@ -17,8 +21,4 @@ class Point internal constructor(var x: Float = 0.0f,
 
     operator fun component1() = x
     operator fun component2() = y
-}
-
-val PointFactory = object: Pool<Point>() {
-    override fun newObject() = Point()
 }

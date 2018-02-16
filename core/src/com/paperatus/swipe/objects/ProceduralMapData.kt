@@ -12,6 +12,7 @@ class ProceduralMapData : MapData {
     val points = GdxArray<Point>()
 
     override fun create() {
+        val start = Point.obtain()
     }
 
     override fun update(world: World, camera: Camera) {
@@ -20,7 +21,7 @@ class ProceduralMapData : MapData {
         // Create more paths if the top of the screen is near the
         // end of the path
         if (generatedY - cameraTop < GENERATE_GAP) {
-            val point = PointFactory.obtain()
+            val point = Point.obtain()
         }
 
     }
