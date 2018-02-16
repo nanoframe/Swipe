@@ -11,7 +11,7 @@ import com.paperatus.swipe.core.PhysicsComponent
 import ktx.box2d.body
 import ktx.math.times
 
-const val MAX_VELOCITY = 21.0f
+const val MAX_VELOCITY = 23.0f
 class PlayerPhysicsComponent : PhysicsComponent() {
 
     private var physicsBody: Body? = null

@@ -11,16 +11,16 @@ private const val DISTANCE_X_MIN = 1.0f
 private const val DISTANCE_X_MAX = 15.0f
 private const val DISTANCE_Y_MIN = 2.0f
 private const val DISTANCE_Y_MAX = 30.0f
-private const val VELOCITY_MIN = 2.0f
-private const val VELOCITY_MAX = 20.0f
-private const val ZOOM_MIN = 0.4f
+private const val VELOCITY_MIN = 7.0f
+private const val VELOCITY_MAX = 18.0f
+private const val ZOOM_MIN = 0.35f
 private const val ZOOM_MAX = 1.4f
 
 private const val POSITION_X_OFFSET = 0.0f
 private const val POSITION_Y_OFFSET = -3.0f
 
 private const val POSITION_MAX_CHANGE_PER_SECOND = 25.0f
-private const val ZOOM_MAX_CHANGE_PER_SECOND = 0.4f
+private const val ZOOM_MAX_CHANGE_PER_SECOND = 0.15f
 
 class GameCamera(width: Float, height: Float) :
         OrthographicCamera(width, height) {
