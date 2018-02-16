@@ -9,12 +9,15 @@ import com.paperatus.swipe.core.PhysicsComponent
 
 private const val DISTANCE_X_MIN = 1.0f
 private const val DISTANCE_X_MAX = 15.0f
-private const val DISTANCE_Y_MIN = 4.0f
+private const val DISTANCE_Y_MIN = 2.0f
 private const val DISTANCE_Y_MAX = 30.0f
 private const val VELOCITY_MIN = 2.0f
 private const val VELOCITY_MAX = 20.0f
 private const val ZOOM_MIN = 0.4f
 private const val ZOOM_MAX = 1.4f
+
+private const val POSITION_X_OFFSET = 0.0f
+private const val POSITION_Y_OFFSET = -3.0f
 
 private const val POSITION_MAX_CHANGE_PER_SECOND = 25.0f
 private const val ZOOM_MAX_CHANGE_PER_SECOND = 0.4f
@@ -35,28 +38,29 @@ class GameCamera(width: Float, height: Float) :
     }
 
     private fun updatePosition(delta: Float, player: GameObject) {
+        val deltaX = player.position.x - (position.x + POSITION_X_OFFSET)
+        val deltaY = player.position.y - (position.y + POSITION_Y_OFFSET)
 
+        // Position interpolation
         tempPosition.apply {
             // Calculate the amount to change per second relative to the
             // difference between the player's position and the current position
-            x = Math.abs(player.position.x - position.x)
-            y = Math.abs(player.position.y - position.y)
 
-            x = inverseLerpClamped(x, DISTANCE_X_MIN, DISTANCE_X_MAX)
-            y = inverseLerpClamped(y, DISTANCE_Y_MIN, DISTANCE_Y_MAX)
+            x = inverseLerpClamped(Math.abs(deltaX), DISTANCE_X_MIN, DISTANCE_X_MAX)
+            y = inverseLerpClamped(Math.abs(deltaY), DISTANCE_Y_MIN, DISTANCE_Y_MAX)
 
             x = positionInterpolation
                     // Interpolate
                     .apply(x) *
 
                     // Direction (|x| removes the negative direction)
-                    Math.signum(player.position.x - position.x) *
+                    Math.signum(deltaX) *
 
                     // Speed
                     POSITION_MAX_CHANGE_PER_SECOND * delta
 
             y = positionInterpolation.apply(y) *
-                    Math.signum(player.position.y - position.y) *
+                    Math.signum(deltaY) *
                     POSITION_MAX_CHANGE_PER_SECOND * delta
         }
         position.add(tempPosition)
