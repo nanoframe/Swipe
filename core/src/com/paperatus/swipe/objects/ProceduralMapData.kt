@@ -79,6 +79,8 @@ class ProceduralMapData : MapData {
     private fun createBodyChunk(world: World,
                                 chunk: Chunk,
                                 reverse: Boolean = false) : Body {
+        val restitution = 0.7f
+
         val bodyDef = BodyDef()
         val body = world.createBody(bodyDef)
         val shape = EdgeShape()
@@ -93,7 +95,8 @@ class ProceduralMapData : MapData {
                     point1.x, point1.y,
                     point2.x, point2.y)
 
-            body.createFixture(shape, 0.0f)
+            val fixture = body.createFixture(shape, 0.0f)
+            fixture.restitution = restitution
 
         }
         shape.dispose()
