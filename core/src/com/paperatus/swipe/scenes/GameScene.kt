@@ -15,6 +15,8 @@ import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.TiledTexture
 import com.paperatus.swipe.objects.GameCamera
+import com.paperatus.swipe.objects.MapData
+import com.paperatus.swipe.objects.ProceduralMapData
 import ktx.log.debug
 
 const val WORLD_SIZE = 50.0f // World height
@@ -23,6 +25,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private val player: GameObject = GameObject("player.png")
+    var mapData: MapData? = ProceduralMapData()
 
     private lateinit var background: TiledTexture
 
@@ -50,6 +53,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         background.direction = TiledTexture.Direction.Y
 
         background.repeatCount = 640.0f / 15.0f
+
+        mapData!!.create()
     }
 
     override fun update(delta: Float) {
@@ -67,6 +72,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                         (player.position.y / backgroundTileSize).toInt() *
                                 backgroundTileSize
         )
+
+        mapData!!.update(physicsWorld, camera)
 
         camera.update(delta, player)
     }

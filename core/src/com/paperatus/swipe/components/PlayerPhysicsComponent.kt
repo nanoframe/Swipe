@@ -51,7 +51,7 @@ class PlayerPhysicsComponent : PhysicsComponent() {
 
         // Limit the max velocity
         if (velocityLen2 > MAX_VELOCITY * MAX_VELOCITY) {
-            physicsBody!!.setLinearVelocity(velocity.nor() * MAX_VELOCITY)
+            physicsBody!!.linearVelocity = velocity.nor() * MAX_VELOCITY
         }
     }
 
