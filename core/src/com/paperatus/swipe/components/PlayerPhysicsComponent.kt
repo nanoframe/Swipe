@@ -23,6 +23,8 @@ class PlayerPhysicsComponent : PhysicsComponent() {
             circle(radius) {
                 density = 0.3f / (MathUtils.PI * radius * radius)
             }
+
+            fixedRotation = true
             linearDamping = 1.7f
         }
     }
