@@ -10,6 +10,7 @@ interface MapData {
     fun update(world: World, camera: Camera)
 }
 
+// TODO: Implement separate array class
 class Chunk private constructor() : GdxArray<ChunkPoint>(), Pool.Poolable {
 
     companion object : Pool<Chunk>() {

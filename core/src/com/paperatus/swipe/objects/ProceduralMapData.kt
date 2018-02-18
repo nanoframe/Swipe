@@ -1,8 +1,6 @@
 package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -26,19 +24,13 @@ class ProceduralMapData : MapData {
     private lateinit var recentPoint: Point
     private var currentChunk = 0
 
-    private val points = GdxArray<Point>()
-
     private val leftChunks = GdxArray<Chunk>()
     private val rightChunks = GdxArray<Chunk>()
 
     override fun create() {
-        points.add(Point.obtain().also {
-            // Defaults to (0, 0)
-            recentPoint = it
-        })
+        recentPoint = Point.obtain()
     }
 
-    val renderer = ShapeRenderer()
     override fun update(world: World, camera: Camera) {
         val cameraTop = camera.position.y + camera.viewportHeight / 2.0f
 
@@ -66,12 +58,12 @@ class ProceduralMapData : MapData {
 
             do { // Generate a bunch of points for the chunk
                 val point = createNextPoint(cameraLeft, cameraRight)
-                points.add(point)
 
                 // Generate the walls of the map
                 chunkLeft.addPoint(point.x - width / 2.0f, point.y)
                 chunkRight.addPoint(point.x + width / 2.0f, point.y)
 
+                Point.free(recentPoint)
                 recentPoint = point
 
             } while (recentPoint.y < currentChunk * CHUNK_SIZE)
@@ -84,19 +76,9 @@ class ProceduralMapData : MapData {
         }
     }
 
-    // TODO: Remove this upon completion of class
-    fun debugRender() {
-        renderer.color = Color.RED
-        renderer.begin(ShapeRenderer.ShapeType.Line)
-        for (i in 1 until points.size) {
-            val p1 = points[i - 1]
-            val p2 = points[i]
-            renderer.line(p1.x, p1.y, p2.x, p2.y)
-        }
-        renderer.end()
-    }
-
-    private fun createBodyChunk(world: World, chunk: Chunk, reverse: Boolean = false): Body {
+    private fun createBodyChunk(world: World,
+                                chunk: Chunk,
+                                reverse: Boolean = false) : Body {
         val bodyDef = BodyDef()
         val body = world.createBody(bodyDef)
         val shape = EdgeShape()
