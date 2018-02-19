@@ -67,7 +67,7 @@ class ProceduralMapData : MapData() {
             } while (recentPoint.y < currentChunk * CHUNK_SIZE)
 
             createBodyChunk(world, chunkLeft)
-            createBodyChunk(world, chunkRight, true)
+            createBodyChunk(world, chunkRight)
 
             leftChunks.add(chunkLeft)
             rightChunks.add(chunkRight)
@@ -79,20 +79,14 @@ class ProceduralMapData : MapData() {
      *
      * @param world the physics world.
      * @param chunk points of the map.
-     * @param reverse true if the array should be reversed; false otherwise.
-     * true should be used if creating a right chunk as world bodies are created
-     * in a CCW order.
      */
     private fun createBodyChunk(world: World,
-                                chunk: Chunk,
-                                reverse: Boolean = false) : Body {
+                                chunk: Chunk) : Body {
         val restitution = 0.7f
 
         val bodyDef = BodyDef()
         val body = world.createBody(bodyDef)
         val shape = EdgeShape()
-
-        if (reverse) chunk.reverse()
 
         // Generate world edges
         for (i in 1 until chunk.size) {
