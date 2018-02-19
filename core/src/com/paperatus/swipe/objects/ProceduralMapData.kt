@@ -24,8 +24,8 @@ class ProceduralMapData : MapData {
     private lateinit var recentPoint: Point
     private var currentChunk = 0
 
-    private val leftChunks = GdxArray<Chunk>()
-    private val rightChunks = GdxArray<Chunk>()
+    override val leftChunks = GdxArray<Chunk>()
+    override val rightChunks = GdxArray<Chunk>()
 
     override fun create() {
         recentPoint = Point.obtain()

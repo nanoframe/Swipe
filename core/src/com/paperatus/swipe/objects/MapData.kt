@@ -6,6 +6,9 @@ import com.badlogic.gdx.utils.Pool
 import ktx.collections.GdxArray
 
 interface MapData {
+    val leftChunks: GdxArray<Chunk>
+    val rightChunks: GdxArray<Chunk>
+
     fun create()
     fun update(world: World, camera: Camera)
 }
