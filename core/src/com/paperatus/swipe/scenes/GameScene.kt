@@ -84,14 +84,15 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     override fun render(batch: SpriteBatch) {
         background.draw(batch)
-
+        batch.end()
+        mapData!!.render(camera)
+        batch.begin()
         super.render(batch)
     }
 
     override fun postRender(batch: SpriteBatch) {
         super.postRender(batch)
         debugRender(camera)
-        mapData!!.render(camera)
     }
 
     override fun resize(width: Int, height: Int) {
