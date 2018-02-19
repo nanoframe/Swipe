@@ -30,7 +30,11 @@ class Chunk private constructor() : GdxArray<ChunkPoint>(), Pool.Poolable {
     }
 
     override fun reset() {
+        forEach {
+            ChunkPoint.free(it)
+        }
 
+        clear()
     }
 }
 
