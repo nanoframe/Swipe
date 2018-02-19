@@ -41,6 +41,7 @@ class ProceduralMapData : MapData {
 
             log.debug { "Creating chunk #$currentChunk" }
 
+            // Left/right bounds
             val cameraLeft = -camera.viewportWidth / 2.0f
             val cameraRight = camera.viewportWidth / 2.0f
 
@@ -48,6 +49,7 @@ class ProceduralMapData : MapData {
             val chunkRight = Chunk.obtain()
             val width = 10.0f
 
+            // Start from the last point of the previous chunk
             chunkLeft.addPoint(
                     recentPoint.x - width / 2.0f,
                     recentPoint.y)
@@ -56,7 +58,7 @@ class ProceduralMapData : MapData {
                     recentPoint.y
             )
 
-            do { // Generate a bunch of points for the chunk
+            do { // Generate points until the y threshold is reached
                 val point = createNextPoint(cameraLeft, cameraRight)
 
                 // Generate the walls of the map
@@ -76,6 +78,15 @@ class ProceduralMapData : MapData {
         }
     }
 
+    /**
+     * Creates a world body based on the chunk specifications.
+     *
+     * @param world the physics world.
+     * @param chunk points of the map.
+     * @param reverse true if the array should be reversed; false otherwise.
+     * true should be used if creating a right chunk as world bodies are created
+     * in a CCW order.
+     */
     private fun createBodyChunk(world: World,
                                 chunk: Chunk,
                                 reverse: Boolean = false) : Body {
@@ -87,6 +98,7 @@ class ProceduralMapData : MapData {
 
         if (reverse) chunk.reverse()
 
+        // Generate world edges
         for (i in 1 until chunk.size) {
             val point1 = chunk[i - 1]
             val point2 = chunk[i]
