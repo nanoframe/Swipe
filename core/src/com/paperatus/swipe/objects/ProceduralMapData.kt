@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.EdgeShape
 import com.badlogic.gdx.physics.box2d.World
-import ktx.collections.GdxArray
 import ktx.log.Logger
 
 private const val CHUNK_SIZE = 70.0f
@@ -15,7 +14,7 @@ private const val GENERATE_GAP = 30.0f
 private const val MIN_Y = 8.0f
 private const val MAX_Y = 40.0f
 
-class ProceduralMapData : MapData {
+class ProceduralMapData : MapData() {
 
     companion object {
         private val log = Logger("ProceduralMapData")
@@ -23,9 +22,6 @@ class ProceduralMapData : MapData {
 
     private lateinit var recentPoint: Point
     private var currentChunk = 0
-
-    override val leftChunks = GdxArray<Chunk>()
-    override val rightChunks = GdxArray<Chunk>()
 
     override fun create() {
         recentPoint = Point.obtain()

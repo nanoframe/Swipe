@@ -5,12 +5,12 @@ import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Pool
 import ktx.collections.GdxArray
 
-interface MapData {
-    val leftChunks: GdxArray<Chunk>
-    val rightChunks: GdxArray<Chunk>
+abstract class MapData {
+    val leftChunks = GdxArray<Chunk>()
+    val rightChunks = GdxArray<Chunk>()
 
-    fun create()
-    fun update(world: World, camera: Camera)
+    abstract fun create()
+    abstract fun update(world: World, camera: Camera)
 }
 
 // TODO: Implement separate array class
