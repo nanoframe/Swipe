@@ -2,6 +2,7 @@ package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Mesh
 import com.badlogic.gdx.graphics.VertexAttribute
@@ -17,6 +18,8 @@ abstract class MapData {
     val leftChunks = GdxArray<Chunk>()
     val rightChunks = GdxArray<Chunk>()
 
+    abstract var pathColor: Color
+
     private val renderer = MapRenderer()
 
     abstract fun create()
@@ -27,6 +30,7 @@ abstract class MapData {
         if (leftChunks.size == 0) return
 
         renderer.projectionMatrix = camera.combined
+        renderer.pathColor = pathColor
 
         for (i in 0 until leftChunks.size) {
             val leftChunk = leftChunks[i]
@@ -40,6 +44,7 @@ abstract class MapData {
 
     private class MapRenderer (maxVertices: Int = 24) {
 
+        var pathColor: Color = Color.BLACK
         var projectionMatrix: Matrix4? = null
 
         private val shader = ShaderProgram(
@@ -52,11 +57,15 @@ abstract class MapData {
                                 2,
                                 "a_position"))
 
+        // TODO: Utilize indices instead of vertices
         private val verts = FloatArray(maxVertices)
         private var size = 0
 
         init {
             assert(maxVertices % 3 == 0)
+            assert(shader.isCompiled) {
+                shader.log
+            }
         }
 
         fun drawPath(leftChunk: Chunk, rightChunk: Chunk) {
@@ -64,16 +73,9 @@ abstract class MapData {
                 if (size + 6 > verts.size) {
                     flush()
                 }
-
-                val chunkLeft = leftChunk
-                val chunkRight = rightChunk
-                var p1 : ChunkPoint
-                var p2 : ChunkPoint
-                var p3 : ChunkPoint
-
-                p1 = chunkLeft[i]
-                p2 = chunkRight[i]
-                p3 = chunkLeft[i+1]
+                var p1 = leftChunk[i]
+                var p2 = rightChunk[i]
+                var p3 = leftChunk[i+1]
 
                 verts[size++] = p1.x
                 verts[size++] = p1.y
@@ -82,9 +84,9 @@ abstract class MapData {
                 verts[size++] = p3.x
                 verts[size++] = p3.y
 
-                p1 = chunkRight[i]
-                p2 = chunkLeft[i+1]
-                p3 = chunkRight[i+1]
+                p1 = rightChunk[i]
+                p2 = leftChunk[i+1]
+                p3 = rightChunk[i+1]
 
                 verts[size++] = p1.x
                 verts[size++] = p1.y
@@ -101,6 +103,11 @@ abstract class MapData {
 
             shader.begin()
             shader.setUniformMatrix("u_projTrans", projectionMatrix)
+            shader.setUniformf(
+                    "u_pathColor",
+                    pathColor.r,
+                    pathColor.g,
+                    pathColor.b)
             mesh.render(shader, GL20.GL_TRIANGLES, 0, vertexCount)
             shader.end()
 

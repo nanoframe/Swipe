@@ -1,6 +1,7 @@
 package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -15,6 +16,7 @@ private const val MIN_Y = 8.0f
 private const val MAX_Y = 40.0f
 
 class ProceduralMapData : MapData() {
+    override var pathColor = Color(204.0f / 255.0f, 230.0f / 255.0f, 228.0f / 255.0f, 1.0f)
 
     companion object {
         private val log = Logger("ProceduralMapData")
