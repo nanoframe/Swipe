@@ -70,7 +70,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                 -background.width / 2.0f,
                 -background.height / 2.0f +
                         (player.position.y / backgroundTileSize).toInt() *
-                                backgroundTileSize
+                        backgroundTileSize
         )
 
         mapData!!.update(physicsWorld, camera)

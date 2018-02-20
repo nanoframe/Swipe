@@ -12,6 +12,7 @@ import ktx.box2d.body
 import ktx.math.times
 
 const val MAX_VELOCITY = 25.0f
+
 class PlayerPhysicsComponent : PhysicsComponent() {
 
     private var physicsBody: Body? = null

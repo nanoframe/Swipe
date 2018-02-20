@@ -3,7 +3,7 @@ package com.paperatus.swipe.objects
 import com.badlogic.gdx.utils.Pool
 
 class Point private constructor(var x: Float = 0.0f,
-                                 var y: Float = 0.0f) : Pool.Poolable {
+                                var y: Float = 0.0f) : Pool.Poolable {
 
     companion object : Pool<Point>() {
         override fun newObject() = Point()

@@ -83,7 +83,7 @@ class ProceduralMapData : MapData() {
      * @param chunk points of the map.
      */
     private fun createBodyChunk(world: World,
-                                chunk: Chunk) : Body {
+                                chunk: Chunk): Body {
         val restitution = 0.7f
 
         val bodyDef = BodyDef()
