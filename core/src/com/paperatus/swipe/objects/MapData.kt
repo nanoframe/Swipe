@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.VertexAttribute
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Pool
 import ktx.collections.GdxArray
@@ -123,6 +124,8 @@ class Chunk private constructor() : GdxArray<ChunkPoint>(), Pool.Poolable {
             return Chunk()
         }
     }
+
+    var body: Body? = null
 
     fun addPoint(x: Float, y: Float) {
         add(ChunkPoint.obtain().also {

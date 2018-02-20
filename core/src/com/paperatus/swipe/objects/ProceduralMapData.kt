@@ -54,6 +54,9 @@ class ProceduralMapData : MapData() {
                 leftChunks.removeIndex(0)
                 rightChunks.removeIndex(0)
 
+                world.destroyBody(lastLeftChunk.body!!)
+                world.destroyBody(lastRightChunk.body!!)
+
                 Chunk.free(lastLeftChunk)
                 Chunk.free(lastRightChunk)
 
@@ -114,7 +117,7 @@ class ProceduralMapData : MapData() {
      * @param chunk points of the map.
      */
     private fun createBodyChunk(world: World,
-                                chunk: Chunk): Body {
+                                chunk: Chunk) {
         val restitution = 0.7f
 
         val bodyDef = BodyDef()
@@ -136,7 +139,7 @@ class ProceduralMapData : MapData() {
         }
         shape.dispose()
 
-        return body
+        chunk.body = body
     }
 
     private fun createNextPoint(leftBound: Float, rightBound: Float): Point {
