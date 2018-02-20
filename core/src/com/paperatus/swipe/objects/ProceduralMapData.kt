@@ -15,6 +15,8 @@ private const val GENERATE_GAP = 30.0f
 private const val MIN_Y = 8.0f
 private const val MAX_Y = 40.0f
 
+private const val LIMIT_FOLLOW_DISTANCE = 120.0f
+
 class ProceduralMapData : MapData() {
     override var pathColor = Color(204.0f / 255.0f, 230.0f / 255.0f, 228.0f / 255.0f, 1.0f)
 
@@ -25,11 +27,18 @@ class ProceduralMapData : MapData() {
     private lateinit var recentPoint: Point
     private var currentChunk = 0
 
+    private var mapLimit: Body? = null
+
     override fun create() {
         recentPoint = Point.obtain()
     }
 
     override fun update(world: World, camera: Camera) {
+        updateChunk(world, camera)
+        updateBottomBounds(world, camera)
+    }
+
+    private fun updateChunk(world: World, camera: Camera) {
         val cameraTop = camera.position.y + camera.viewportHeight / 2.0f
 
         // Create more paths if the top of the screen is near the
@@ -123,6 +132,25 @@ class ProceduralMapData : MapData() {
         )
 
         return point
+    }
+
+    private fun updateBottomBounds(world: World, camera: Camera) {
+        if (mapLimit == null) {
+            val edge = EdgeShape()
+            edge.set(-camera.viewportWidth/2.0f, 0.0f,
+                    camera.viewportHeight/2.0f, 0.0f)
+
+            mapLimit = world.createBody(BodyDef())
+            mapLimit!!.createFixture(edge, 0.0f)
+            edge.dispose()
+        }
+
+        if (camera.position.y - mapLimit!!.position.y > LIMIT_FOLLOW_DISTANCE) {
+            mapLimit!!.setTransform(
+                    0.0f,
+                    camera.position.y - LIMIT_FOLLOW_DISTANCE,
+                    0.0f)
+        }
     }
 
 }
