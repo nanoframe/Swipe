@@ -162,8 +162,12 @@ class ProceduralMapData : MapData() {
     private fun updateBottomBounds(world: World, camera: Camera) {
         if (mapLimit == null) {
             val edge = EdgeShape()
-            edge.set(-camera.viewportWidth/2.0f, 0.0f,
-                    camera.viewportHeight/2.0f, 0.0f)
+
+            // camera.viewportWidth / 2.0f doesn't give the exact dimensions
+            // because the resolution might change during gameplay. We'll just
+            // lazily create a long line to deal with this problem.
+            edge.set(-camera.viewportWidth, 0.0f,
+                    camera.viewportWidth, 0.0f)
 
             mapLimit = world.createBody(BodyDef())
             mapLimit!!.createFixture(edge, 0.0f)
