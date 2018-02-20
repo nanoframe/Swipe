@@ -1,12 +1,12 @@
 package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.EdgeShape
 import com.badlogic.gdx.physics.box2d.World
-import ktx.collections.GdxArray
 import ktx.log.Logger
 
 private const val CHUNK_SIZE = 70.0f
@@ -15,7 +15,8 @@ private const val GENERATE_GAP = 30.0f
 private const val MIN_Y = 8.0f
 private const val MAX_Y = 40.0f
 
-class ProceduralMapData : MapData {
+class ProceduralMapData : MapData() {
+    override var pathColor = Color(204.0f / 255.0f, 230.0f / 255.0f, 228.0f / 255.0f, 1.0f)
 
     companion object {
         private val log = Logger("ProceduralMapData")
@@ -23,9 +24,6 @@ class ProceduralMapData : MapData {
 
     private lateinit var recentPoint: Point
     private var currentChunk = 0
-
-    override val leftChunks = GdxArray<Chunk>()
-    override val rightChunks = GdxArray<Chunk>()
 
     override fun create() {
         recentPoint = Point.obtain()
@@ -71,7 +69,7 @@ class ProceduralMapData : MapData {
             } while (recentPoint.y < currentChunk * CHUNK_SIZE)
 
             createBodyChunk(world, chunkLeft)
-            createBodyChunk(world, chunkRight, true)
+            createBodyChunk(world, chunkRight)
 
             leftChunks.add(chunkLeft)
             rightChunks.add(chunkRight)
@@ -83,20 +81,14 @@ class ProceduralMapData : MapData {
      *
      * @param world the physics world.
      * @param chunk points of the map.
-     * @param reverse true if the array should be reversed; false otherwise.
-     * true should be used if creating a right chunk as world bodies are created
-     * in a CCW order.
      */
     private fun createBodyChunk(world: World,
-                                chunk: Chunk,
-                                reverse: Boolean = false) : Body {
+                                chunk: Chunk) : Body {
         val restitution = 0.7f
 
         val bodyDef = BodyDef()
         val body = world.createBody(bodyDef)
         val shape = EdgeShape()
-
-        if (reverse) chunk.reverse()
 
         // Generate world edges
         for (i in 1 until chunk.size) {
