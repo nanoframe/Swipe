@@ -7,7 +7,9 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.EdgeShape
 import com.badlogic.gdx.physics.box2d.World
+import ktx.collections.lastIndex
 import ktx.log.Logger
+import kotlin.math.max
 
 private const val CHUNK_SIZE = 70.0f
 private const val GENERATE_GAP = 30.0f
@@ -16,6 +18,7 @@ private const val MIN_Y = 8.0f
 private const val MAX_Y = 40.0f
 
 private const val LIMIT_FOLLOW_DISTANCE = 120.0f
+private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 class ProceduralMapData : MapData() {
     override var pathColor = Color(204.0f / 255.0f, 230.0f / 255.0f, 228.0f / 255.0f, 1.0f)
@@ -39,6 +42,25 @@ class ProceduralMapData : MapData() {
     }
 
     private fun updateChunk(world: World, camera: Camera) {
+        // Clean up memory by removing unused chunks
+        if (leftChunks.size > 0) {
+            val lastLeftChunk = leftChunks[0]
+            val lastRightChunk = rightChunks[0]
+            val lastY = max(
+                    lastLeftChunk[lastLeftChunk.lastIndex].y,
+                    lastRightChunk[lastRightChunk.lastIndex].y)
+
+            if (camera.position.y - lastY > CHUNK_DISPOSAL_DISTANCE) {
+                leftChunks.removeIndex(0)
+                rightChunks.removeIndex(0)
+
+                Chunk.free(lastLeftChunk)
+                Chunk.free(lastRightChunk)
+
+                log.debug { "Disposed chunk #${currentChunk - leftChunks.size}" }
+            }
+        }
+
         val cameraTop = camera.position.y + camera.viewportHeight / 2.0f
 
         // Create more paths if the top of the screen is near the
