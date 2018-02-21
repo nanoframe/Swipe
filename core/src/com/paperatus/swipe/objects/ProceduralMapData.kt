@@ -2,7 +2,6 @@ package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
@@ -41,17 +40,12 @@ class ProceduralMapData : MapData() {
     override fun create() {
         val start = Vector2Pool.obtain()
         recentPoints.add(start)
-
-        temp.add(start) // TODO: Remove
     }
 
     override fun update(world: World, camera: Camera) {
         updateChunk(world, camera)
         updateBottomBounds(world, camera)
     }
-
-    val temp = GdxArray<Vector2>() // TODO: Remove
-    val renderer = ShapeRenderer() // TODO: Remove
 
     private fun updateChunk(world: World, camera: Camera) {
         // Clean up memory by removing unused chunks
@@ -150,8 +144,6 @@ class ProceduralMapData : MapData() {
                         edge2Slope, pathPoint2.x, pathPoint2.y,
                         intersection)
                 chunkRight.addPoint(intersection.x, intersection.y)
-
-                //Vector2Pool.free(recentPoint) // TODO: Restore
             }
 
             Vector2Pool.free(direction12)
@@ -179,10 +171,8 @@ class ProceduralMapData : MapData() {
         var count = 0
         do { // Generate points until the y threshold is reached
             count++
-
             recentPoints.add(createNextPoint(leftBound, rightBound))
-            temp.add(recentPoints.lastItem()) // TODO: REMOVE
-            recentPoints.lastItem()
+
         } while (recentPoints.lastItem().y < currentChunk * CHUNK_SIZE)
 
         return count
@@ -193,19 +183,6 @@ class ProceduralMapData : MapData() {
                 .set(v2.y - v1.y, v1.x - v2.x)
                 .nor()
                 .scl(width / 2.0f)
-    }
-
-    // TODO: Remove function
-    override fun render(camera: Camera) {
-        super.render(camera)
-        renderer.projectionMatrix = camera.combined
-        renderer.begin(ShapeRenderer.ShapeType.Line)
-
-        for (i in 1 until temp.size) {
-            renderer.line(temp[i-1], temp[i])
-        }
-
-        renderer.end()
     }
 
     /**
