@@ -82,7 +82,6 @@ class ProceduralMapData : MapData() {
         // end of the chunk subtracted by the gap
         if (currentChunk * CHUNK_SIZE - cameraTop < GENERATE_GAP) {
             currentChunk++
-            //if (currentChunk >= 2) return
 
             log.debug { "Creating chunk #$currentChunk" }
 
@@ -94,19 +93,22 @@ class ProceduralMapData : MapData() {
             val chunkRight = Chunk.obtain()
             val width = 10.0f
 
-            // Remove everything but the last point to use for generating the
-            // next path
-//            val lastPoint = recentPoints.removeIndex(recentPoints.lastIndex)
-//            Vector2Pool.freeAll(recentPoints)
-//            recentPoints.add(lastPoint)
+            // Initialize the start point
+            if (currentChunk == 1) {
+                chunkLeft.addPoint(-width/2.0f, 0.0f)
+                chunkRight.addPoint(width/2.0f, 0.0f)
+            }
+
             val generatedCount = generatePoints(cameraLeft, cameraRight)
 
             // Extra -1 to connect the previous chunk to the current chunk
             val startIndex = recentPoints.size - generatedCount - 1
 
             // The previous two points are needed for calculating the path position
-            for (i in (if (startIndex < 2) 2 else startIndex)..recentPoints.lastIndex) {
+            for (i in max(2, startIndex)..recentPoints.lastIndex) {
                 if (i < 0) continue
+
+                // TODO: Fix vertical slopes
 
                 val point1 = recentPoints[i - 2]
                 val point2 = recentPoints[i - 1]
@@ -168,6 +170,7 @@ class ProceduralMapData : MapData() {
 
             recentPoints.add(createNextPoint(leftBound, rightBound))
             temp.add(recentPoints.lastItem()) // TODO: REMOVE
+            recentPoints.lastItem()
         } while (recentPoints.lastItem().y < currentChunk * CHUNK_SIZE)
 
         return count
