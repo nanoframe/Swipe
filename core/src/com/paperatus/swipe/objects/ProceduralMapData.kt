@@ -82,6 +82,7 @@ class ProceduralMapData : MapData() {
         // end of the chunk subtracted by the gap
         if (currentChunk * CHUNK_SIZE - cameraTop < GENERATE_GAP) {
             currentChunk++
+            //if (currentChunk >= 2) return
 
             log.debug { "Creating chunk #$currentChunk" }
 
@@ -93,27 +94,23 @@ class ProceduralMapData : MapData() {
             val chunkRight = Chunk.obtain()
             val width = 10.0f
 
-            val lastPoint = recentPoints.lastItem()
-            // Start from the last point of the previous chunk
-            chunkLeft.addPoint(
-                    lastPoint.x - width / 2.0f,
-                    lastPoint.y)
-            chunkRight.addPoint(
-                    lastPoint.x + width / 2.0f,
-                    lastPoint.y
-            )
+            // Remove everything but the last point to use for generating the
+            // next path
+//            val lastPoint = recentPoints.removeIndex(recentPoints.lastIndex)
+//            Vector2Pool.freeAll(recentPoints)
+//            recentPoints.add(lastPoint)
+            val generatedCount = generatePoints(cameraLeft, cameraRight)
 
-            do { // Generate points until the y threshold is reached
-                recentPoints.add(createNextPoint(cameraLeft, cameraRight))
-                temp.add(recentPoints.lastItem()) // TODO: REMOVE
+            // Extra -1 to connect the previous chunk to the current chunk
+            val startIndex = recentPoints.size - generatedCount - 1
 
-                // At least two edges are needed to create a bend in the path.
-                // Three points create two edges.
-                if (recentPoints.size < 3) continue
+            // The previous two points are needed for calculating the path position
+            for (i in (if (startIndex < 2) 2 else startIndex)..recentPoints.lastIndex) {
+                if (i < 0) continue
 
-                val point1 = recentPoints[recentPoints.lastIndex - 2]
-                val point2 = recentPoints[recentPoints.lastIndex - 1]
-                val point3 = recentPoints[recentPoints.lastIndex]
+                val point1 = recentPoints[i - 2]
+                val point2 = recentPoints[i - 1]
+                val point3 = recentPoints[i]
 
                 val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
                 val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
@@ -153,8 +150,8 @@ class ProceduralMapData : MapData() {
                 chunkRight.addPoint(intersection.x, intersection.y)
 
                 //Vector2Pool.free(recentPoint) // TODO: Restore
+            }
 
-            } while (recentPoints.lastItem().y < currentChunk * CHUNK_SIZE)
 
             createBodyChunk(world, chunkLeft)
             createBodyChunk(world, chunkRight)
@@ -162,6 +159,18 @@ class ProceduralMapData : MapData() {
             leftChunks.add(chunkLeft)
             rightChunks.add(chunkRight)
         }
+    }
+
+    private fun generatePoints(leftBound: Float, rightBound: Float): Int {
+        var count = 0
+        do { // Generate points until the y threshold is reached
+            count++
+
+            recentPoints.add(createNextPoint(leftBound, rightBound))
+            temp.add(recentPoints.lastItem()) // TODO: REMOVE
+        } while (recentPoints.lastItem().y < currentChunk * CHUNK_SIZE)
+
+        return count
     }
 
     fun getPathDelta(v1: Vector2, v2: Vector2, width: Float, out: Vector2) {
