@@ -9,7 +9,9 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.EdgeShape
 import com.badlogic.gdx.physics.box2d.World
+import com.paperatus.swipe.data.Solver
 import com.paperatus.swipe.data.Vector2Pool
+import com.paperatus.swipe.data.lastItem
 import ktx.collections.GdxArray
 import ktx.collections.lastIndex
 import ktx.log.Logger
@@ -31,15 +33,16 @@ class ProceduralMapData : MapData() {
         private val log = Logger("ProceduralMapData")
     }
 
-    private lateinit var recentPoint: Vector2
+    private val recentPoints = GdxArray<Vector2>()
     private var currentChunk = 0
 
     private var mapLimit: Body? = null
 
     override fun create() {
-        recentPoint = Vector2Pool.obtain()
+        val start = Vector2Pool.obtain()
+        recentPoints.add(start)
 
-        temp.add(recentPoint) // TODO: Remove
+        temp.add(start) // TODO: Remove
     }
 
     override fun update(world: World, camera: Camera) {
@@ -90,35 +93,68 @@ class ProceduralMapData : MapData() {
             val chunkRight = Chunk.obtain()
             val width = 10.0f
 
+            val lastPoint = recentPoints.lastItem()
             // Start from the last point of the previous chunk
             chunkLeft.addPoint(
-                    recentPoint.x - width / 2.0f,
-                    recentPoint.y)
+                    lastPoint.x - width / 2.0f,
+                    lastPoint.y)
             chunkRight.addPoint(
-                    recentPoint.x + width / 2.0f,
-                    recentPoint.y
+                    lastPoint.x + width / 2.0f,
+                    lastPoint.y
             )
 
             do { // Generate points until the y threshold is reached
-                val point = createNextPoint(cameraLeft, cameraRight)
-                val normalDirection = Vector2Pool.obtain()
-                normalDirection
-                        .set(point.y - recentPoint.y, recentPoint.x - point.x)
-                        .nor()
-                        .scl(width / 2.0f)
+                recentPoints.add(createNextPoint(cameraLeft, cameraRight))
+                temp.add(recentPoints.lastItem()) // TODO: REMOVE
 
-                ktx.log.info{"$normalDirection"}
+                // At least two edges are needed to create a bend in the path.
+                // Three points create two edges.
+                if (recentPoints.size < 3) continue
 
+                val point1 = recentPoints[recentPoints.lastIndex - 2]
+                val point2 = recentPoints[recentPoints.lastIndex - 1]
+                val point3 = recentPoints[recentPoints.lastIndex]
 
-                // Generate the walls of the map
-                chunkLeft.addPoint(point.x - normalDirection.x, point.y - normalDirection.y)
-                chunkRight.addPoint(point.x + normalDirection.x, point.y + normalDirection.y)
+                val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
+                val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
+                val direction12 = Vector2Pool.obtain()
+                val direction23 = Vector2Pool.obtain()
+                val pathPoint1 = Vector2Pool.obtain()
+                val pathPoint2 = Vector2Pool.obtain()
+                val intersection = Vector2Pool.obtain()
+
+                getPathDelta(point1, point2, width, direction12)
+                getPathDelta(point2, point3, width, direction23)
+
+                // Left intersection
+                pathPoint1
+                        .set(point2)
+                        .sub(direction12)
+                pathPoint2
+                        .set(point2)
+                        .sub(direction23)
+                Solver.solveIntersection(
+                        edge1Slope, pathPoint1.x, pathPoint1.y,
+                        edge2Slope, pathPoint2.x, pathPoint2.y,
+                        intersection)
+                chunkLeft.addPoint(intersection.x, intersection.y)
+
+                // Right intersection
+                pathPoint1
+                        .set(point2)
+                        .add(direction12)
+                pathPoint2
+                        .set(point2)
+                        .add(direction23)
+                Solver.solveIntersection(
+                        edge1Slope, pathPoint1.x, pathPoint1.y,
+                        edge2Slope, pathPoint2.x, pathPoint2.y,
+                        intersection)
+                chunkRight.addPoint(intersection.x, intersection.y)
 
                 //Vector2Pool.free(recentPoint) // TODO: Restore
-                temp.add(point) // TODO: REMOVE
-                recentPoint = point
 
-            } while (recentPoint.y < currentChunk * CHUNK_SIZE)
+            } while (recentPoints.lastItem().y < currentChunk * CHUNK_SIZE)
 
             createBodyChunk(world, chunkLeft)
             createBodyChunk(world, chunkRight)
@@ -126,6 +162,13 @@ class ProceduralMapData : MapData() {
             leftChunks.add(chunkLeft)
             rightChunks.add(chunkRight)
         }
+    }
+
+    fun getPathDelta(v1: Vector2, v2: Vector2, width: Float, out: Vector2) {
+        out
+                .set(v2.y - v1.y, v1.x - v2.x)
+                .nor()
+                .scl(width / 2.0f)
     }
 
     // TODO: Remove function
@@ -175,6 +218,7 @@ class ProceduralMapData : MapData() {
 
     private fun createNextPoint(leftBound: Float, rightBound: Float): Vector2 {
         // Distance between the current x-position and the left/right edge
+        val recentPoint = recentPoints.lastItem()
         val leftDelta = leftBound - recentPoint.x
         val rightDelta = rightBound - recentPoint.x
 
