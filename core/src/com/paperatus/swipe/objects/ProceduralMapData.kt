@@ -104,6 +104,13 @@ class ProceduralMapData : MapData() {
             // Extra -1 to connect the previous chunk to the current chunk
             val startIndex = recentPoints.size - generatedCount - 1
 
+            // Point data
+            val direction12 = Vector2Pool.obtain()
+            val direction23 = Vector2Pool.obtain()
+            val pathPoint1 = Vector2Pool.obtain()
+            val pathPoint2 = Vector2Pool.obtain()
+            val intersection = Vector2Pool.obtain()
+
             // The previous two points are needed for calculating the path position
             for (i in max(2, startIndex)..recentPoints.lastIndex) {
                 if (i < 0) continue
@@ -114,11 +121,6 @@ class ProceduralMapData : MapData() {
 
                 val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
                 val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
-                val direction12 = Vector2Pool.obtain()
-                val direction23 = Vector2Pool.obtain()
-                val pathPoint1 = Vector2Pool.obtain()
-                val pathPoint2 = Vector2Pool.obtain()
-                val intersection = Vector2Pool.obtain()
 
                 getPathDelta(point1, point2, width, direction12)
                 getPathDelta(point2, point3, width, direction23)
@@ -152,6 +154,18 @@ class ProceduralMapData : MapData() {
                 //Vector2Pool.free(recentPoint) // TODO: Restore
             }
 
+            Vector2Pool.free(direction12)
+            Vector2Pool.free(direction23)
+            Vector2Pool.free(pathPoint1)
+            Vector2Pool.free(pathPoint2)
+            Vector2Pool.free(intersection)
+            // As only three points are required to create a path, we'll
+            // discard old points that doesn't contribute to path
+            // generation
+            while (recentPoints.size > 3) {
+                val point = recentPoints.removeIndex(0)
+                Vector2Pool.free(point)
+            }
 
             createBodyChunk(world, chunkLeft)
             createBodyChunk(world, chunkRight)
