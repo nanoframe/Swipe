@@ -108,8 +108,6 @@ class ProceduralMapData : MapData() {
             for (i in max(2, startIndex)..recentPoints.lastIndex) {
                 if (i < 0) continue
 
-                // TODO: Fix vertical slopes
-
                 val point1 = recentPoints[i - 2]
                 val point2 = recentPoints[i - 1]
                 val point3 = recentPoints[i]

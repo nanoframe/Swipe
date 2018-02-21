@@ -6,8 +6,27 @@ object Solver {
     fun solveIntersection(m1: Float, x1: Float, y1: Float,
                           m2: Float, x2: Float, y2: Float,
                           out: Vector2) {
-        val x = (y2 - y1 + m1 * x1 - m2 * x2) / (m1 - m2)
-        val y = m1 * (x - x1) + y1
+        val x: Float
+        val y: Float
+
+        val isM1Vertical = m1.isNaN() || m1.isInfinite()
+        val isM2Vertical = m2.isNaN() || m2.isInfinite()
+
+        // Check for vertical slopes
+        if (isM1Vertical && isM2Vertical) {
+            x = x1
+            y = y1
+        } else if (isM1Vertical) {
+            x = x1
+            y = m2 * (x - x2) + y2
+        } else if (isM2Vertical) {
+            x = x2
+            y = m1 * (x - x1) + y1
+        } else {
+            x = (y2 - y1 + m1 * x1 - m2 * x2) / (m1 - m2)
+            y = m1 * (x - x1) + y1
+        }
+
 
         out.set(x, y)
     }
