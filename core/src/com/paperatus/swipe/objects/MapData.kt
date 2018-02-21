@@ -25,7 +25,7 @@ abstract class MapData {
     abstract fun create()
     abstract fun update(world: World, camera: Camera)
 
-    fun render(camera: Camera) {
+    open fun render(camera: Camera) {
         assert(leftChunks.size == rightChunks.size)
         if (leftChunks.size == 0) return
 

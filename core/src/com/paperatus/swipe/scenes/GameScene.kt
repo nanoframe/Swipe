@@ -76,6 +76,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         mapData!!.update(physicsWorld, camera)
 
         camera.update(delta, player)
+        camera.zoom = 1.0f // TODO: Remove
     }
 
     override fun preRender(batch: SpriteBatch) {

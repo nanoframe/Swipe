@@ -2,6 +2,7 @@ package com.paperatus.swipe.objects
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
@@ -9,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.EdgeShape
 import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.data.Vector2Pool
+import ktx.collections.GdxArray
 import ktx.collections.lastIndex
 import ktx.log.Logger
 import kotlin.math.max
@@ -36,12 +38,17 @@ class ProceduralMapData : MapData() {
 
     override fun create() {
         recentPoint = Vector2Pool.obtain()
+
+        temp.add(recentPoint) // TODO: Remove
     }
 
     override fun update(world: World, camera: Camera) {
         updateChunk(world, camera)
         updateBottomBounds(world, camera)
     }
+
+    val temp = GdxArray<Vector2>() // TODO: Remove
+    val renderer = ShapeRenderer() // TODO: Remove
 
     private fun updateChunk(world: World, camera: Camera) {
         // Clean up memory by removing unused chunks
@@ -95,13 +102,20 @@ class ProceduralMapData : MapData() {
             do { // Generate points until the y threshold is reached
                 val point = createNextPoint(cameraLeft, cameraRight)
                 val normalDirection = Vector2Pool.obtain()
-                normalDirection.set(point.y - recentPoint.y, recentPoint.x - point.x)
+                normalDirection
+                        .set(point.y - recentPoint.y, recentPoint.x - point.x)
+                        .nor()
+                        .scl(width / 2.0f)
+
+                ktx.log.info{"$normalDirection"}
+
 
                 // Generate the walls of the map
-                chunkLeft.addPoint(point.x - width / 2.0f, point.y)
-                chunkRight.addPoint(point.x + width / 2.0f, point.y)
+                chunkLeft.addPoint(point.x - normalDirection.x, point.y - normalDirection.y)
+                chunkRight.addPoint(point.x + normalDirection.x, point.y + normalDirection.y)
 
-                Vector2Pool.free(recentPoint)
+                //Vector2Pool.free(recentPoint) // TODO: Restore
+                temp.add(point) // TODO: REMOVE
                 recentPoint = point
 
             } while (recentPoint.y < currentChunk * CHUNK_SIZE)
@@ -112,6 +126,19 @@ class ProceduralMapData : MapData() {
             leftChunks.add(chunkLeft)
             rightChunks.add(chunkRight)
         }
+    }
+
+    // TODO: Remove function
+    override fun render(camera: Camera) {
+        super.render(camera)
+        renderer.projectionMatrix = camera.combined
+        renderer.begin(ShapeRenderer.ShapeType.Line)
+
+        for (i in 1 until temp.size) {
+            renderer.line(temp[i-1], temp[i])
+        }
+
+        renderer.end()
     }
 
     /**
