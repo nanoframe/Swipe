@@ -20,6 +20,9 @@ import kotlin.math.min
 private const val CHUNK_SIZE = 70.0f
 private const val GENERATE_GAP = 40.0f
 
+private const val CURVE_POINT_MIN = 3
+private const val CURVE_POINT_MAX = 8
+
 private const val MIN_Y = 8.0f
 private const val MAX_Y = 20.0f
 private const val MAX_X = 15.0f
@@ -98,7 +101,7 @@ class ProceduralMapData : MapData() {
                 chunkRight.addPoint(width/2.0f, 0.0f)
             }
 
-            val generatedCount = generatePoints(cameraLeft, cameraRight, width)
+            val generatedCount = generatePoints(cameraLeft, cameraRight)
 
             // Extra -1 to connect the previous chunk to the current chunk
             val startIndex = recentPoints.size - generatedCount - 1
@@ -120,8 +123,9 @@ class ProceduralMapData : MapData() {
                 val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
                 val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
 
-                getPathDelta(point1, point2, point2.width, direction12)
-                getPathDelta(point2, point3, point2.width, direction23)
+                // TODO: Fix hardcoded widths
+                getPathDelta(point1, point2, 10.0f, direction12)
+                getPathDelta(point2, point3, 10.0f, direction23)
 
                 // Left intersection
                 pathPoint1
@@ -171,15 +175,107 @@ class ProceduralMapData : MapData() {
         }
     }
 
-    private fun generatePoints(leftBound: Float, rightBound: Float, width: Float): Int {
+    private fun generatePoints(leftBound: Float, rightBound: Float): Int {
         var count = 0
         do { // Generate points until the y threshold is reached
-            count++
-            recentPoints.add(createNextPoint(leftBound, rightBound, width))
+
+            val pathType = Path.random()
+            val previousPoint = recentPoints.lastItem()
+            println(pathType)
+
+            count += when(pathType) {
+                Path.Type.CurveLeft -> generateLeftCurve(leftBound, previousPoint)
+                Path.Type.CurveRight -> generateRightCurve(rightBound, previousPoint)
+                Path.Type.Up -> generateUp(leftBound, rightBound, previousPoint)
+            }
 
         } while (recentPoints.lastItem().y < currentChunk * CHUNK_SIZE)
 
         return count
+    }
+
+    // TODO: Fix hardcoded numbers and return values
+
+    private fun generateLeftCurve(leftBound: Float,
+                                  start: PathPoint): Int {
+        val count = MathUtils.random(CURVE_POINT_MIN, CURVE_POINT_MAX)
+
+        var previous = start
+        for (i in 1..count) {
+            val nextPoint = PathPoint.obtain()
+            nextPoint.set(previous)
+
+            val leftDelta = leftBound - previous.x
+
+            val offsetX = MathUtils.random(
+                    leftDelta / 2.0f, 0.0f
+            )
+            val offsetY = MathUtils.random(
+                    MIN_Y, MAX_Y
+            )
+
+            nextPoint.add(offsetX, offsetY)
+            recentPoints.add(nextPoint)
+
+            previous = nextPoint
+        }
+
+        return count
+    }
+
+    private fun generateRightCurve(rightBound: Float,
+                                  start: PathPoint): Int {
+        val count = MathUtils.random(CURVE_POINT_MIN, CURVE_POINT_MAX)
+
+        var previous = start
+        for (i in 1..count) {
+            val nextPoint = PathPoint.obtain()
+            nextPoint.set(previous)
+
+            val rightDelta = rightBound - previous.x
+
+            val offsetX = MathUtils.random(
+                    0.0f, rightDelta / 2.0f
+            )
+            val offsetY = MathUtils.random(
+                    MIN_Y, MAX_Y
+            )
+
+            nextPoint.add(offsetX, offsetY)
+            recentPoints.add(nextPoint)
+
+            previous = nextPoint
+        }
+
+        return count
+    }
+
+    private fun generateUp(leftBound: Float, rightBound: Float,
+                           start: PathPoint): Int {
+        var previousPoint = start
+        for (i in 1..5) {
+            val leftDelta = leftBound - previousPoint.x
+            val rightDelta = rightBound - previousPoint.x
+
+            val nextPoint = PathPoint.obtain()
+            nextPoint.set(previousPoint)
+
+            val offsetX = MathUtils.clamp(
+                    MathUtils.random(leftDelta, rightDelta),
+                    -3.0f,
+                    3.0f
+            )
+
+            nextPoint.add(
+                    offsetX,
+                    MathUtils.random(MIN_Y, MAX_Y)
+            )
+
+            recentPoints.add(nextPoint)
+            previousPoint = nextPoint
+        }
+
+        return 5
     }
 
     private fun getPathDelta(v1: Vector2, v2: Vector2, width: Float, out: Vector2) {
