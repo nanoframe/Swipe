@@ -17,7 +17,7 @@ import ktx.log.Logger
 import kotlin.math.max
 
 private const val CHUNK_SIZE = 70.0f
-private const val GENERATE_GAP = 30.0f
+private const val GENERATE_GAP = 40.0f
 
 private const val MIN_Y = 8.0f
 private const val MAX_Y = 40.0f
@@ -178,7 +178,7 @@ class ProceduralMapData : MapData() {
         return count
     }
 
-    fun getPathDelta(v1: Vector2, v2: Vector2, width: Float, out: Vector2) {
+    private fun getPathDelta(v1: Vector2, v2: Vector2, width: Float, out: Vector2) {
         out
                 .set(v2.y - v1.y, v1.x - v2.x)
                 .nor()
