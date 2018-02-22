@@ -15,8 +15,8 @@ import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.TiledTexture
 import com.paperatus.swipe.objects.GameCamera
-import com.paperatus.swipe.objects.MapData
-import com.paperatus.swipe.objects.ProceduralMapData
+import com.paperatus.swipe.map.MapData
+import com.paperatus.swipe.map.ProceduralMapData
 import ktx.log.debug
 
 const val WORLD_SIZE = 50.0f // World height
