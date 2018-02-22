@@ -43,11 +43,12 @@ abstract class MapData {
     }
 
     fun update(world: World, camera: Camera) {
-        updateChunk(world, camera)
+        cleanupChunks(world, camera)
+        updateChunks(world, camera)
         updateBottomBounds(world, camera)
     }
 
-    private fun updateChunk(world: World, camera: Camera) {
+    private fun cleanupChunks(world: World, camera: Camera) {
         // Clean up memory by removing unused chunks
         if (leftChunks.size > 0) {
             val lastLeftChunk = leftChunks[0]
@@ -69,6 +70,17 @@ abstract class MapData {
                 log.debug { "Disposed chunk #${currentChunk - leftChunks.size}" }
             }
         }
+
+        // As only three points are required to create a path, we'll
+        // discard old points that doesn't contribute to path
+        // generation
+        while (pathPoints.size > 3) {
+            val point = pathPoints.removeIndex(0)
+            PathPoint.free(point)
+        }
+    }
+
+    private fun updateChunks(world: World, camera: Camera) {
 
         val cameraTop = camera.position.y + camera.viewportHeight / 2.0f
 
@@ -155,13 +167,6 @@ abstract class MapData {
             PathPoint.free(pathPoint1)
             PathPoint.free(pathPoint2)
             PathPoint.free(intersection)
-            // As only three points are required to create a path, we'll
-            // discard old points that doesn't contribute to path
-            // generation
-            while (pathPoints.size > 3) {
-                val point = pathPoints.removeIndex(0)
-                PathPoint.free(point)
-            }
 
             createBodyChunk(world, chunkLeft)
             createBodyChunk(world, chunkRight)
