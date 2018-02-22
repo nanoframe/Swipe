@@ -8,19 +8,21 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.EdgeShape
 import com.badlogic.gdx.physics.box2d.World
+import com.paperatus.swipe.data.PathPoint
 import com.paperatus.swipe.data.Solver
-import com.paperatus.swipe.data.Vector2Pool
 import com.paperatus.swipe.data.lastItem
 import ktx.collections.GdxArray
 import ktx.collections.lastIndex
 import ktx.log.Logger
 import kotlin.math.max
+import kotlin.math.min
 
 private const val CHUNK_SIZE = 70.0f
 private const val GENERATE_GAP = 40.0f
 
 private const val MIN_Y = 8.0f
-private const val MAX_Y = 40.0f
+private const val MAX_Y = 20.0f
+private const val MAX_X = 15.0f
 
 private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
@@ -32,13 +34,13 @@ class ProceduralMapData : MapData() {
         private val log = Logger("ProceduralMapData")
     }
 
-    private val recentPoints = GdxArray<Vector2>()
+    private val recentPoints = GdxArray<PathPoint>()
     private var currentChunk = 0
 
     private var mapLimit: Body? = null
 
     override fun create() {
-        val start = Vector2Pool.obtain()
+        val start = PathPoint.obtain()
         recentPoints.add(start)
     }
 
@@ -85,7 +87,10 @@ class ProceduralMapData : MapData() {
 
             val chunkLeft = Chunk.obtain()
             val chunkRight = Chunk.obtain()
-            val width = 10.0f
+            val width = max(
+                    // Smallest width at 3500
+                    10.0f - camera.position.y / 500.0f, // Increase difficulty
+                    4.0f)
 
             // Initialize the start point
             if (currentChunk == 1) {
@@ -93,21 +98,20 @@ class ProceduralMapData : MapData() {
                 chunkRight.addPoint(width/2.0f, 0.0f)
             }
 
-            val generatedCount = generatePoints(cameraLeft, cameraRight)
+            val generatedCount = generatePoints(cameraLeft, cameraRight, width)
 
             // Extra -1 to connect the previous chunk to the current chunk
             val startIndex = recentPoints.size - generatedCount - 1
 
             // Point data
-            val direction12 = Vector2Pool.obtain()
-            val direction23 = Vector2Pool.obtain()
-            val pathPoint1 = Vector2Pool.obtain()
-            val pathPoint2 = Vector2Pool.obtain()
-            val intersection = Vector2Pool.obtain()
+            val direction12 = PathPoint.obtain()
+            val direction23 = PathPoint.obtain()
+            val pathPoint1 = PathPoint.obtain()
+            val pathPoint2 = PathPoint.obtain()
+            val intersection = PathPoint.obtain()
 
             // The previous two points are needed for calculating the path position
             for (i in max(2, startIndex)..recentPoints.lastIndex) {
-                if (i < 0) continue
 
                 val point1 = recentPoints[i - 2]
                 val point2 = recentPoints[i - 1]
@@ -116,8 +120,8 @@ class ProceduralMapData : MapData() {
                 val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
                 val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
 
-                getPathDelta(point1, point2, width, direction12)
-                getPathDelta(point2, point3, width, direction23)
+                getPathDelta(point1, point2, point2.width, direction12)
+                getPathDelta(point2, point3, point2.width, direction23)
 
                 // Left intersection
                 pathPoint1
@@ -146,17 +150,17 @@ class ProceduralMapData : MapData() {
                 chunkRight.addPoint(intersection.x, intersection.y)
             }
 
-            Vector2Pool.free(direction12)
-            Vector2Pool.free(direction23)
-            Vector2Pool.free(pathPoint1)
-            Vector2Pool.free(pathPoint2)
-            Vector2Pool.free(intersection)
+            PathPoint.free(direction12)
+            PathPoint.free(direction23)
+            PathPoint.free(pathPoint1)
+            PathPoint.free(pathPoint2)
+            PathPoint.free(intersection)
             // As only three points are required to create a path, we'll
             // discard old points that doesn't contribute to path
             // generation
             while (recentPoints.size > 3) {
                 val point = recentPoints.removeIndex(0)
-                Vector2Pool.free(point)
+                PathPoint.free(point)
             }
 
             createBodyChunk(world, chunkLeft)
@@ -167,11 +171,11 @@ class ProceduralMapData : MapData() {
         }
     }
 
-    private fun generatePoints(leftBound: Float, rightBound: Float): Int {
+    private fun generatePoints(leftBound: Float, rightBound: Float, width: Float): Int {
         var count = 0
         do { // Generate points until the y threshold is reached
             count++
-            recentPoints.add(createNextPoint(leftBound, rightBound))
+            recentPoints.add(createNextPoint(leftBound, rightBound, width))
 
         } while (recentPoints.lastItem().y < currentChunk * CHUNK_SIZE)
 
@@ -217,7 +221,8 @@ class ProceduralMapData : MapData() {
         chunk.body = body
     }
 
-    private fun createNextPoint(leftBound: Float, rightBound: Float): Vector2 {
+    private fun createNextPoint(leftBound: Float, rightBound: Float,
+                                width: Float): PathPoint {
         // Distance between the current x-position and the left/right edge
         val recentPoint = recentPoints.lastItem()
         val leftDelta = leftBound - recentPoint.x
@@ -226,11 +231,15 @@ class ProceduralMapData : MapData() {
         val deltaY = MathUtils.random(MIN_Y, MAX_Y)
 
         // Create a new path point
-        val point = Vector2Pool.obtain()
+        val point = PathPoint.obtain()
         point.set(
-                recentPoint.x + MathUtils.random(leftDelta, rightDelta),
+                recentPoint.x + MathUtils.random(
+                        min(leftDelta, MAX_X),
+                        min(rightDelta, MAX_X)),
                 recentPoint.y + deltaY
         )
+
+        point.width = width + MathUtils.random(-width/10.0f, width/10.0f)
 
         return point
     }
