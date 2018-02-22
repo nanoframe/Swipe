@@ -108,11 +108,17 @@ abstract class MapData {
                 chunkRight.addPoint(width/2.0f, 0.0f)
             }
 
-            val points = generatePoints(cameraLeft, cameraRight, pathPoints.lastItem())
-            pathPoints.addAll(points)
+            var totalPoints = 0
+
+            do {
+                val points = generatePoints(cameraLeft, cameraRight, pathPoints.lastItem())
+                pathPoints.addAll(points)
+
+                totalPoints += points.size
+            } while (pathPoints.lastItem().y < currentChunk * CHUNK_SIZE)
 
             // Extra -1 to connect the previous chunk to the current chunk
-            val startIndex = pathPoints.size - points.size - 1
+            val startIndex = pathPoints.size - totalPoints - 1
 
             // Point data
             val direction12 = PathPoint.obtain()
