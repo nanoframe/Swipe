@@ -7,9 +7,12 @@ import ktx.collections.GdxArray
 
 private const val CURVE_MIN_Y_DISTANCE = 8.0f
 private const val CURVE_MAX_Y_DISTANCE = 20.0f
-
 private const val CURVE_MIN_POINTS = 3
 private const val CURVE_MAX_POINTS = 8
+
+private const val UP_MIN_POINTS = 2
+private const val UP_MAX_POINTS = 4
+private const val UP_MAX_X_DELTA = 3.0f
 
 class ProceduralMapData : MapData() {
     override var pathColor = Color(204.0f / 255.0f, 230.0f / 255.0f, 228.0f / 255.0f, 1.0f)
@@ -21,7 +24,6 @@ class ProceduralMapData : MapData() {
         tempArray.clear()
 
         val pathType = Path.random()
-        println(pathType)
 
         when(pathType) {
             Path.Type.CurveLeft -> generateLeftCurve(leftBound, start)
@@ -32,11 +34,9 @@ class ProceduralMapData : MapData() {
         return tempArray
     }
 
-    // TODO: Fix hardcoded numbers and return values
-
     private fun generateLeftCurve(leftBound: Float,
                                   start: PathPoint) {
-        val count = MathUtils.random(CURVE_MIN_POINTS, CURVE_MAX_POINTS)
+        val count = randomCurvePointCount()
 
         var previous = start
         for (i in 1..count) {
@@ -61,7 +61,7 @@ class ProceduralMapData : MapData() {
 
     private fun generateRightCurve(rightBound: Float,
                                   start: PathPoint) {
-        val count = MathUtils.random(CURVE_MIN_POINTS, CURVE_MAX_POINTS)
+        val count = randomCurvePointCount()
 
         var previous = start
         for (i in 1..count) {
@@ -86,8 +86,10 @@ class ProceduralMapData : MapData() {
 
     private fun generateUp(leftBound: Float, rightBound: Float,
                            start: PathPoint) {
+        val count = randomUpPointCount()
+
         var previousPoint = start
-        for (i in 1..5) {
+        for (i in 1..count) {
             val leftDelta = leftBound - previousPoint.x
             val rightDelta = rightBound - previousPoint.x
 
@@ -96,8 +98,8 @@ class ProceduralMapData : MapData() {
 
             val offsetX = MathUtils.clamp(
                     MathUtils.random(leftDelta, rightDelta),
-                    -3.0f,
-                    3.0f
+                    -UP_MAX_X_DELTA,
+                    UP_MAX_X_DELTA
             )
 
             nextPoint.add(
@@ -109,4 +111,11 @@ class ProceduralMapData : MapData() {
             previousPoint = nextPoint
         }
     }
+
+    private fun randomCurvePointCount() = MathUtils.random(
+            CURVE_MIN_POINTS, CURVE_MAX_POINTS)
+
+    private fun randomUpPointCount() = MathUtils.random(
+            UP_MIN_POINTS, UP_MAX_POINTS
+    )
 }
