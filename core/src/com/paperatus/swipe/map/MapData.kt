@@ -1,4 +1,4 @@
-package com.paperatus.swipe.objects
+package com.paperatus.swipe.map
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
