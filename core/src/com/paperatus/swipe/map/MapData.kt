@@ -111,8 +111,14 @@ abstract class MapData {
             var totalPoints = 0
 
             do {
-                val points = generatePoints(cameraLeft, cameraRight, pathPoints.lastItem())
-                pathPoints.addAll(points)
+                val points = generatePoints(
+                        cameraLeft, cameraRight,
+                        pathPoints.lastItem())
+
+                points.forEach {
+                    it.width = width
+                    pathPoints.add(it)
+                }
 
                 totalPoints += points.size
             } while (pathPoints.lastItem().y < currentChunk * CHUNK_SIZE)
@@ -137,9 +143,8 @@ abstract class MapData {
                 val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
                 val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
 
-                // TODO: Fix hardcoded widths
-                Solver.getPerpendicularDelta(point1, point2, 10.0f, direction12)
-                Solver.getPerpendicularDelta(point2, point3, 10.0f, direction23)
+                Solver.getPerpendicularDelta(point1, point2, point2.width, direction12)
+                Solver.getPerpendicularDelta(point2, point3, point2.width, direction23)
 
                 // Left intersection
                 pathPoint1
