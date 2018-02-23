@@ -46,7 +46,7 @@ class ProceduralMapData : MapData() {
             val leftDelta = leftBound - previous.x
 
             val offsetX = MathUtils.random(
-                    leftDelta / 2.0f, 0.0f
+                    leftDelta / 2.0f, leftDelta / 5.0f
             )
             val offsetY = MathUtils.random(
                     CURVE_MIN_Y_DISTANCE, CURVE_MAX_Y_DISTANCE
@@ -71,7 +71,7 @@ class ProceduralMapData : MapData() {
             val rightDelta = rightBound - previous.x
 
             val offsetX = MathUtils.random(
-                    0.0f, rightDelta / 2.0f
+                    rightDelta / 5.0f, rightDelta / 2.0f
             )
             val offsetY = MathUtils.random(
                     CURVE_MIN_Y_DISTANCE, CURVE_MAX_Y_DISTANCE
