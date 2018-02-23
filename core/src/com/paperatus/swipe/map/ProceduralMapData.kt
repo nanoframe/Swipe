@@ -1,5 +1,6 @@
 package com.paperatus.swipe.map
 
+import Path
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.MathUtils
 import com.paperatus.swipe.data.PathPoint
@@ -25,7 +26,7 @@ class ProceduralMapData : MapData() {
 
         val pathType = Path.random()
 
-        when(pathType) {
+        when (pathType) {
             Path.Type.CurveLeft -> generateLeftCurve(leftBound, start)
             Path.Type.CurveRight -> generateRightCurve(rightBound, start)
             Path.Type.Up -> generateUp(leftBound, rightBound, start)
@@ -60,7 +61,7 @@ class ProceduralMapData : MapData() {
     }
 
     private fun generateRightCurve(rightBound: Float,
-                                  start: PathPoint) {
+                                   start: PathPoint) {
         val count = randomCurvePointCount()
 
         var previous = start

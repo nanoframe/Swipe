@@ -22,8 +22,6 @@ private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 abstract class MapData {
-    private val leftChunks = GdxArray<Chunk>()
-    private val rightChunks = GdxArray<Chunk>()
 
     companion object {
         private val log = Logger("MapData")
@@ -31,12 +29,15 @@ abstract class MapData {
 
     abstract var pathColor: Color
 
+    private val leftChunks = GdxArray<Chunk>()
+    private val rightChunks = GdxArray<Chunk>()
     private val pathPoints = GdxArray<PathPoint>()
-
     private var currentChunk = 0
     private val renderer = MapRenderer()
-
     private var mapLimit: Body? = null
+
+    abstract fun generatePoints(leftBound: Float, rightBound: Float,
+                                start: PathPoint): GdxArray<PathPoint>
 
     open fun create() {
         val start = PathPoint.obtain()
@@ -102,8 +103,8 @@ abstract class MapData {
 
             // Initialize the start point
             if (currentChunk == 1) {
-                chunkLeft.addPoint(-width/2.0f, 0.0f)
-                chunkRight.addPoint(width/2.0f, 0.0f)
+                chunkLeft.addPoint(-width / 2.0f, 0.0f)
+                chunkRight.addPoint(width / 2.0f, 0.0f)
             }
 
             val totalPoints = createPoints(cameraLeft, cameraRight, width)
@@ -276,10 +277,6 @@ abstract class MapData {
 
         chunk.body = body
     }
-
-    abstract fun generatePoints(leftBound: Float, rightBound: Float,
-                                start: PathPoint): GdxArray<PathPoint>
-
 }
 
 private class SidePoints {
