@@ -55,8 +55,8 @@ abstract class MapData {
             val lastLeftChunk = leftChunks[0]
             val lastRightChunk = rightChunks[0]
             val lastY = max(
-                    lastLeftChunk[lastLeftChunk.lastIndex].y,
-                    lastRightChunk[lastRightChunk.lastIndex].y)
+                    lastLeftChunk.lastItem().y,
+                    lastRightChunk.lastItem().y)
 
             if (camera.position.y - lastY > CHUNK_DISPOSAL_DISTANCE) {
                 leftChunks.removeIndex(0)
@@ -85,21 +85,19 @@ abstract class MapData {
 
         val cameraTop = camera.position.y + camera.viewportHeight / 2.0f
 
-        // Create more paths if the top of the screen is near the
-        // end of the chunk subtracted by the gap
+        // Generate more chunks (if needed) to create an unending path
         if (currentChunk * CHUNK_SIZE - cameraTop < GENERATE_GAP) {
             currentChunk++
             log.debug { "Creating chunk #$currentChunk" }
 
-            // Left/right bounds
             val cameraLeft = -camera.viewportWidth / 2.0f
             val cameraRight = camera.viewportWidth / 2.0f
             val chunkLeft = Chunk.obtain()
             val chunkRight = Chunk.obtain()
 
+            // Decreasing width over time to increase difficulty
             val width = max(
-                    // Smallest width at 3500
-                    10.0f - camera.position.y / 500.0f, // Increase difficulty
+                    10.0f - camera.position.y / 500.0f,
                     4.0f)
 
             // Initialize the start point
@@ -110,12 +108,15 @@ abstract class MapData {
 
             val totalPoints = createPoints(cameraLeft, cameraRight, width)
 
-            // Extra -1 to connect the previous chunk to the current chunk
-            val startIndex = pathPoints.size - totalPoints - 1
+            val startIndex = max(
+                    // Offset by -1 to connect the previous chunk
+                    pathPoints.size - totalPoints - 1,
 
-            // The previous two points are needed for calculating the path position
-            for (i in max(2, startIndex)..pathPoints.lastIndex) {
+                    // We'll need to access the last two points that have been
+                    // generated
+                    2)
 
+            for (i in startIndex..pathPoints.lastIndex) {
                 val (left, right) = generatePathSide(
                         pathPoints[i - 2],
                         pathPoints[i - 1],
@@ -151,9 +152,9 @@ abstract class MapData {
     }
 
     private fun createPoints(leftBound: Float, rightBound: Float, width: Float): Int {
+        var totalPoints = 0 // Total points created
 
-        var totalPoints = 0
-
+        // Keep creating until the chunk exceeds the minimum size
         do {
             val points = generatePoints(
                     leftBound, rightBound,
@@ -180,7 +181,6 @@ abstract class MapData {
         val pathPoint1 = PathPoint.obtain()
         val pathPoint2 = PathPoint.obtain()
         val intersection = PathPoint.obtain()
-
         val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
         val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
 
@@ -228,7 +228,7 @@ abstract class MapData {
 
             // camera.viewportWidth / 2.0f doesn't give the exact dimensions
             // because the resolution might change during gameplay. We'll just
-            // lazily create a long line to deal with this problem.
+            // cheat and create a long line to deal with this problem.
             edge.set(-camera.viewportWidth, 0.0f,
                     camera.viewportWidth, 0.0f)
 
