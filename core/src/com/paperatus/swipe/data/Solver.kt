@@ -30,4 +30,11 @@ object Solver {
 
         out.set(x, y)
     }
+
+    fun getPerpendicularDelta(v1: Vector2, v2: Vector2, width: Float, out: Vector2) {
+        out
+                .set(v2.y - v1.y, v1.x - v2.x)
+                .nor()
+                .scl(width / 2.0f)
+    }
 }

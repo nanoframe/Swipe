@@ -1,29 +1,139 @@
 package com.paperatus.swipe.map
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Mesh
-import com.badlogic.gdx.graphics.VertexAttribute
-import com.badlogic.gdx.graphics.VertexAttributes
-import com.badlogic.gdx.graphics.glutils.ShaderProgram
-import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.EdgeShape
 import com.badlogic.gdx.physics.box2d.World
-import com.badlogic.gdx.utils.Pool
+import com.paperatus.swipe.data.PathPoint
+import com.paperatus.swipe.data.Solver
+import com.paperatus.swipe.data.lastItem
 import ktx.collections.GdxArray
+import ktx.collections.lastIndex
+import ktx.log.Logger
+import kotlin.math.max
+
+private const val CHUNK_SIZE = 70.0f
+private const val GENERATE_GAP = 40.0f
+
+private const val LIMIT_FOLLOW_DISTANCE = 120.0f
+private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 abstract class MapData {
-    val leftChunks = GdxArray<Chunk>()
-    val rightChunks = GdxArray<Chunk>()
+
+    companion object {
+        private val log = Logger("MapData")
+    }
 
     abstract var pathColor: Color
 
+    private val leftChunks = GdxArray<Chunk>()
+    private val rightChunks = GdxArray<Chunk>()
+    private val pathPoints = GdxArray<PathPoint>()
+    private var currentChunk = 0
     private val renderer = MapRenderer()
+    private var mapLimit: Body? = null
 
-    abstract fun create()
-    abstract fun update(world: World, camera: Camera)
+    abstract fun generatePoints(leftBound: Float, rightBound: Float,
+                                start: PathPoint): GdxArray<PathPoint>
+
+    open fun create() {
+        val start = PathPoint.obtain()
+        pathPoints.add(start)
+    }
+
+    fun update(world: World, camera: Camera) {
+        cleanupChunks(world, camera)
+        updateChunks(world, camera)
+        updateBottomBounds(world, camera)
+    }
+
+    private fun cleanupChunks(world: World, camera: Camera) {
+        // Clean up memory by removing unused chunks
+        if (leftChunks.size > 0) {
+            val lastLeftChunk = leftChunks[0]
+            val lastRightChunk = rightChunks[0]
+            val lastY = max(
+                    lastLeftChunk.lastItem().y,
+                    lastRightChunk.lastItem().y)
+
+            if (camera.position.y - lastY > CHUNK_DISPOSAL_DISTANCE) {
+                leftChunks.removeIndex(0)
+                rightChunks.removeIndex(0)
+
+                world.destroyBody(lastLeftChunk.body!!)
+                world.destroyBody(lastRightChunk.body!!)
+
+                Chunk.free(lastLeftChunk)
+                Chunk.free(lastRightChunk)
+
+                log.debug { "Disposed chunk #${currentChunk - leftChunks.size}" }
+            }
+        }
+
+        // As only three points are required to create a path, we'll
+        // discard old points that doesn't contribute to path
+        // generation
+        while (pathPoints.size > 3) {
+            val point = pathPoints.removeIndex(0)
+            PathPoint.free(point)
+        }
+    }
+
+    private fun updateChunks(world: World, camera: Camera) {
+
+        val cameraTop = camera.position.y + camera.viewportHeight / 2.0f
+
+        // Generate more chunks (if needed) to create an unending path
+        if (currentChunk * CHUNK_SIZE - cameraTop < GENERATE_GAP) {
+            currentChunk++
+            log.debug { "Creating chunk #$currentChunk" }
+
+            val cameraLeft = -camera.viewportWidth / 2.0f
+            val cameraRight = camera.viewportWidth / 2.0f
+            val chunkLeft = Chunk.obtain()
+            val chunkRight = Chunk.obtain()
+
+            // Decreasing width over time to increase difficulty
+            val width = max(
+                    10.0f - camera.position.y / 500.0f,
+                    4.0f)
+
+            // Initialize the start point
+            if (currentChunk == 1) {
+                chunkLeft.addPoint(-width / 2.0f, 0.0f)
+                chunkRight.addPoint(width / 2.0f, 0.0f)
+            }
+
+            val totalPoints = createPoints(cameraLeft, cameraRight, width)
+
+            val startIndex = max(
+                    // Offset by -1 to connect the previous chunk
+                    pathPoints.size - totalPoints - 1,
+
+                    // We'll need to access the last two points that have been
+                    // generated
+                    2)
+
+            for (i in startIndex..pathPoints.lastIndex) {
+                val (left, right) = generatePathSide(
+                        pathPoints[i - 2],
+                        pathPoints[i - 1],
+                        pathPoints[i])
+
+                chunkLeft.addPoint(left.x, left.y)
+                chunkRight.addPoint(right.x, right.y)
+            }
+
+            createBodyChunk(world, chunkLeft)
+            createBodyChunk(world, chunkRight)
+
+            leftChunks.add(chunkLeft)
+            rightChunks.add(chunkRight)
+        }
+    }
 
     open fun render(camera: Camera) {
         assert(leftChunks.size == rightChunks.size)
@@ -42,118 +152,164 @@ abstract class MapData {
         renderer.flush()
     }
 
-    private class MapRenderer(maxVertices: Int = 24) {
+    private fun createPoints(leftBound: Float, rightBound: Float, width: Float): Int {
+        var totalPoints = 0 // Total points created
 
-        var pathColor: Color = Color.BLACK
-        var projectionMatrix: Matrix4? = null
+        // Keep creating until the chunk exceeds the minimum size
+        do {
+            val points = generatePoints(
+                    leftBound, rightBound,
+                    pathPoints.lastItem())
 
-        private val shader = ShaderProgram(
-                Gdx.files.internal("shaders/map_shader.vert"),
-                Gdx.files.internal("shaders/map_shader.frag")
-        )
-        private val mesh = Mesh(false, maxVertices, 0,
-                VertexAttribute(
-                        VertexAttributes.Usage.Position,
-                        2,
-                        "a_position"))
-
-        // TODO: Utilize indices instead of vertices
-        private val verts = FloatArray(maxVertices)
-        private var size = 0
-
-        init {
-            assert(maxVertices % 3 == 0)
-            assert(shader.isCompiled) {
-                shader.log
+            points.forEach {
+                it.width = width
+                pathPoints.add(it)
             }
+
+            totalPoints += points.size
+        } while (pathPoints.lastItem().y < currentChunk * CHUNK_SIZE)
+
+        return totalPoints
+    }
+
+    private val sides = SidePoints()
+    private fun generatePathSide(point1: PathPoint,
+                                 point2: PathPoint,
+                                 point3: PathPoint): SidePoints {
+        // Point data
+        val direction12 = PathPoint.obtain()
+        val direction23 = PathPoint.obtain()
+        val pathPoint1 = PathPoint.obtain()
+        val pathPoint2 = PathPoint.obtain()
+        val intersection = PathPoint.obtain()
+        val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
+        val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
+
+        Solver.getPerpendicularDelta(point1, point2, point2.width, direction12)
+        Solver.getPerpendicularDelta(point2, point3, point2.width, direction23)
+
+        // Left intersection
+        pathPoint1
+                .set(point2)
+                .sub(direction12)
+        pathPoint2
+                .set(point2)
+                .sub(direction23)
+        Solver.solveIntersection(
+                edge1Slope, pathPoint1.x, pathPoint1.y,
+                edge2Slope, pathPoint2.x, pathPoint2.y,
+                intersection)
+        sides.setLeft(intersection.x, intersection.y)
+
+        // Right intersection
+        pathPoint1
+                .set(point2)
+                .add(direction12)
+        pathPoint2
+                .set(point2)
+                .add(direction23)
+        Solver.solveIntersection(
+                edge1Slope, pathPoint1.x, pathPoint1.y,
+                edge2Slope, pathPoint2.x, pathPoint2.y,
+                intersection)
+        sides.setRight(intersection.x, intersection.y)
+
+        PathPoint.free(direction12)
+        PathPoint.free(direction23)
+        PathPoint.free(pathPoint1)
+        PathPoint.free(pathPoint2)
+        PathPoint.free(intersection)
+
+        return sides
+    }
+
+    private fun updateBottomBounds(world: World, camera: Camera) {
+        if (mapLimit == null) {
+            val edge = EdgeShape()
+
+            // camera.viewportWidth / 2.0f doesn't give the exact dimensions
+            // because the resolution might change during gameplay. We'll just
+            // cheat and create a long line to deal with this problem.
+            edge.set(-camera.viewportWidth, 0.0f,
+                    camera.viewportWidth, 0.0f)
+
+            mapLimit = world.createBody(BodyDef())
+            mapLimit!!.createFixture(edge, 0.0f)
+            edge.dispose()
         }
 
-        fun drawPath(leftChunk: Chunk, rightChunk: Chunk) {
-            for (i in 0 until leftChunk.size - 1) {
-                if (size + 6 > verts.size) {
-                    flush()
-                }
-                var p1 = leftChunk[i]
-                var p2 = rightChunk[i]
-                var p3 = leftChunk[i + 1]
-
-                verts[size++] = p1.x
-                verts[size++] = p1.y
-                verts[size++] = p2.x
-                verts[size++] = p2.y
-                verts[size++] = p3.x
-                verts[size++] = p3.y
-
-                p1 = rightChunk[i]
-                p2 = leftChunk[i + 1]
-                p3 = rightChunk[i + 1]
-
-                verts[size++] = p1.x
-                verts[size++] = p1.y
-                verts[size++] = p2.x
-                verts[size++] = p2.y
-                verts[size++] = p3.x
-                verts[size++] = p3.y
-            }
+        if (camera.position.y - mapLimit!!.position.y > LIMIT_FOLLOW_DISTANCE) {
+            mapLimit!!.setTransform(
+                    0.0f,
+                    camera.position.y - LIMIT_FOLLOW_DISTANCE,
+                    0.0f)
         }
+    }
 
-        fun flush() {
-            mesh.setVertices(verts)
-            val vertexCount = size / 2
+    /**
+     * Creates a world body based on the chunk specifications.
+     *
+     * @param world the physics world.
+     * @param chunk points of the map.
+     */
+    private fun createBodyChunk(world: World,
+                                chunk: Chunk) {
+        val restitution = 0.7f
 
-            shader.begin()
-            shader.setUniformMatrix("u_projTrans", projectionMatrix)
-            shader.setUniformf(
-                    "u_pathColor",
-                    pathColor.r,
-                    pathColor.g,
-                    pathColor.b)
-            mesh.render(shader, GL20.GL_TRIANGLES, 0, vertexCount)
-            shader.end()
+        val bodyDef = BodyDef()
+        val body = world.createBody(bodyDef)
+        val shape = EdgeShape()
 
-            size = 0
+        // Generate world edges
+        for (i in 1 until chunk.size) {
+            val point1 = chunk[i - 1]
+            val point2 = chunk[i]
+
+            shape.set(
+                    point1.x, point1.y,
+                    point2.x, point2.y)
+
+            val fixture = body.createFixture(shape, 0.0f)
+            fixture.restitution = restitution
+
         }
+        shape.dispose()
+
+        chunk.body = body
     }
 }
 
-// TODO: Implement separate array class
-class Chunk private constructor() : GdxArray<ChunkPoint>(), Pool.Poolable {
+private class SidePoints {
+    private val left = Vector2()
+    private val right = Vector2()
 
-    companion object : Pool<Chunk>() {
-        override fun newObject(): Chunk {
-            return Chunk()
-        }
+    fun set(l: Vector2, r: Vector2) {
+        left.set(l)
+        right.set(r)
     }
 
-    var body: Body? = null
-
-    fun addPoint(x: Float, y: Float) {
-        add(ChunkPoint.obtain().also {
-            it.x = x
-            it.y = y
-        })
+    fun set(lx: Float, ly: Float,
+            rx: Float, ry: Float) {
+        left.set(lx, ly)
+        right.set(rx, ry)
     }
 
-    override fun reset() {
-        forEach {
-            ChunkPoint.free(it)
-        }
-
-        clear()
-    }
-}
-
-class ChunkPoint private constructor(var x: Float = 0.0f,
-                                     var y: Float = 0.0f) : Pool.Poolable {
-
-    companion object : Pool<ChunkPoint>() {
-        override fun newObject(): ChunkPoint {
-            return ChunkPoint()
-        }
+    fun setLeft(l: Vector2) {
+        left.set(l)
     }
 
-    override fun reset() {
-        x = 0.0f
-        y = 0.0f
+    fun setLeft(x: Float, y: Float) {
+        left.set(x, y)
     }
+
+    fun setRight(r: Vector2) {
+        right.set(r)
+    }
+
+    fun setRight(x: Float, y: Float) {
+        right.set(x, y)
+    }
+
+    operator fun component1() = left
+    operator fun component2() = right
 }
