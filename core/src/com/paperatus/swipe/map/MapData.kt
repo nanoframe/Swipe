@@ -2,6 +2,7 @@ package com.paperatus.swipe.map
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.EdgeShape
@@ -88,15 +89,14 @@ abstract class MapData {
         // end of the chunk subtracted by the gap
         if (currentChunk * CHUNK_SIZE - cameraTop < GENERATE_GAP) {
             currentChunk++
-
             log.debug { "Creating chunk #$currentChunk" }
 
             // Left/right bounds
             val cameraLeft = -camera.viewportWidth / 2.0f
             val cameraRight = camera.viewportWidth / 2.0f
-
             val chunkLeft = Chunk.obtain()
             val chunkRight = Chunk.obtain()
+
             val width = max(
                     // Smallest width at 3500
                     10.0f - camera.position.y / 500.0f, // Increase difficulty
@@ -108,76 +108,22 @@ abstract class MapData {
                 chunkRight.addPoint(width/2.0f, 0.0f)
             }
 
-            var totalPoints = 0
-
-            do {
-                val points = generatePoints(
-                        cameraLeft, cameraRight,
-                        pathPoints.lastItem())
-
-                points.forEach {
-                    it.width = width
-                    pathPoints.add(it)
-                }
-
-                totalPoints += points.size
-            } while (pathPoints.lastItem().y < currentChunk * CHUNK_SIZE)
+            val totalPoints = createPoints(cameraLeft, cameraRight, width)
 
             // Extra -1 to connect the previous chunk to the current chunk
             val startIndex = pathPoints.size - totalPoints - 1
 
-            // Point data
-            val direction12 = PathPoint.obtain()
-            val direction23 = PathPoint.obtain()
-            val pathPoint1 = PathPoint.obtain()
-            val pathPoint2 = PathPoint.obtain()
-            val intersection = PathPoint.obtain()
-
             // The previous two points are needed for calculating the path position
             for (i in max(2, startIndex)..pathPoints.lastIndex) {
 
-                val point1 = pathPoints[i - 2]
-                val point2 = pathPoints[i - 1]
-                val point3 = pathPoints[i]
+                val (left, right) = generatePathSide(
+                        pathPoints[i - 2],
+                        pathPoints[i - 1],
+                        pathPoints[i])
 
-                val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
-                val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
-
-                Solver.getPerpendicularDelta(point1, point2, point2.width, direction12)
-                Solver.getPerpendicularDelta(point2, point3, point2.width, direction23)
-
-                // Left intersection
-                pathPoint1
-                        .set(point2)
-                        .sub(direction12)
-                pathPoint2
-                        .set(point2)
-                        .sub(direction23)
-                Solver.solveIntersection(
-                        edge1Slope, pathPoint1.x, pathPoint1.y,
-                        edge2Slope, pathPoint2.x, pathPoint2.y,
-                        intersection)
-                chunkLeft.addPoint(intersection.x, intersection.y)
-
-                // Right intersection
-                pathPoint1
-                        .set(point2)
-                        .add(direction12)
-                pathPoint2
-                        .set(point2)
-                        .add(direction23)
-                Solver.solveIntersection(
-                        edge1Slope, pathPoint1.x, pathPoint1.y,
-                        edge2Slope, pathPoint2.x, pathPoint2.y,
-                        intersection)
-                chunkRight.addPoint(intersection.x, intersection.y)
+                chunkLeft.addPoint(left.x, left.y)
+                chunkRight.addPoint(right.x, right.y)
             }
-
-            PathPoint.free(direction12)
-            PathPoint.free(direction23)
-            PathPoint.free(pathPoint1)
-            PathPoint.free(pathPoint2)
-            PathPoint.free(intersection)
 
             createBodyChunk(world, chunkLeft)
             createBodyChunk(world, chunkRight)
@@ -202,6 +148,78 @@ abstract class MapData {
         }
 
         renderer.flush()
+    }
+
+    private fun createPoints(leftBound: Float, rightBound: Float, width: Float): Int {
+
+        var totalPoints = 0
+
+        do {
+            val points = generatePoints(
+                    leftBound, rightBound,
+                    pathPoints.lastItem())
+
+            points.forEach {
+                it.width = width
+                pathPoints.add(it)
+            }
+
+            totalPoints += points.size
+        } while (pathPoints.lastItem().y < currentChunk * CHUNK_SIZE)
+
+        return totalPoints
+    }
+
+    private val sides = SidePoints()
+    private fun generatePathSide(point1: PathPoint,
+                                 point2: PathPoint,
+                                 point3: PathPoint): SidePoints {
+        // Point data
+        val direction12 = PathPoint.obtain()
+        val direction23 = PathPoint.obtain()
+        val pathPoint1 = PathPoint.obtain()
+        val pathPoint2 = PathPoint.obtain()
+        val intersection = PathPoint.obtain()
+
+        val edge1Slope = (point2.y - point1.y) / (point2.x - point1.x)
+        val edge2Slope = (point3.y - point2.y) / (point3.x - point2.x)
+
+        Solver.getPerpendicularDelta(point1, point2, point2.width, direction12)
+        Solver.getPerpendicularDelta(point2, point3, point2.width, direction23)
+
+        // Left intersection
+        pathPoint1
+                .set(point2)
+                .sub(direction12)
+        pathPoint2
+                .set(point2)
+                .sub(direction23)
+        Solver.solveIntersection(
+                edge1Slope, pathPoint1.x, pathPoint1.y,
+                edge2Slope, pathPoint2.x, pathPoint2.y,
+                intersection)
+        sides.setLeft(intersection.x, intersection.y)
+
+        // Right intersection
+        pathPoint1
+                .set(point2)
+                .add(direction12)
+        pathPoint2
+                .set(point2)
+                .add(direction23)
+        Solver.solveIntersection(
+                edge1Slope, pathPoint1.x, pathPoint1.y,
+                edge2Slope, pathPoint2.x, pathPoint2.y,
+                intersection)
+        sides.setRight(intersection.x, intersection.y)
+
+        PathPoint.free(direction12)
+        PathPoint.free(direction23)
+        PathPoint.free(pathPoint1)
+        PathPoint.free(pathPoint2)
+        PathPoint.free(intersection)
+
+        return sides
     }
 
     private fun updateBottomBounds(world: World, camera: Camera) {
@@ -261,4 +279,40 @@ abstract class MapData {
 
     abstract fun generatePoints(leftBound: Float, rightBound: Float,
                                 start: PathPoint): GdxArray<PathPoint>
+
+}
+
+private class SidePoints {
+    private val left = Vector2()
+    private val right = Vector2()
+
+    fun set(l: Vector2, r: Vector2) {
+        left.set(l)
+        right.set(r)
+    }
+
+    fun set(lx: Float, ly: Float,
+            rx: Float, ry: Float) {
+        left.set(lx, ly)
+        right.set(rx, ry)
+    }
+
+    fun setLeft(l: Vector2) {
+        left.set(l)
+    }
+
+    fun setLeft(x: Float, y: Float) {
+        left.set(x, y)
+    }
+
+    fun setRight(r: Vector2) {
+        right.set(r)
+    }
+
+    fun setRight(x: Float, y: Float) {
+        right.set(x, y)
+    }
+
+    operator fun component1() = left
+    operator fun component2() = right
 }
