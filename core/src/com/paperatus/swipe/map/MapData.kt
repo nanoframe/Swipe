@@ -22,8 +22,8 @@ private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 abstract class MapData {
-    val leftChunks = GdxArray<Chunk>()
-    val rightChunks = GdxArray<Chunk>()
+    private val leftChunks = GdxArray<Chunk>()
+    private val rightChunks = GdxArray<Chunk>()
 
     companion object {
         private val log = Logger("MapData")
