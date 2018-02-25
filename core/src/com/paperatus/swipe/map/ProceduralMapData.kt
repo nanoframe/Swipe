@@ -11,14 +11,14 @@ private const val CURVE_MAX_Y_DISTANCE = 20.0f
 private const val CURVE_MIN_POINTS = 3
 private const val CURVE_MAX_POINTS = 8
 
-private const val UP_MIN_POINTS = 2
-private const val UP_MAX_POINTS = 4
-private const val UP_MAX_X_DELTA = 3.0f
+private const val CURVE_UP_MIN_POINTS = 2
+private const val CURVE_UP_MAX_POINTS = 4
+private const val CURVE_UP_MAX_X_DELTA = 3.0f
 
 class ProceduralMapData : MapData() {
     override var pathColor = Color(204.0f / 255.0f, 230.0f / 255.0f, 228.0f / 255.0f, 1.0f)
 
-    val tempArray = GdxArray<PathPoint>()
+    private val tempArray = GdxArray<PathPoint>()
 
     override fun generatePoints(leftBound: Float, rightBound: Float,
                                 start: PathPoint): GdxArray<PathPoint> {
@@ -29,7 +29,7 @@ class ProceduralMapData : MapData() {
         when (pathType) {
             Path.Type.CurveLeft -> generateLeftCurve(leftBound, start)
             Path.Type.CurveRight -> generateRightCurve(rightBound, start)
-            Path.Type.Up -> generateUp(leftBound, rightBound, start)
+            Path.Type.CurveUp -> generateCurveUp(leftBound, rightBound, start)
         }
 
         return tempArray
@@ -85,8 +85,8 @@ class ProceduralMapData : MapData() {
         }
     }
 
-    private fun generateUp(leftBound: Float, rightBound: Float,
-                           start: PathPoint) {
+    private fun generateCurveUp(leftBound: Float, rightBound: Float,
+                                start: PathPoint) {
         val count = randomUpPointCount()
 
         var previousPoint = start
@@ -99,8 +99,8 @@ class ProceduralMapData : MapData() {
 
             val offsetX = MathUtils.clamp(
                     MathUtils.random(leftDelta, rightDelta),
-                    -UP_MAX_X_DELTA,
-                    UP_MAX_X_DELTA
+                    -CURVE_UP_MAX_X_DELTA,
+                    CURVE_UP_MAX_X_DELTA
             )
 
             nextPoint.add(
@@ -117,6 +117,6 @@ class ProceduralMapData : MapData() {
             CURVE_MIN_POINTS, CURVE_MAX_POINTS)
 
     private fun randomUpPointCount() = MathUtils.random(
-            UP_MIN_POINTS, UP_MAX_POINTS
+            CURVE_UP_MIN_POINTS, CURVE_UP_MAX_POINTS
     )
 }
