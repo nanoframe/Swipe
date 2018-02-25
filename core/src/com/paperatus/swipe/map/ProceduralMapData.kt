@@ -11,12 +11,26 @@ private const val SOFT_CURVE_MAX_Y_DISTANCE = 20.0f
 private const val SOFT_CURVE_MIN_POINTS = 3
 private const val SOFT_CURVE_MAX_POINTS = 8
 
+private const val HARD_CURVE_MIN_Y_DISTANCE = 5.0f
+private const val HARD_CURVE_MAX_Y_DISTANCE = 8.0f
+private const val HARD_CURVE_MIN_POINTS = 4
+private const val HARD_CURVE_MAX_POINTS = 5
+
 private const val UP_MIN_POINTS = 2
 private const val UP_MAX_POINTS = 4
 private const val UP_MAX_X_DELTA = 3.0f
 
+/* TODO: Simplify code by creating one method to generate all paths
+ * That "one" method should have parameters that accept a base class
+ * CurveData that provides the properties of the path
+ */
+
 class ProceduralMapData : MapData() {
-    override var pathColor = Color(204.0f / 255.0f, 230.0f / 255.0f, 228.0f / 255.0f, 1.0f)
+    override var pathColor = Color(
+            204.0f / 255.0f,
+            230.0f / 255.0f,
+            228.0f / 255.0f,
+            1.0f)
 
     private val tempArray = GdxArray<PathPoint>()
 
@@ -28,9 +42,13 @@ class ProceduralMapData : MapData() {
 
         when (type) {
             Path.Type.SoftCurve -> generateSoftCurve(
-                    leftBound, rightBound, direction, start)
+                    leftBound, rightBound, direction, start
+            )
+            Path.Type.HardCurve -> generateHardCurve(
+                    leftBound, rightBound, direction, start
+            )
             Path.Type.Up -> generateUp(leftBound, rightBound, start)
-            else -> throw RuntimeException("Unspecified type: $type")
+            Path.Type.Uninitialized -> throw RuntimeException()
         }
 
         return tempArray
@@ -40,7 +58,7 @@ class ProceduralMapData : MapData() {
                                   rightBound: Float,
                                   direction: Path.Direction,
                                   start: PathPoint) {
-        val count = randomCurvePointCount()
+        val count = randomSoftCurvePointCount()
 
         var previous = start
         for (i in 1..count) {
@@ -50,12 +68,41 @@ class ProceduralMapData : MapData() {
             val delta = when(direction) {
                 Path.Direction.Left -> leftBound - previous.x
                 Path.Direction.Right -> rightBound - previous.x
-                else -> throw RuntimeException("Unspecified direction: $direction")
+                Path.Direction.None -> throw RuntimeException()
             }
 
             val offsetX = MathUtils.random(delta / 2.0f, delta / 5.0f)
             val offsetY = MathUtils.random(
                     SOFT_CURVE_MIN_Y_DISTANCE, SOFT_CURVE_MAX_Y_DISTANCE
+            )
+
+            nextPoint.add(offsetX, offsetY)
+            tempArray.add(nextPoint)
+
+            previous = nextPoint
+        }
+    }
+
+    private fun generateHardCurve(leftBound: Float,
+                                  rightBound: Float,
+                                  direction: Path.Direction,
+                                  start: PathPoint) {
+        val count = randomHardCurvePointCount()
+
+        var previous = start
+        for (i in 1..count) {
+            val nextPoint = PathPoint.obtain()
+            nextPoint.set(previous)
+
+            val delta = when(direction) {
+                Path.Direction.Left -> leftBound - previous.x
+                Path.Direction.Right -> rightBound - previous.x
+                Path.Direction.None -> throw RuntimeException()
+            }
+
+            val offsetX = MathUtils.random(delta / 2.0f, delta / 3.0f)
+            val offsetY = MathUtils.random(
+                    HARD_CURVE_MIN_Y_DISTANCE, HARD_CURVE_MAX_Y_DISTANCE
             )
 
             nextPoint.add(offsetX, offsetY)
@@ -94,8 +141,12 @@ class ProceduralMapData : MapData() {
         }
     }
 
-    private fun randomCurvePointCount() = MathUtils.random(
+    private fun randomSoftCurvePointCount() = MathUtils.random(
             SOFT_CURVE_MIN_POINTS, SOFT_CURVE_MAX_POINTS)
+
+    private fun randomHardCurvePointCount() = MathUtils.random(
+            HARD_CURVE_MIN_POINTS, HARD_CURVE_MAX_POINTS
+    )
 
     private fun randomUpPointCount() = MathUtils.random(
             UP_MIN_POINTS, UP_MAX_POINTS
