@@ -146,7 +146,7 @@ abstract class MapData {
             val leftChunk = leftChunks[i]
             val rightChunk = rightChunks[i]
 
-            renderer.drawPath(leftChunk, rightChunk)
+            renderer.draw(leftChunk, rightChunk)
         }
 
         renderer.flush()

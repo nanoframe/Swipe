@@ -35,7 +35,29 @@ class MapRenderer(maxVertices: Int = 24) {
         }
     }
 
-    fun drawPath(leftChunk: Chunk, rightChunk: Chunk) {
+    fun draw(leftChunk: Chunk, rightChunk: Chunk) {
+        drawPath(leftChunk, rightChunk)
+        drawEdges(leftChunk, rightChunk)
+    }
+
+    fun flush() {
+        mesh.setVertices(verts)
+        val vertexCount = size / 2
+
+        shader.begin()
+        shader.setUniformMatrix("u_projTrans", projectionMatrix)
+        shader.setUniformf(
+                "u_pathColor",
+                pathColor.r,
+                pathColor.g,
+                pathColor.b)
+        mesh.render(shader, GL20.GL_TRIANGLES, 0, vertexCount)
+        shader.end()
+
+        size = 0
+    }
+
+    private fun drawPath(leftChunk: Chunk, rightChunk: Chunk) {
         for (i in 0 until leftChunk.size - 1) {
             if (size + 6 > verts.size) {
                 flush()
@@ -64,20 +86,7 @@ class MapRenderer(maxVertices: Int = 24) {
         }
     }
 
-    fun flush() {
-        mesh.setVertices(verts)
-        val vertexCount = size / 2
+    private fun drawEdges(leftChunk: Chunk, rightChunk: Chunk) {
 
-        shader.begin()
-        shader.setUniformMatrix("u_projTrans", projectionMatrix)
-        shader.setUniformf(
-                "u_pathColor",
-                pathColor.r,
-                pathColor.g,
-                pathColor.b)
-        mesh.render(shader, GL20.GL_TRIANGLES, 0, vertexCount)
-        shader.end()
-
-        size = 0
     }
 }
