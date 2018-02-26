@@ -3,7 +3,7 @@ import ktx.collections.GdxArray
 import ktx.collections.GdxMap
 import ktx.collections.set
 
-object Path {
+class Path {
 
     private val types: Array<Type>
     private val availableTypes = GdxArray<Type>(5)

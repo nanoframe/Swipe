@@ -12,9 +12,9 @@ private const val SOFT_CURVE_MIN_POINTS = 3
 private const val SOFT_CURVE_MAX_POINTS = 8
 
 private const val HARD_CURVE_MIN_Y_DISTANCE = 5.0f
-private const val HARD_CURVE_MAX_Y_DISTANCE = 8.0f
-private const val HARD_CURVE_MIN_POINTS = 4
-private const val HARD_CURVE_MAX_POINTS = 5
+private const val HARD_CURVE_MAX_Y_DISTANCE = 6.0f
+private const val HARD_CURVE_MIN_POINTS = 2
+private const val HARD_CURVE_MAX_POINTS = 3
 
 private const val UP_MIN_POINTS = 2
 private const val UP_MAX_POINTS = 4
@@ -33,12 +33,13 @@ class ProceduralMapData : MapData() {
             1.0f)
 
     private val tempArray = GdxArray<PathPoint>()
+    private val path: Path = Path()
 
     override fun generatePoints(leftBound: Float, rightBound: Float,
                                 start: PathPoint): GdxArray<PathPoint> {
         tempArray.clear()
 
-        val (type, direction) = Path.random()
+        val (type, direction) = path.random()
 
         when (type) {
             Path.Type.SoftCurve -> generateSoftCurve(
