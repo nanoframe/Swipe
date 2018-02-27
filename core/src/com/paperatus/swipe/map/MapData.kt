@@ -34,7 +34,7 @@ abstract class MapData {
     private val rightChunks = GdxArray<Chunk>()
     private val pathPoints = GdxArray<PathPoint>()
     private var currentChunk = 0
-    private val renderer = MapRenderer()
+    private val pathRenderer = PathRenderer()
     private var mapLimit: Body? = null
 
     abstract fun generatePoints(leftBound: Float, rightBound: Float,
@@ -140,17 +140,17 @@ abstract class MapData {
         assert(leftChunks.size == rightChunks.size)
         if (leftChunks.size == 0) return
 
-        renderer.projectionMatrix = camera.combined
-        renderer.pathColor = pathColor
+        pathRenderer.projectionMatrix = camera.combined
+        pathRenderer.pathColor = pathColor
 
         for (i in 0 until leftChunks.size) {
             val leftChunk = leftChunks[i]
             val rightChunk = rightChunks[i]
 
-            renderer.drawPath(leftChunk, rightChunk)
+            pathRenderer.draw(leftChunk, rightChunk)
         }
 
-        renderer.flush()
+        pathRenderer.flush()
     }
 
     private fun createPoints(leftBound: Float, rightBound: Float, width: Float): Int {

@@ -9,14 +9,14 @@ import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Matrix4
 
-class MapRenderer(maxVertices: Int = 24) {
+class PathRenderer(maxVertices: Int = 24) {
 
     var pathColor: Color = Color.BLACK
     var projectionMatrix: Matrix4? = null
 
     private val shader = ShaderProgram(
-            Gdx.files.internal("shaders/map_shader.vert"),
-            Gdx.files.internal("shaders/map_shader.frag")
+            Gdx.files.internal("shaders/color_shader.vert"),
+            Gdx.files.internal("shaders/color_shader.frag")
     )
     private val mesh = Mesh(false, maxVertices, 0,
             VertexAttribute(
@@ -35,7 +35,7 @@ class MapRenderer(maxVertices: Int = 24) {
         }
     }
 
-    fun drawPath(leftChunk: Chunk, rightChunk: Chunk) {
+    fun draw(leftChunk: Chunk, rightChunk: Chunk) {
         for (i in 0 until leftChunk.size - 1) {
             if (size + 6 > verts.size) {
                 flush()
