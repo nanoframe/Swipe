@@ -21,6 +21,7 @@ private const val GENERATE_GAP = 40.0f
 private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
+// TODO: Dispose object and renderer
 abstract class MapData {
 
     companion object {
