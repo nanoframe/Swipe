@@ -25,7 +25,7 @@ private const val UP_MAX_X_DELTA = 3.0f
  * CurveData that provides the properties of the path
  */
 
-class ProceduralMapData : MapData() {
+class ProceduralMapData : GameMap() {
     override var pathColor = Color(
             204.0f / 255.0f,
             230.0f / 255.0f,

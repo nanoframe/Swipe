@@ -22,10 +22,10 @@ private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 // TODO: Dispose object and renderer
-abstract class MapData {
+abstract class GameMap {
 
     companion object {
-        private val log = Logger("MapData")
+        private val log = Logger("GameMap")
     }
 
     abstract var pathColor: Color
