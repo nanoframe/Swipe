@@ -22,7 +22,7 @@ private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 // TODO: Dispose object and renderer
-abstract class GameMap {
+abstract class GameMap(var mapGenerator: Generator) {
 
     companion object {
         private val log = Logger("GameMap")
@@ -37,9 +37,6 @@ abstract class GameMap {
     private val pathRenderer = PathRenderer()
     private val edgeRenderer = EdgeRenderer()
     private var mapLimit: Body? = null
-
-    abstract fun generatePoints(leftBound: Float, rightBound: Float,
-                                start: PathPoint): GdxArray<PathPoint>
 
     open fun create() {
         val start = PathPoint.obtain()
@@ -167,7 +164,7 @@ abstract class GameMap {
 
         // Keep creating until the chunk exceeds the minimum size
         do {
-            val points = generatePoints(
+            val points = mapGenerator.generatePoints(
                     leftBound, rightBound,
                     pathPoints.lastItem())
 
