@@ -33,7 +33,7 @@ class GameMap(var mapData: MapData,
     private val pathPoints = GdxArray<PathPoint>()
     private var currentChunk = 0
     private val pathRenderer = PathRenderer()
-    private val edgeRenderer = EdgeRenderer()
+    private val edgeRenderer = EdgeRenderer(mapData.edgeTexture)
     private var mapLimit: Body? = null
 
     fun create() {
@@ -50,6 +50,7 @@ class GameMap(var mapData: MapData,
 
     fun applyDependencies() {
         pathRenderer.pathColor = mapData.backgroundColor
+        edgeRenderer.edgeTexture = mapData.edgeTexture
     }
 
     private fun cleanupChunks(world: World, camera: Camera) {
