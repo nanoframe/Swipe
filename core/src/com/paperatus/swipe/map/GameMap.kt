@@ -40,12 +40,17 @@ class GameMap(var mapData: MapData,
     fun create() {
         val start = PathPoint.obtain()
         pathPoints.add(start)
+        applyDependencies()
     }
 
     fun update(world: World, camera: Camera) {
         cleanupChunks(world, camera)
         updateChunks(world, camera)
         updateBottomBounds(world, camera)
+    }
+
+    fun applyDependencies() {
+        pathRenderer.pathColor = mapData.backgroundColor
     }
 
     private fun cleanupChunks(world: World, camera: Camera) {
@@ -138,7 +143,6 @@ class GameMap(var mapData: MapData,
         if (leftChunks.size == 0) return
 
         pathRenderer.projectionMatrix = camera.combined
-        pathRenderer.pathColor = mapData.backgroundColor
 
         for (i in 0 until leftChunks.size) {
             val leftChunk = leftChunks[i]
