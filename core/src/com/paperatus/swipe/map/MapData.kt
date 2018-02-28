@@ -157,6 +157,7 @@ abstract class MapData {
 
         for (i in 0..leftChunks.lastIndex) {
             edgeRenderer.draw(leftChunks[i])
+            edgeRenderer.draw(rightChunks[i])
         }
         edgeRenderer.flush()
     }
