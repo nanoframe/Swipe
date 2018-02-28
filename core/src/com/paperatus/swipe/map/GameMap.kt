@@ -28,11 +28,14 @@ class GameMap(var mapData: MapData,
         private val log = Logger("GameMap")
     }
 
+    // Chunk data
+    private var currentChunk = 0
     private val leftChunks = GdxArray<Chunk>()
     private val rightChunks = GdxArray<Chunk>()
     private val pathPoints = GdxArray<PathPoint>()
-    private var currentChunk = 0
+
     private var mapLimit: Body? = null
+
     private val mapRenderer = MapRenderer(
             mapData.backgroundColor,
             mapData.edgeTexture)
