@@ -21,6 +21,7 @@ private const val GENERATE_GAP = 40.0f
 private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
+// TODO: Dispose object and renderer
 abstract class MapData {
 
     companion object {
@@ -33,7 +34,8 @@ abstract class MapData {
     private val rightChunks = GdxArray<Chunk>()
     private val pathPoints = GdxArray<PathPoint>()
     private var currentChunk = 0
-    private val renderer = MapRenderer()
+    private val pathRenderer = PathRenderer()
+    private val edgeRenderer = EdgeRenderer()
     private var mapLimit: Body? = null
 
     abstract fun generatePoints(leftBound: Float, rightBound: Float,
@@ -139,17 +141,24 @@ abstract class MapData {
         assert(leftChunks.size == rightChunks.size)
         if (leftChunks.size == 0) return
 
-        renderer.projectionMatrix = camera.combined
-        renderer.pathColor = pathColor
+        pathRenderer.projectionMatrix = camera.combined
+        pathRenderer.pathColor = pathColor
 
         for (i in 0 until leftChunks.size) {
             val leftChunk = leftChunks[i]
             val rightChunk = rightChunks[i]
 
-            renderer.draw(leftChunk, rightChunk)
+            pathRenderer.draw(leftChunk, rightChunk)
         }
 
-        renderer.flush()
+        pathRenderer.flush()
+
+        edgeRenderer.projectionMatrix = camera.combined
+
+        for (i in 0..leftChunks.lastIndex) {
+            edgeRenderer.draw(leftChunks[i])
+        }
+        edgeRenderer.flush()
     }
 
     private fun createPoints(leftBound: Float, rightBound: Float, width: Float): Int {

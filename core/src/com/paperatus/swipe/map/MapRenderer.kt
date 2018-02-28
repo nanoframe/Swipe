@@ -1,22 +1,135 @@
 package com.paperatus.swipe.map
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Mesh
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttribute
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Matrix4
 
-class MapRenderer(maxVertices: Int = 24) {
+import com.paperatus.swipe.data.Solver
+import kotlin.math.sqrt
+
+class EdgeRenderer(maxVertices: Int = 60) {
+
+    var projectionMatrix: Matrix4? = null
+    private val texture = Texture("edge.png")
+
+    private val shader = ShaderProgram(
+            Gdx.files.internal("shaders/edge_shader.vert"),
+            Gdx.files.internal("shaders/edge_shader.frag")
+    )
+    private val mesh = Mesh(false, maxVertices, 0,
+            VertexAttribute(
+                    VertexAttributes.Usage.Position,
+                    2,
+                    "a_position"),
+            VertexAttribute(
+                    VertexAttributes.Usage.TextureCoordinates,
+                    2,
+                    "a_texCoords"
+            ))
+
+    // TODO: Utilize indices instead of vertices
+    private val verts = FloatArray(maxVertices)
+    private var size = 0
+
+    init {
+        assert(maxVertices % 3 == 0)
+        assert(shader.isCompiled) {
+            shader.log
+        }
+
+        texture.setWrap(
+                Texture.TextureWrap.Repeat,
+                Texture.TextureWrap.Repeat)
+    }
+
+    private val temp = Vector2()
+    fun draw(chunk: Chunk) {
+        for (i in 0 until chunk.size - 1) {
+            if (size + 24 > verts.size) {
+                flush()
+            }
+
+            val p1 = chunk[i]
+            val p2 = chunk[i+1]
+            Solver.getPerpendicularDelta(p1, p2, 3.0f, temp)
+
+            val x1 = p1.x - temp.x
+            val y1 = p1.y - temp.y
+            val x2 = p2.x - temp.x
+            val y2 = p2.y - temp.y
+            val dx1 = p1.x + temp.x
+            val dy1 = p1.y + temp.y
+            val dx2 = p2.x + temp.x
+            val dy2 = p2.y + temp.y
+            val u = 0.0f
+            val v = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 3.0f
+            val u2 = 1.0f
+            val v2 = 0.0f
+
+            verts[size++] = x1
+            verts[size++] = y1
+            verts[size++] = u
+            verts[size++] = v
+
+            verts[size++] = x2
+            verts[size++] = y2
+            verts[size++] = u
+            verts[size++] = v2
+
+            verts[size++] = dx1
+            verts[size++] = dy1
+            verts[size++] = u2
+            verts[size++] = v
+
+            verts[size++] = dx1
+            verts[size++] = dy1
+            verts[size++] = u2
+            verts[size++] = v
+
+            verts[size++] = x2
+            verts[size++] = y2
+            verts[size++] = u
+            verts[size++] = v2
+
+            verts[size++] = dx2
+            verts[size++] = dy2
+            verts[size++] = u2
+            verts[size++] = v2
+        }
+    }
+
+    fun flush() {
+        mesh.setVertices(verts)
+        val vertexCount = size / 2
+
+        texture.bind()
+        shader.begin()
+        shader.setUniformMatrix("u_projTrans", projectionMatrix)
+        Gdx.gl.glEnable(GL20.GL_BLEND)
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+        mesh.render(shader, GL20.GL_TRIANGLES, 0, vertexCount)
+        shader.end()
+        Gdx.gl.glDisable(GL20.GL_BLEND)
+
+        size = 0
+    }
+}
+
+class PathRenderer(maxVertices: Int = 24) {
 
     var pathColor: Color = Color.BLACK
     var projectionMatrix: Matrix4? = null
 
     private val shader = ShaderProgram(
-            Gdx.files.internal("shaders/map_shader.vert"),
-            Gdx.files.internal("shaders/map_shader.frag")
+            Gdx.files.internal("shaders/color_shader.vert"),
+            Gdx.files.internal("shaders/color_shader.frag")
     )
     private val mesh = Mesh(false, maxVertices, 0,
             VertexAttribute(
@@ -33,11 +146,6 @@ class MapRenderer(maxVertices: Int = 24) {
         assert(shader.isCompiled) {
             shader.log
         }
-    }
-
-    fun draw(leftChunk: Chunk, rightChunk: Chunk) {
-        drawPath(leftChunk, rightChunk)
-        drawEdges(leftChunk, rightChunk)
     }
 
     fun flush() {
@@ -57,7 +165,7 @@ class MapRenderer(maxVertices: Int = 24) {
         size = 0
     }
 
-    private fun drawPath(leftChunk: Chunk, rightChunk: Chunk) {
+    fun draw(leftChunk: Chunk, rightChunk: Chunk) {
         for (i in 0 until leftChunk.size - 1) {
             if (size + 6 > verts.size) {
                 flush()
@@ -84,9 +192,5 @@ class MapRenderer(maxVertices: Int = 24) {
             verts[size++] = p3.x
             verts[size++] = p3.y
         }
-    }
-
-    private fun drawEdges(leftChunk: Chunk, rightChunk: Chunk) {
-
     }
 }
