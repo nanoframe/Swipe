@@ -1,7 +1,6 @@
 package com.paperatus.swipe.map
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Mesh
@@ -10,12 +9,35 @@ import com.badlogic.gdx.graphics.VertexAttribute
 import com.badlogic.gdx.graphics.VertexAttributes
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Matrix4
-
+import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.data.Solver
 import kotlin.math.sqrt
 
-class EdgeRenderer(var edgeTexture: Texture,
-                   val maxVertices: Int = 60) {
+class MapRenderer(var pathColor: Color,
+                  var edgeTexture: Texture) {
+
+    private val edgeRenderer = EdgeRenderer(this, 120)
+    private val pathRenderer = PathRenderer(this, 120)
+
+    var projectionMatrix: Matrix4? = null
+
+    fun drawEdge(chunk: Chunk) {
+        edgeRenderer.projectionMatrix = projectionMatrix
+        edgeRenderer.draw(chunk)
+    }
+
+    fun flushEdge() = edgeRenderer.flush()
+
+    fun drawPath(leftChunk: Chunk, rightChunk: Chunk) {
+        pathRenderer.projectionMatrix = projectionMatrix
+        pathRenderer.draw(leftChunk, rightChunk)
+    }
+
+    fun flushPath() = pathRenderer.flush()
+}
+
+private class EdgeRenderer(val mapRenderer: MapRenderer,
+                           maxVertices: Int = 60) {
 
     var projectionMatrix: Matrix4? = null
 
@@ -44,7 +66,7 @@ class EdgeRenderer(var edgeTexture: Texture,
             shader.log
         }
 
-        edgeTexture.setWrap(
+        mapRenderer.edgeTexture.setWrap(
                 Texture.TextureWrap.Repeat,
                 Texture.TextureWrap.Repeat)
     }
@@ -57,7 +79,7 @@ class EdgeRenderer(var edgeTexture: Texture,
             }
 
             val p1 = chunk[i]
-            val p2 = chunk[i+1]
+            val p2 = chunk[i + 1]
             Solver.getPerpendicularDelta(p1, p2, 3.0f, temp)
 
             val x1 = p1.x - temp.x
@@ -109,7 +131,7 @@ class EdgeRenderer(var edgeTexture: Texture,
         mesh.setVertices(verts)
         val vertexCount = size / 2
 
-        edgeTexture.bind()
+        mapRenderer.edgeTexture.bind()
         shader.begin()
         shader.setUniformMatrix("u_projTrans", projectionMatrix)
         Gdx.gl.glEnable(GL20.GL_BLEND)
@@ -122,9 +144,9 @@ class EdgeRenderer(var edgeTexture: Texture,
     }
 }
 
-class PathRenderer(maxVertices: Int = 24) {
+private class PathRenderer(val mapRenderer: MapRenderer,
+                           maxVertices: Int = 24) {
 
-    var pathColor: Color = Color.BLACK
     var projectionMatrix: Matrix4? = null
 
     private val shader = ShaderProgram(
@@ -156,9 +178,9 @@ class PathRenderer(maxVertices: Int = 24) {
         shader.setUniformMatrix("u_projTrans", projectionMatrix)
         shader.setUniformf(
                 "u_pathColor",
-                pathColor.r,
-                pathColor.g,
-                pathColor.b)
+                mapRenderer.pathColor.r,
+                mapRenderer.pathColor.g,
+                mapRenderer.pathColor.b)
         mesh.render(shader, GL20.GL_TRIANGLES, 0, vertexCount)
         shader.end()
 

@@ -15,10 +15,10 @@ import com.paperatus.swipe.core.InputComponent
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.TiledTexture
-import com.paperatus.swipe.objects.GameCamera
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
 import com.paperatus.swipe.map.ProceduralMapGenerator
+import com.paperatus.swipe.objects.GameCamera
 import ktx.log.debug
 
 const val WORLD_SIZE = 50.0f // World height
@@ -97,9 +97,12 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     override fun render(batch: SpriteBatch) {
         background.draw(batch)
         batch.end()
-        gameMap.render(camera)
+        gameMap.renderPath()
         batch.begin()
         super.render(batch)
+        batch.end()
+        gameMap.renderEdge()
+        batch.begin()
     }
 
     override fun postRender(batch: SpriteBatch) {

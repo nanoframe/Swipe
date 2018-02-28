@@ -32,9 +32,10 @@ class GameMap(var mapData: MapData,
     private val rightChunks = GdxArray<Chunk>()
     private val pathPoints = GdxArray<PathPoint>()
     private var currentChunk = 0
-    private val pathRenderer = PathRenderer()
-    private val edgeRenderer = EdgeRenderer(mapData.edgeTexture)
     private var mapLimit: Body? = null
+    private val mapRenderer = MapRenderer(
+            mapData.backgroundColor,
+            mapData.edgeTexture)
 
     fun create() {
         val start = PathPoint.obtain()
@@ -46,11 +47,12 @@ class GameMap(var mapData: MapData,
         cleanupChunks(world, camera)
         updateChunks(world, camera)
         updateBottomBounds(world, camera)
+        mapRenderer.projectionMatrix = camera.combined
     }
 
     fun applyDependencies() {
-        pathRenderer.pathColor = mapData.backgroundColor
-        edgeRenderer.edgeTexture = mapData.edgeTexture
+        mapRenderer.pathColor = mapData.backgroundColor
+        mapRenderer.edgeTexture = mapData.edgeTexture
     }
 
     private fun cleanupChunks(world: World, camera: Camera) {
@@ -138,28 +140,30 @@ class GameMap(var mapData: MapData,
         }
     }
 
-    fun render(camera: Camera) {
+    fun renderPath() {
         assert(leftChunks.size == rightChunks.size)
         if (leftChunks.size == 0) return
-
-        pathRenderer.projectionMatrix = camera.combined
 
         for (i in 0 until leftChunks.size) {
             val leftChunk = leftChunks[i]
             val rightChunk = rightChunks[i]
 
-            pathRenderer.draw(leftChunk, rightChunk)
+            mapRenderer.drawPath(leftChunk, rightChunk)
         }
 
-        pathRenderer.flush()
+        mapRenderer.flushPath()
+    }
 
-        edgeRenderer.projectionMatrix = camera.combined
+    fun renderEdge() {
+        assert(leftChunks.size == rightChunks.size)
+        if (leftChunks.size == 0) return
 
         for (i in 0..leftChunks.lastIndex) {
-            edgeRenderer.draw(leftChunks[i])
-            edgeRenderer.draw(rightChunks[i])
+            mapRenderer.drawEdge(leftChunks[i])
+            mapRenderer.drawEdge(rightChunks[i])
         }
-        edgeRenderer.flush()
+
+        mapRenderer.flushEdge()
     }
 
     private fun createPoints(leftBound: Float, rightBound: Float, width: Float): Int {
