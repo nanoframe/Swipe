@@ -35,6 +35,7 @@ abstract class MapData {
     private val pathPoints = GdxArray<PathPoint>()
     private var currentChunk = 0
     private val pathRenderer = PathRenderer()
+    private val edgeRenderer = EdgeRenderer()
     private var mapLimit: Body? = null
 
     abstract fun generatePoints(leftBound: Float, rightBound: Float,
@@ -151,6 +152,13 @@ abstract class MapData {
         }
 
         pathRenderer.flush()
+
+        edgeRenderer.projectionMatrix = camera.combined
+
+        for (i in 0..leftChunks.lastIndex) {
+            edgeRenderer.draw(leftChunks[i])
+        }
+        edgeRenderer.flush()
     }
 
     private fun createPoints(leftBound: Float, rightBound: Float, width: Float): Int {
