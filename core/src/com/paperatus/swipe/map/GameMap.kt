@@ -22,13 +22,12 @@ private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 // TODO: Dispose object and renderer
-abstract class GameMap(var mapGenerator: Generator) {
+class GameMap(var mapData: MapData,
+              var mapGenerator: Generator) {
 
     companion object {
         private val log = Logger("GameMap")
     }
-
-    abstract var pathColor: Color
 
     private val leftChunks = GdxArray<Chunk>()
     private val rightChunks = GdxArray<Chunk>()
@@ -38,7 +37,7 @@ abstract class GameMap(var mapGenerator: Generator) {
     private val edgeRenderer = EdgeRenderer()
     private var mapLimit: Body? = null
 
-    open fun create() {
+    fun create() {
         val start = PathPoint.obtain()
         pathPoints.add(start)
     }
@@ -134,12 +133,12 @@ abstract class GameMap(var mapGenerator: Generator) {
         }
     }
 
-    open fun render(camera: Camera) {
+    fun render(camera: Camera) {
         assert(leftChunks.size == rightChunks.size)
         if (leftChunks.size == 0) return
 
         pathRenderer.projectionMatrix = camera.combined
-        pathRenderer.pathColor = pathColor
+        pathRenderer.pathColor = mapData.backgroundColor
 
         for (i in 0 until leftChunks.size) {
             val leftChunk = leftChunks[i]
