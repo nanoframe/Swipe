@@ -2,6 +2,7 @@ package com.paperatus.swipe.scenes
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
@@ -15,8 +16,9 @@ import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.TiledTexture
 import com.paperatus.swipe.objects.GameCamera
+import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
-import com.paperatus.swipe.map.ProceduralMapData
+import com.paperatus.swipe.map.ProceduralMapGenerator
 import ktx.log.debug
 
 const val WORLD_SIZE = 50.0f // World height
@@ -25,7 +27,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private val player: GameObject = GameObject("player.png")
-    var mapData: MapData? = ProceduralMapData()
+    lateinit var gameMap: GameMap
 
     private lateinit var background: TiledTexture
 
@@ -54,7 +56,17 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         background.repeatCount = 640.0f / 15.0f
 
-        mapData!!.create()
+        val mapData = MapData(
+                Color(
+                        204.0f / 255.0f,
+                        230.0f / 255.0f,
+                        228.0f / 255.0f,
+                        1.0f),
+                game.assets["edge.png"]
+        )
+        val mapGenerator = ProceduralMapGenerator()
+        gameMap = GameMap(mapData, mapGenerator)
+        gameMap.create()
     }
 
     override fun update(delta: Float) {
@@ -73,7 +85,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                         backgroundTileSize
         )
 
-        mapData!!.update(physicsWorld, camera)
+        gameMap.update(physicsWorld, camera)
 
         camera.update(delta, player)
     }
@@ -85,7 +97,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     override fun render(batch: SpriteBatch) {
         background.draw(batch)
         batch.end()
-        mapData!!.render(camera)
+        gameMap.render(camera)
         batch.begin()
         super.render(batch)
     }

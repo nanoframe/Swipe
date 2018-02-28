@@ -14,10 +14,10 @@ import com.badlogic.gdx.math.Matrix4
 import com.paperatus.swipe.data.Solver
 import kotlin.math.sqrt
 
-class EdgeRenderer(maxVertices: Int = 60) {
+class EdgeRenderer(var edgeTexture: Texture,
+                   val maxVertices: Int = 60) {
 
     var projectionMatrix: Matrix4? = null
-    private val texture = Texture("edge.png")
 
     private val shader = ShaderProgram(
             Gdx.files.internal("shaders/edge_shader.vert"),
@@ -44,7 +44,7 @@ class EdgeRenderer(maxVertices: Int = 60) {
             shader.log
         }
 
-        texture.setWrap(
+        edgeTexture.setWrap(
                 Texture.TextureWrap.Repeat,
                 Texture.TextureWrap.Repeat)
     }
@@ -109,7 +109,7 @@ class EdgeRenderer(maxVertices: Int = 60) {
         mesh.setVertices(verts)
         val vertexCount = size / 2
 
-        texture.bind()
+        edgeTexture.bind()
         shader.begin()
         shader.setUniformMatrix("u_projTrans", projectionMatrix)
         Gdx.gl.glEnable(GL20.GL_BLEND)

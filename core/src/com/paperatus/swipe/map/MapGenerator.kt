@@ -1,10 +1,14 @@
 package com.paperatus.swipe.map
 
-import Path
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.MathUtils
 import com.paperatus.swipe.data.PathPoint
+import Path
 import ktx.collections.GdxArray
+
+interface MapGenerator {
+    fun generatePoints(leftBound: Float, rightBound: Float,
+                                start: PathPoint): GdxArray<PathPoint>
+}
 
 private const val SOFT_CURVE_MIN_Y_DISTANCE = 8.0f
 private const val SOFT_CURVE_MAX_Y_DISTANCE = 20.0f
@@ -20,23 +24,14 @@ private const val UP_MIN_POINTS = 2
 private const val UP_MAX_POINTS = 4
 private const val UP_MAX_X_DELTA = 3.0f
 
-/* TODO: Simplify code by creating one method to generate all paths
- * That "one" method should have parameters that accept a base class
- * CurveData that provides the properties of the path
- */
-
-class ProceduralMapData : MapData() {
-    override var pathColor = Color(
-            204.0f / 255.0f,
-            230.0f / 255.0f,
-            228.0f / 255.0f,
-            1.0f)
-
+class ProceduralMapGenerator : MapGenerator {
     private val tempArray = GdxArray<PathPoint>()
     private val path: Path = Path()
 
-    override fun generatePoints(leftBound: Float, rightBound: Float,
+    override fun generatePoints(leftBound: Float,
+                                rightBound: Float,
                                 start: PathPoint): GdxArray<PathPoint> {
+
         tempArray.clear()
 
         val (type, direction) = path.random()
@@ -152,4 +147,5 @@ class ProceduralMapData : MapData() {
     private fun randomUpPointCount() = MathUtils.random(
             UP_MIN_POINTS, UP_MAX_POINTS
     )
+
 }
