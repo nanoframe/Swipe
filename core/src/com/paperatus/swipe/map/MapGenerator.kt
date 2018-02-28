@@ -5,7 +5,7 @@ import com.paperatus.swipe.data.PathPoint
 import Path
 import ktx.collections.GdxArray
 
-interface Generator {
+interface MapGenerator {
     fun generatePoints(leftBound: Float, rightBound: Float,
                                 start: PathPoint): GdxArray<PathPoint>
 }
@@ -24,7 +24,7 @@ private const val UP_MIN_POINTS = 2
 private const val UP_MAX_POINTS = 4
 private const val UP_MAX_X_DELTA = 3.0f
 
-class ProceduralGenerator : Generator {
+class ProceduralMapGenerator : MapGenerator {
     private val tempArray = GdxArray<PathPoint>()
     private val path: Path = Path()
 

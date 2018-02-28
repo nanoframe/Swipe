@@ -18,7 +18,7 @@ import com.paperatus.swipe.core.TiledTexture
 import com.paperatus.swipe.objects.GameCamera
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
-import com.paperatus.swipe.map.ProceduralGenerator
+import com.paperatus.swipe.map.ProceduralMapGenerator
 import ktx.log.debug
 
 const val WORLD_SIZE = 50.0f // World height
@@ -64,7 +64,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                         1.0f),
                 game.assets["edge.png"]
         )
-        val mapGenerator = ProceduralGenerator()
+        val mapGenerator = ProceduralMapGenerator()
         gameMap = GameMap(mapData, mapGenerator)
         gameMap.create()
     }

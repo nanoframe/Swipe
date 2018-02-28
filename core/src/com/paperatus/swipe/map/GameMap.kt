@@ -1,7 +1,6 @@
 package com.paperatus.swipe.map
 
 import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -23,7 +22,7 @@ private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 // TODO: Dispose object and renderer
 class GameMap(var mapData: MapData,
-              var mapGenerator: Generator) {
+              var mapGenerator: MapGenerator) {
 
     companion object {
         private val log = Logger("GameMap")
