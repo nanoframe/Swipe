@@ -60,16 +60,16 @@ class EdgeRenderer(maxVertices: Int = 60) {
             val p2 = chunk[i+1]
             Solver.getPerpendicularDelta(p1, p2, 3.0f, temp)
 
-            val x1 = p1.x
-            val y1 = p1.y
-            val x2 = p2.x
-            val y2 = p2.y
-            val dx1 = x1 + temp.x
-            val dy1 = y1 + temp.y
-            val dx2 = x2 + temp.x
-            val dy2 = y2 + temp.y
+            val x1 = p1.x - temp.x
+            val y1 = p1.y - temp.y
+            val x2 = p2.x - temp.x
+            val y2 = p2.y - temp.y
+            val dx1 = p1.x + temp.x
+            val dy1 = p1.y + temp.y
+            val dx2 = p2.x + temp.x
+            val dy2 = p2.y + temp.y
             val u = 0.0f
-            val v = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 1.5f
+            val v = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) / 3.0f
             val u2 = 1.0f
             val v2 = 0.0f
 
