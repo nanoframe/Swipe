@@ -129,7 +129,7 @@ private class EdgeRenderer(val mapRenderer: MapRenderer,
 
     fun flush() {
         mesh.setVertices(verts)
-        val vertexCount = size / 2
+        val vertexCount = size / 4
 
         mapRenderer.edgeTexture.bind()
         shader.begin()
