@@ -2,6 +2,7 @@ package com.paperatus.swipe.core
 
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
+import ktx.collections.GdxArray
 
 /**
  * Components that can be attached to a GameObject instance to extend functionality.
@@ -46,6 +47,7 @@ abstract class InputComponent : Component {
  */
 abstract class PhysicsComponent : Component {
     override val order = Component.Order.POST_UPDATE
+    private val contactListeners = GdxArray<ContactListener>()
 
     /**
      * Called upon initialization to create Body instances.
@@ -55,4 +57,25 @@ abstract class PhysicsComponent : Component {
     abstract fun init(world: World)
 
     abstract fun getBody(): Body
+
+    fun addContactListener(contactListener: ContactListener) {
+        contactListeners.add(contactListener)
+    }
+
+    fun removeContactListener(contactListener: ContactListener) {
+        contactListeners.removeValue(contactListener, true)
+    }
+
+    fun postCollisionStart(other: Body) {
+        contactListeners.forEach { it.onContactBegin(other) }
+    }
+
+    fun postCollisionEnd(other: Body) {
+        contactListeners.forEach { it.onContactEnd(other) }
+    }
+
+    interface ContactListener {
+        fun onContactBegin(other: Body)
+        fun onContactEnd(other: Body)
+    }
 }
