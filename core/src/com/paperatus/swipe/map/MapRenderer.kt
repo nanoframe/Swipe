@@ -74,7 +74,7 @@ private class EdgeRenderer(val mapRenderer: MapRenderer,
     private val temp = Vector2()
     fun draw(chunk: Chunk) {
         for (i in 0 until chunk.size - 1) {
-            if (size + 24 > verts.size) {
+            if (size + 24 >= verts.size) {
                 flush()
             }
 
@@ -189,7 +189,7 @@ private class PathRenderer(val mapRenderer: MapRenderer,
 
     fun draw(leftChunk: Chunk, rightChunk: Chunk) {
         for (i in 0 until leftChunk.size - 1) {
-            if (size + 6 > verts.size) {
+            if (size + 6 >= verts.size) {
                 flush()
             }
             var p1 = leftChunk[i]
