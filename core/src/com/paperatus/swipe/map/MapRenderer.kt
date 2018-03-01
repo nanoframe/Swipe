@@ -56,7 +56,6 @@ private class EdgeRenderer(val mapRenderer: MapRenderer,
                     "a_texCoords"
             ))
 
-    // TODO: Utilize indices instead of vertices
     private val verts = FloatArray(maxVertices)
     private var size = 0
 
@@ -159,7 +158,6 @@ private class PathRenderer(val mapRenderer: MapRenderer,
                     2,
                     "a_position"))
 
-    // TODO: Utilize indices instead of vertices
     private val verts = FloatArray(maxVertices)
     private var size = 0
 
