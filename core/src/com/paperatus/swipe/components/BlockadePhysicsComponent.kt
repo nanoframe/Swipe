@@ -14,7 +14,7 @@ class BlockadePhysicsComponent : PhysicsComponent() {
     override fun init(world: World) {
         val body = world.createBody(BodyDef())
         val shape = PolygonShape()
-        shape.setAsBox(2.0f, 2.0f)
+        shape.setAsBox(1.5f, 1.5f)
         val fixture = body.createFixture(shape, 0.0f)
         fixture.restitution = 0.8f
 
@@ -22,6 +22,10 @@ class BlockadePhysicsComponent : PhysicsComponent() {
     }
 
     override fun update(gameObject: GameObject) {
+        physicsBody!!.setTransform(
+                gameObject.position.x + gameObject.size.width / 2.0f,
+                gameObject.position.y + gameObject.size.height / 2.0f,
+                0.0f)
     }
 
     override fun receive(what: Component.Message, payload: Any?) {

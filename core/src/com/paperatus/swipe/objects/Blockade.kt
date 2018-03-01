@@ -4,7 +4,8 @@ import com.paperatus.swipe.components.BlockadePhysicsComponent
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
-class Blockade : GameObject() {
+class Blockade : GameObject("blockade.png") {
+
     var health = 100.0f
     var maxHealth = 100.0f
 
