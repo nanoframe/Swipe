@@ -56,6 +56,8 @@ abstract class PhysicsComponent : Component {
      */
     abstract fun init(world: World)
 
+    abstract fun destroy(world: World)
+
     abstract fun getBody(): Body
 
     fun addContactListener(contactListener: ContactListener) {
