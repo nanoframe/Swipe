@@ -169,6 +169,8 @@ class GameMap(var mapData: MapData,
         mapRenderer.flushEdge()
     }
 
+    fun getLimit() = mapLimit!!.position.y
+
     private fun createPoints(leftBound: Float, rightBound: Float, width: Float): Int {
         var totalPoints = 0 // Total points created
 
