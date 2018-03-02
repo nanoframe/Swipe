@@ -15,10 +15,14 @@ import com.paperatus.swipe.core.InputComponent
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.TiledTexture
+import com.paperatus.swipe.core.filterBy
+import com.paperatus.swipe.core.filterByType
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
 import com.paperatus.swipe.map.ProceduralMapGenerator
+import com.paperatus.swipe.objects.Blockade
 import com.paperatus.swipe.objects.GameCamera
+import ktx.collections.GdxArray
 import ktx.log.debug
 
 const val WORLD_SIZE = 50.0f // World height
@@ -28,6 +32,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private val player: GameObject = GameObject("player.png")
     lateinit var gameMap: GameMap
+
+    private val blockades = GdxArray<Blockade>()
 
     private lateinit var background: TiledTexture
 
@@ -88,6 +94,16 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         gameMap.update(physicsWorld, camera)
 
         camera.update(delta, player)
+
+        gameObjects.filterByType<Blockade>().forEach {
+            val shouldRemove = when {
+                it.position.y < gameMap.getLimit() -> true
+                it.health <= 0 -> true
+                else -> false
+            }
+
+            if (shouldRemove) queueRemove(it)
+        }
     }
 
     override fun preRender(batch: SpriteBatch) {
@@ -132,5 +148,11 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     override fun dispose() {
+    }
+
+    object BlockadeSpawner: Observer {
+        fun receive(what: Int) {
+
+        }
     }
 }
