@@ -1,6 +1,6 @@
 package com.paperatus.swipe.scenes
 
-import NOTIFICATION_BLOCKADE_SPAWN
+import NOTIFICATION_DESTRUCTIBLE_SPAWN
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -21,7 +21,7 @@ import com.paperatus.swipe.core.filterByType
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
 import com.paperatus.swipe.map.ProceduralMapGenerator
-import com.paperatus.swipe.objects.Blockade
+import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.GameCamera
 import ktx.log.debug
 
@@ -70,7 +70,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         )
         val mapGenerator = ProceduralMapGenerator()
         gameMap = GameMap(mapData, mapGenerator)
-        gameMap.addObserver(BlockadeSpawner())
+        gameMap.addObserver(DestructibleSpawner())
         gameMap.create()
     }
 
@@ -94,7 +94,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         camera.update(delta, player)
 
-        gameObjects.filterByType<Blockade>().forEach {
+        gameObjects.filterByType<Destructible>().forEach {
             val shouldRemove = when {
                 it.position.y < gameMap.getLimit() -> true
                 it.health <= 0 -> true
@@ -149,11 +149,11 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     override fun dispose() {
     }
 
-    inner class BlockadeSpawner: Observer {
+    inner class DestructibleSpawner : Observer {
         override fun receive(what: Int, payload: Any?) {
-            if (what != NOTIFICATION_BLOCKADE_SPAWN) return
+            if (what != NOTIFICATION_DESTRUCTIBLE_SPAWN) return
 
-            addObject(Blockade().apply {
+            addObject(Destructible().apply {
                 size.set(3.0f, 2.789f)
                 position.set(payload as Vector2)
             })

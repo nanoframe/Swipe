@@ -10,8 +10,8 @@ import ktx.collections.GdxArray
 interface MapGenerator {
     fun generatePoints(leftBound: Float, rightBound: Float,
                                 start: PathPoint): GdxArray<PathPoint>
-    fun shouldSpawnBlockade(positionY: Float): Boolean
-    fun nextBlockade(): Vector2
+    fun shouldSpawnDestructible(positionY: Float): Boolean
+    fun nextDestructible(): Vector2
 }
 
 private const val SOFT_CURVE_MIN_Y_DISTANCE = 8.0f
@@ -33,7 +33,7 @@ class ProceduralMapGenerator : MapGenerator {
     private val tempArray = GdxArray<PathPoint>()
     private val path: Path = Path()
 
-    private var blockadeCount = 1
+    private var destructibleCount = 1
     private val tempVector = Vector2()
 
     override fun generatePoints(leftBound: Float,
@@ -58,11 +58,11 @@ class ProceduralMapGenerator : MapGenerator {
         return tempArray
     }
 
-    override fun shouldSpawnBlockade(positionY: Float) =
-            positionY >= blockadeCount * 250.0f
+    override fun shouldSpawnDestructible(positionY: Float) =
+            positionY >= destructibleCount * 250.0f
 
-    override fun nextBlockade(): Vector2 {
-        blockadeCount++
+    override fun nextDestructible(): Vector2 {
+        destructibleCount++
         tempVector.set(tempArray.lastItem())
         return tempVector
     }

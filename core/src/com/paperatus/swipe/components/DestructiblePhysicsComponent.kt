@@ -8,7 +8,7 @@ import com.paperatus.swipe.core.Component
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
-class BlockadePhysicsComponent : PhysicsComponent() {
+class DestructiblePhysicsComponent : PhysicsComponent() {
     private var physicsBody: Body? = null
 
     override fun init(world: World) {
