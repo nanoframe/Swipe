@@ -12,7 +12,7 @@ import ktx.collections.GdxArray
  * @property gameObjects contains GameObjects that will be rendered every frame
  */
 abstract class ObjectScene(protected val game: Game) : Scene {
-    private val gameObjects = GdxArray<GameObject>()
+    val gameObjects = GdxArray<GameObject>()
     private val removeQueue = GdxArray<GameObject>()
 
     override fun preUpdate(delta: Float) = updateComponents(Component.Order.PRE_UPDATE)
@@ -97,7 +97,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
             gameObjects.removeValue(gameObject, identity)
 
     open fun queueRemove(gameObject: GameObject) {
-        removeQueue.add(gameObject)        
+        removeQueue.add(gameObject)
     }
 
     // TODO: Implement a map for each order for faster updates
