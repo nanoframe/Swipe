@@ -21,6 +21,10 @@ class BlockadePhysicsComponent : PhysicsComponent() {
         physicsBody = body
     }
 
+    override fun destroy(world: World) {
+        world.destroyBody(physicsBody)
+    }
+
     override fun update(gameObject: GameObject) {
         physicsBody!!.setTransform(
                 gameObject.position.x + gameObject.size.width / 2.0f,
