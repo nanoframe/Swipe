@@ -28,6 +28,8 @@ class PlayerPhysicsComponent : PhysicsComponent() {
             fixedRotation = true
             linearDamping = 0.8f
         }
+
+        physicsBody!!.setTransform(0.0f, 2.0f, 0.0f)
     }
 
     override fun getBody(): Body = physicsBody!!
