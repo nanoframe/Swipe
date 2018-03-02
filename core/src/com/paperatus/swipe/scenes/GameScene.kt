@@ -21,6 +21,7 @@ import com.paperatus.swipe.core.filterByType
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
 import com.paperatus.swipe.map.ProceduralMapGenerator
+import com.paperatus.swipe.objects.Blockade
 import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.GameCamera
 import ktx.log.debug
@@ -102,6 +103,11 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             }
 
             if (shouldRemove) queueRemove(it)
+        }
+
+        gameObjects.filterByType<Blockade>().forEach {
+            if (!it.isHit) return@forEach
+            queueRemove(it)
         }
     }
 
