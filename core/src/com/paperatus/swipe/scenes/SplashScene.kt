@@ -11,6 +11,7 @@ class SplashScene(private val game: Game) : Scene {
         game.assets.load("player.png", Texture::class.java)
         game.assets.load("background.png", Texture::class.java)
         game.assets.load("edge.png", Texture::class.java)
+        game.assets.load("blockade.png", Texture::class.java)
     }
 
     override fun update(delta: Float) {

@@ -32,6 +32,10 @@ class PlayerPhysicsComponent : PhysicsComponent() {
         physicsBody!!.setTransform(0.0f, 2.0f, 0.0f)
     }
 
+    override fun destroy(world: World) {
+        world.destroyBody(physicsBody)
+    }
+
     override fun getBody(): Body = physicsBody!!
 
     override fun update(gameObject: GameObject) {

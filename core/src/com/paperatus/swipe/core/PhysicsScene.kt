@@ -80,5 +80,16 @@ abstract class PhysicsScene(game: Game,
         }
     }
 
+    override fun removeObject(gameObject: GameObject, identity: Boolean): Boolean {
+        val status = super.removeObject(gameObject, identity)
+
+        if (gameObject.components.containsKey(PhysicsComponent::class)) {
+            val com = (gameObject.components[PhysicsComponent::class] as PhysicsComponent)
+            com.destroy(physicsWorld)
+        }
+
+        return status
+    }
+
 
 }
