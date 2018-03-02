@@ -13,12 +13,19 @@ import ktx.collections.GdxArray
  */
 abstract class ObjectScene(protected val game: Game) : Scene {
     private val gameObjects = GdxArray<GameObject>()
+    private val removeQueue = GdxArray<GameObject>()
 
     override fun preUpdate(delta: Float) = updateComponents(Component.Order.PRE_UPDATE)
 
     override fun update(delta: Float) = updateComponents(Component.Order.UPDATE)
 
-    override fun postUpdate(delta: Float) = updateComponents(Component.Order.POST_UPDATE)
+    override fun postUpdate(delta: Float) {
+        updateComponents(Component.Order.POST_UPDATE)
+        removeQueue.forEach {
+            removeObject(it)
+        }
+        removeQueue.clear()
+    }
 
     override fun preRender(batch: SpriteBatch) = updateComponents(Component.Order.PRE_RENDER)
 
@@ -88,6 +95,10 @@ abstract class ObjectScene(protected val game: Game) : Scene {
      */
     open fun removeObject(gameObject: GameObject, identity: Boolean = true) =
             gameObjects.removeValue(gameObject, identity)
+
+    open fun queueRemove(gameObject: GameObject) {
+        removeQueue.add(gameObject)        
+    }
 
     // TODO: Implement a map for each order for faster updates
     private fun updateComponents(order: Component.Order) {
