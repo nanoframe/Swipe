@@ -3,20 +3,21 @@ package com.paperatus.swipe.components
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
+import com.badlogic.gdx.physics.box2d.Shape
 import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.core.Component
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
-class DestructiblePhysicsComponent : PhysicsComponent() {
+class StaticPhysicsComponent(private val shape: Shape) : PhysicsComponent() {
     private var physicsBody: Body? = null
 
     override fun init(world: World) {
         val body = world.createBody(BodyDef())
-        val shape = PolygonShape()
-        shape.setAsBox(1.5f, 1.5f)
         val fixture = body.createFixture(shape, 0.0f)
         fixture.restitution = 0.8f
+
+        shape.dispose()
 
         physicsBody = body
     }
