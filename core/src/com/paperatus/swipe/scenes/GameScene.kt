@@ -23,7 +23,6 @@ import com.paperatus.swipe.map.MapData
 import com.paperatus.swipe.map.ProceduralMapGenerator
 import com.paperatus.swipe.objects.Blockade
 import com.paperatus.swipe.objects.GameCamera
-import ktx.collections.GdxArray
 import ktx.log.debug
 
 const val WORLD_SIZE = 50.0f // World height
@@ -33,8 +32,6 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private val player: GameObject = GameObject("player.png")
     lateinit var gameMap: GameMap
-
-    private val blockades = GdxArray<Blockade>()
 
     private lateinit var background: TiledTexture
 
@@ -156,8 +153,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         override fun receive(what: Int, payload: Any?) {
             if (what != NOTIFICATION_BLOCKADE_SPAWN) return
 
-            gameObjects.add(Blockade().apply {
-                addObject(this)
+            addObject(Blockade().apply {
                 size.set(3.0f, 2.789f)
                 position.set(payload as Vector2)
             })
