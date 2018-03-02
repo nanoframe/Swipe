@@ -3,11 +3,15 @@ package com.paperatus.swipe.map
 import com.badlogic.gdx.math.MathUtils
 import com.paperatus.swipe.data.PathPoint
 import Path
+import com.badlogic.gdx.math.Vector2
+import com.paperatus.swipe.data.lastItem
 import ktx.collections.GdxArray
 
 interface MapGenerator {
     fun generatePoints(leftBound: Float, rightBound: Float,
                                 start: PathPoint): GdxArray<PathPoint>
+    fun shouldSpawnBlockade(positionY: Float): Boolean
+    fun nextBlockade(): Vector2
 }
 
 private const val SOFT_CURVE_MIN_Y_DISTANCE = 8.0f
@@ -25,8 +29,12 @@ private const val UP_MAX_POINTS = 4
 private const val UP_MAX_X_DELTA = 3.0f
 
 class ProceduralMapGenerator : MapGenerator {
+
     private val tempArray = GdxArray<PathPoint>()
     private val path: Path = Path()
+
+    private var blockadeCount = 1
+    private val tempVector = Vector2()
 
     override fun generatePoints(leftBound: Float,
                                 rightBound: Float,
@@ -48,6 +56,15 @@ class ProceduralMapGenerator : MapGenerator {
         }
 
         return tempArray
+    }
+
+    override fun shouldSpawnBlockade(positionY: Float) =
+            positionY >= blockadeCount * 250.0f
+
+    override fun nextBlockade(): Vector2 {
+        blockadeCount++
+        tempVector.set(tempArray.lastItem())
+        return tempVector
     }
 
     private fun generateSoftCurve(leftBound: Float,

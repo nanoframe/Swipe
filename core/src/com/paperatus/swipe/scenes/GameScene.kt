@@ -1,5 +1,6 @@
 package com.paperatus.swipe.scenes
 
+import NOTIFICATION_BLOCKADE_SPAWN
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -12,10 +13,10 @@ import com.paperatus.swipe.components.PlayerPhysicsComponent
 import com.paperatus.swipe.components.TouchInputComponent
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.InputComponent
+import com.paperatus.swipe.core.Observer
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.TiledTexture
-import com.paperatus.swipe.core.filterBy
 import com.paperatus.swipe.core.filterByType
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
@@ -72,6 +73,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         )
         val mapGenerator = ProceduralMapGenerator()
         gameMap = GameMap(mapData, mapGenerator)
+        gameMap.addObserver(BlockadeSpawner())
         gameMap.create()
     }
 
@@ -150,8 +152,15 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     override fun dispose() {
     }
 
-    object BlockadeSpawner: Observer {
-        fun receive(what: Int) {
+    inner class BlockadeSpawner: Observer {
+        override fun receive(what: Int, payload: Any?) {
+            if (what != NOTIFICATION_BLOCKADE_SPAWN) return
+
+            gameObjects.add(Blockade().apply {
+                addObject(this)
+                size.set(3.0f, 2.789f)
+                position.set(payload as Vector2)
+            })
 
         }
     }

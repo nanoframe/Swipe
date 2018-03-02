@@ -6,7 +6,7 @@ import ktx.collections.GdxArray
  * Allows a class to receive events without coupling code together.
  */
 interface Observer {
-    fun receive(what: Int)
+    fun receive(what: Int, payload: Any?)
 }
 
 /**
@@ -40,7 +40,7 @@ open class Subject {
      *
      * @param what the message to notify.
      */
-    protected fun post(what: Int) {
-        observers.forEach { it.receive(what) }
+    protected fun post(what: Int, payload: Any? = null) {
+        observers.forEach { it.receive(what, payload) }
     }
 }

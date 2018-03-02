@@ -1,5 +1,6 @@
 package com.paperatus.swipe.map
 
+import NOTIFICATION_BLOCKADE_SPAWN
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
@@ -9,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.data.PathPoint
 import com.paperatus.swipe.data.Solver
 import com.paperatus.swipe.data.lastItem
+import com.paperatus.swipe.core.Subject
 import ktx.collections.GdxArray
 import ktx.collections.lastIndex
 import ktx.log.Logger
@@ -22,7 +24,7 @@ private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 // TODO: Dispose object and renderer
 class GameMap(var mapData: MapData,
-              var mapGenerator: MapGenerator) {
+              var mapGenerator: MapGenerator): Subject() {
 
     companion object {
         private val log = Logger("GameMap")
@@ -51,6 +53,13 @@ class GameMap(var mapData: MapData,
         updateChunks(world, camera)
         updateBottomBounds(world, camera)
         mapRenderer.projectionMatrix = camera.combined
+
+        if (mapGenerator.shouldSpawnBlockade(camera.position.y)) {
+            val position = mapGenerator.nextBlockade()
+            post(NOTIFICATION_BLOCKADE_SPAWN, position)
+
+            log.debug { "Spawn Blockade at $position" }
+        }
     }
 
     fun applyDependencies() {
