@@ -1,5 +1,6 @@
 package com.paperatus.swipe.scenes
 
+import NOTIFICATION_BLOCKADE_SPAWN
 import NOTIFICATION_DESTRUCTIBLE_SPAWN
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
@@ -71,7 +72,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         )
         val mapGenerator = ProceduralMapGenerator()
         gameMap = GameMap(mapData, mapGenerator)
-        gameMap.addObserver(DestructibleSpawner())
+        gameMap.addObserver(PathObjectSpawner())
         gameMap.create()
     }
 
@@ -158,11 +159,16 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     override fun dispose() {
     }
 
-    inner class DestructibleSpawner : Observer {
+    inner class PathObjectSpawner : Observer {
         override fun receive(what: Int, payload: Any?) {
-            if (what != NOTIFICATION_DESTRUCTIBLE_SPAWN) return
 
-            addObject(Destructible().apply {
+            val pathObject: GameObject = when(what) {
+                NOTIFICATION_BLOCKADE_SPAWN -> Blockade()
+                NOTIFICATION_DESTRUCTIBLE_SPAWN -> Destructible()
+                else -> return
+            }
+
+            addObject(pathObject.apply {
                 size.set(3.0f, 2.789f)
                 position.set(payload as Vector2)
             })

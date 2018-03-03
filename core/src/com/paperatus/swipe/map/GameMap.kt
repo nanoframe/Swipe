@@ -1,5 +1,6 @@
 package com.paperatus.swipe.map
 
+import NOTIFICATION_BLOCKADE_SPAWN
 import NOTIFICATION_DESTRUCTIBLE_SPAWN
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Vector2
@@ -59,6 +60,13 @@ class GameMap(var mapData: MapData,
             post(NOTIFICATION_DESTRUCTIBLE_SPAWN, position)
 
             log.debug { "Spawn Destructible at $position" }
+        }
+
+        if (mapGenerator.shouldSpawnBlockade(camera.position.y)) {
+            val position = mapGenerator.nextBlockade()
+            post(NOTIFICATION_BLOCKADE_SPAWN, position)
+
+            log.debug { "Spwn Blockade at $position" }
         }
     }
 
