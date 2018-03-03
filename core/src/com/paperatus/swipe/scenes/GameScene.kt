@@ -26,6 +26,8 @@ import com.paperatus.swipe.objects.Blockade
 import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.GameCamera
 import ktx.log.debug
+import ktx.math.times
+import ktx.math.unaryMinus
 
 const val WORLD_SIZE = 50.0f // World height
 
@@ -111,7 +113,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             queueRemove(it)
             val p = player.components[PhysicsComponent::class] as PhysicsComponent
             val body = p.getBody()
-            body.applyLinearImpulse(0.0f, -5.0f, body.position.x, body.position.y, true)
+            body.applyForceToCenter(-body.linearVelocity.nor() * 5.0f, true)
         }
     }
 
