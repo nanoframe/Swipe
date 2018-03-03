@@ -108,6 +108,9 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         gameObjects.filterByType<Blockade>().forEach {
             if (!it.isHit) return@forEach
             queueRemove(it)
+            val p = player.components[PhysicsComponent::class] as PhysicsComponent
+            val body = p.getBody()
+            body.applyLinearImpulse(0.0f, -5.0f, body.position.x, body.position.y, true)
         }
     }
 
