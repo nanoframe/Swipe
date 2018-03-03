@@ -64,7 +64,7 @@ class ProceduralMapGenerator : MapGenerator {
     }
 
     override fun shouldSpawnDestructible(positionY: Float) =
-            positionY >= destructibleCount * 250.0f
+            positionY >= destructibleCount * 350.0f
 
     override fun nextDestructible(): Vector2 {
         destructibleCount++

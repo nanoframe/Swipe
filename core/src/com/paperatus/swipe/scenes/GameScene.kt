@@ -113,7 +113,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             queueRemove(it)
             val p = player.components[PhysicsComponent::class] as PhysicsComponent
             val body = p.getBody()
-            body.applyForceToCenter(-body.linearVelocity.nor() * 5.0f, true)
+            body.applyForceToCenter(-body.linearVelocity * 5.0f, true)
         }
     }
 
