@@ -64,7 +64,7 @@ class GameMap(
 
         if (mapGenerator.shouldSpawnBlockade(camera.position.y)) {
             val position = mapGenerator.nextBlockade()
-            post(Notification.DESTRUCTIBLE_SPAWN, position)
+            post(Notification.BLOCKADE_SPAWN, position)
 
             log.debug { "Spawn Blockade at $position" }
         }
