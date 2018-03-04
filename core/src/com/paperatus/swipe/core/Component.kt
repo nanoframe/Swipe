@@ -48,6 +48,7 @@ abstract class InputComponent : Component {
 abstract class PhysicsComponent : Component {
     override val order = Component.Order.POST_UPDATE
     private val contactListeners = GdxArray<ContactListener>()
+    var onInit: ((Body) -> Unit)? = null
 
     /**
      * Called upon initialization to create Body instances.

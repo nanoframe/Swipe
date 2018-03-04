@@ -76,6 +76,7 @@ abstract class PhysicsScene(game: Game,
         if (gameObject.components.containsKey(PhysicsComponent::class)) {
             val com = (gameObject.components[PhysicsComponent::class] as PhysicsComponent)
             com.init(physicsWorld)
+            com.onInit?.invoke(com.getBody())
             com.getBody().userData = com
         }
     }
