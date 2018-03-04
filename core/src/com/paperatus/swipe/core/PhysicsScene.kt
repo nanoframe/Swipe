@@ -41,8 +41,8 @@ abstract class PhysicsScene(
                     val object2 = body2.getGameObject()
 
                     if (object1 != null && object2 != null) {
-                        object1.getComponent<PhysicsComponent>()?.postCollisionStart(object2)
-                        object2.getComponent<PhysicsComponent>()?.postCollisionStart(object1)
+                        object1.getComponent<PhysicsComponent>()?.postCollisionEnd(object2)
+                        object2.getComponent<PhysicsComponent>()?.postCollisionEnd(object1)
                     }
                 }
             }
