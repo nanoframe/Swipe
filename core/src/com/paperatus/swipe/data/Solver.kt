@@ -4,9 +4,15 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 
 object Solver {
-    fun solveIntersection(m1: Float, x1: Float, y1: Float,
-                          m2: Float, x2: Float, y2: Float,
-                          out: Vector2) {
+    fun solveIntersection(
+        m1: Float,
+        x1: Float,
+        y1: Float,
+        m2: Float,
+        x2: Float,
+        y2: Float,
+        out: Vector2
+    ) {
         val x: Float
         val y: Float
 
@@ -19,14 +25,12 @@ object Solver {
         if (isM1Vertical && isM2Vertical) {
             x = x1
             y = y1
-
         } else if ( // Infinite solutions
                 MathUtils.isEqual(x1, x2) &&
                 MathUtils.isEqual(y1, y2) && // Probably not needed
                 MathUtils.isEqual(m1, m2)) {
             x = x1
             y = y1
-
         } else if (isM1Vertical) {
             x = x1
             y = m2 * (x - x2) + y2

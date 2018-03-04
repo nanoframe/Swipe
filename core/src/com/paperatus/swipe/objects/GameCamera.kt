@@ -25,8 +25,8 @@ private const val ZOOM_MAX_CHANGE_PER_SECOND = 0.15f
 class GameCamera(width: Float, height: Float) :
         OrthographicCamera(width, height) {
 
-    var positionInterpolation: Interpolation = Interpolation.pow3Out
-    var velocityInterpolation: Interpolation = Interpolation.pow2Out
+    private var positionInterpolation: Interpolation = Interpolation.pow3Out
+    private var velocityInterpolation: Interpolation = Interpolation.pow2Out
 
     private val tempPosition = Vector3()
 

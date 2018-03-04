@@ -41,8 +41,7 @@ class Path {
                 MathUtils.random(0, availableTypes.size - 1))
         pathType.type = type
         pathType.direction =
-                if (MathUtils.randomBoolean()) { Direction.Left }
-                else { Direction.Right }
+                if (MathUtils.randomBoolean()) { Direction.Left } else { Direction.Right }
 
         return pathType
     }
@@ -57,6 +56,8 @@ class Path {
         }
     }
 
-    data class PathType(var type: Type = Type.Uninitialized,
-                        var direction: Direction = Direction.None)
+    data class PathType(
+        var type: Type = Type.Uninitialized,
+        var direction: Direction = Direction.None
+    )
 }

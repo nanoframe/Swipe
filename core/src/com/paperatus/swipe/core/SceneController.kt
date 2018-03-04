@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.ObjectMap
 import kotlin.math.max
 import kotlin.reflect.KClass
 
-
 /**
  * Provides a way to manage, order, and render Scenes.
  *

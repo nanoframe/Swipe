@@ -22,8 +22,10 @@ private const val LIMIT_FOLLOW_DISTANCE = 120.0f
 private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 // TODO: Dispose object and renderer
-class GameMap(var mapData: MapData,
-              var mapGenerator: MapGenerator): Subject() {
+class GameMap(
+    var mapData: MapData,
+    var mapGenerator: MapGenerator
+) : Subject() {
 
     companion object {
         private val log = Logger("GameMap")
@@ -207,9 +209,11 @@ class GameMap(var mapData: MapData,
     }
 
     private val sides = SidePoints()
-    private fun generatePathSide(point1: PathPoint,
-                                 point2: PathPoint,
-                                 point3: PathPoint): SidePoints {
+    private fun generatePathSide(
+        point1: PathPoint,
+        point2: PathPoint,
+        point3: PathPoint
+    ): SidePoints {
         // Point data
         val direction12 = PathPoint.obtain()
         val direction23 = PathPoint.obtain()
@@ -286,8 +290,10 @@ class GameMap(var mapData: MapData,
      * @param world the physics world.
      * @param chunk points of the map.
      */
-    private fun createBodyChunk(world: World,
-                                chunk: Chunk) {
+    private fun createBodyChunk(
+        world: World,
+        chunk: Chunk
+    ) {
         val restitution = 0.7f
 
         val bodyDef = BodyDef()
@@ -305,7 +311,6 @@ class GameMap(var mapData: MapData,
 
             val fixture = body.createFixture(shape, 0.0f)
             fixture.restitution = restitution
-
         }
         shape.dispose()
 
@@ -322,8 +327,12 @@ private class SidePoints {
         right.set(r)
     }
 
-    fun set(lx: Float, ly: Float,
-            rx: Float, ry: Float) {
+    fun set(
+        lx: Float,
+        ly: Float,
+        rx: Float,
+        ry: Float
+    ) {
         left.set(lx, ly)
         right.set(rx, ry)
     }

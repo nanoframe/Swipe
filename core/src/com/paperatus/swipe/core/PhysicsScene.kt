@@ -10,13 +10,15 @@ import com.badlogic.gdx.physics.box2d.Manifold
 import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.Game
 
-abstract class PhysicsScene(game: Game,
-                            gravity: Vector2,
-                            doSleep: Boolean = true) : ObjectScene(game) {
+abstract class PhysicsScene(
+    game: Game,
+    gravity: Vector2,
+    doSleep: Boolean = true
+) : ObjectScene(game) {
     protected val physicsWorld = World(gravity, doSleep)
 
     init {
-        physicsWorld.setContactListener(object: ContactListener {
+        physicsWorld.setContactListener(object : ContactListener {
             override fun beginContact(contact: Contact?) {
                 contact?.let {
                     val body1 = it.fixtureA.body
@@ -78,13 +80,8 @@ abstract class PhysicsScene(game: Game,
     override fun removeObject(gameObject: GameObject, identity: Boolean): Boolean {
         val status = super.removeObject(gameObject, identity)
 
-        val component = gameObject.getComponent<PhysicsComponent>()
-        if (component != null) {
-            component.destroy(physicsWorld)
-        }
+        gameObject.getComponent<PhysicsComponent>()?.destroy(physicsWorld)
 
         return status
     }
-
-
 }

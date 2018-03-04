@@ -17,7 +17,7 @@ const val MAX_VELOCITY = 27.0f
 class PlayerPhysicsComponent : PhysicsComponent() {
 
     private lateinit var physicsBody: Body
-    val radius = 0.7f
+    private val radius = 0.7f
 
     override fun init(world: World) {
         physicsBody = world.body(BodyDef.BodyType.DynamicBody) {

@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2
 /**
  * Provides a repeated texture in the specified direction
  */
-class TiledTexture(val texture: Texture) {
+class TiledTexture(private val texture: Texture) {
 
     enum class Direction {
         X, Y

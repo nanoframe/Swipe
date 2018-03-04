@@ -7,7 +7,7 @@ import com.paperatus.swipe.core.GameObject
 
 class KeyInputComponent : GameInputComponent() {
 
-    val direction = Vector2()
+    private val direction = Vector2()
 
     override fun updateInput(gameObject: GameObject) {
 

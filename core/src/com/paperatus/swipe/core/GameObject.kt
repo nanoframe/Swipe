@@ -79,17 +79,17 @@ open class GameObject() : Subject() {
     }
 
     /**
-     * Detatches a Component from the GameObject instance.
+     * Detaches a Component from the GameObject instance.
      */
-    inline fun <reified T : Component> detachComponent() = detachComponent(T::class)
+    inline fun <reified T : Component> detachComponent(): Component = detachComponent(T::class)
 
     /**
-     * Detatches a Component from the GameObject instance.
+     * Detaches a Component from the GameObject instance.
      *
      * @param type class type of the Component. [detachComponent] should be
      * called instead for a cleaner code.
      */
-    fun detachComponent(type: KClass<out Component>) = components.remove(type)
+    fun detachComponent(type: KClass<out Component>): Component = components.remove(type)
 
     inline fun <reified T : Component> getComponent() = getComponent(T::class)
 

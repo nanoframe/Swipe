@@ -8,8 +8,11 @@ import com.paperatus.swipe.data.lastItem
 import ktx.collections.GdxArray
 
 interface MapGenerator {
-    fun generatePoints(leftBound: Float, rightBound: Float,
-                                start: PathPoint): GdxArray<PathPoint>
+    fun generatePoints(
+        leftBound: Float,
+        rightBound: Float,
+        start: PathPoint
+    ): GdxArray<PathPoint>
 
     fun shouldSpawnDestructible(positionY: Float): Boolean
     fun nextDestructible(): Vector2
@@ -41,9 +44,11 @@ class ProceduralMapGenerator : MapGenerator {
     private var blockadeCount = 1
     private val tempVector = Vector2()
 
-    override fun generatePoints(leftBound: Float,
-                                rightBound: Float,
-                                start: PathPoint): GdxArray<PathPoint> {
+    override fun generatePoints(
+        leftBound: Float,
+        rightBound: Float,
+        start: PathPoint
+    ): GdxArray<PathPoint> {
 
         tempArray.clear()
 
@@ -81,10 +86,12 @@ class ProceduralMapGenerator : MapGenerator {
         return tempVector
     }
 
-    private fun generateSoftCurve(leftBound: Float,
-                                  rightBound: Float,
-                                  direction: Path.Direction,
-                                  start: PathPoint) {
+    private fun generateSoftCurve(
+        leftBound: Float,
+        rightBound: Float,
+        direction: Path.Direction,
+        start: PathPoint
+    ) {
         val count = randomSoftCurvePointCount()
 
         var previous = start
@@ -92,7 +99,7 @@ class ProceduralMapGenerator : MapGenerator {
             val nextPoint = PathPoint.obtain()
             nextPoint.set(previous)
 
-            val delta = when(direction) {
+            val delta = when (direction) {
                 Path.Direction.Left -> leftBound - previous.x
                 Path.Direction.Right -> rightBound - previous.x
                 Path.Direction.None -> throw RuntimeException()
@@ -110,10 +117,12 @@ class ProceduralMapGenerator : MapGenerator {
         }
     }
 
-    private fun generateHardCurve(leftBound: Float,
-                                  rightBound: Float,
-                                  direction: Path.Direction,
-                                  start: PathPoint) {
+    private fun generateHardCurve(
+        leftBound: Float,
+        rightBound: Float,
+        direction: Path.Direction,
+        start: PathPoint
+    ) {
         val count = randomHardCurvePointCount()
 
         var previous = start
@@ -121,7 +130,7 @@ class ProceduralMapGenerator : MapGenerator {
             val nextPoint = PathPoint.obtain()
             nextPoint.set(previous)
 
-            val delta = when(direction) {
+            val delta = when (direction) {
                 Path.Direction.Left -> leftBound - previous.x
                 Path.Direction.Right -> rightBound - previous.x
                 Path.Direction.None -> throw RuntimeException()
@@ -139,9 +148,11 @@ class ProceduralMapGenerator : MapGenerator {
         }
     }
 
-    private fun generateUp(leftBound: Float,
-                           rightBound: Float,
-                           start: PathPoint) {
+    private fun generateUp(
+        leftBound: Float,
+        rightBound: Float,
+        start: PathPoint
+    ) {
         val count = randomUpPointCount()
 
         var previousPoint = start
@@ -178,5 +189,4 @@ class ProceduralMapGenerator : MapGenerator {
     private fun randomUpPointCount() = MathUtils.random(
             UP_MIN_POINTS, UP_MAX_POINTS
     )
-
 }

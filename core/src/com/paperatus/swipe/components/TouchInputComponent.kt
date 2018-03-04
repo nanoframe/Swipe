@@ -14,8 +14,8 @@ class TouchInputComponent : GameInputComponent() {
         const val MAX_TOUCH_TIME = 1000.0f
     }
 
-    val direction = Vector2()
-    var lastTouchTime = System.currentTimeMillis()
+    private val direction = Vector2()
+    private var lastTouchTime = System.currentTimeMillis()
 
     override fun updateInput(gameObject: GameObject) {
 
@@ -44,7 +44,6 @@ class TouchInputComponent : GameInputComponent() {
 
             // Inform other components about the touch event
             gameObject.messageComponent(Message.MOVEMENT, direction)
-
         }
     }
 }

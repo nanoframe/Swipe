@@ -32,7 +32,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private val player: GameObject = GameObject("player.png")
-    lateinit var gameMap: GameMap
+    private lateinit var gameMap: GameMap
 
     private lateinit var background: TiledTexture
 
@@ -155,7 +155,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     inner class PathObjectSpawner : Observer {
         override fun receive(what: Int, payload: Any?) {
 
-            val pathObject: GameObject = when(what) {
+            val pathObject: GameObject = when (what) {
                 Notification.BLOCKADE_SPAWN -> Blockade()
                 Notification.DESTRUCTIBLE_SPAWN -> Destructible()
                 else -> return
@@ -165,7 +165,6 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                 size.set(3.0f, 2.789f)
                 position.set(payload as Vector2)
             })
-
         }
     }
 }

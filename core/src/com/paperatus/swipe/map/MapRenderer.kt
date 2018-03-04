@@ -13,8 +13,10 @@ import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.data.Solver
 import kotlin.math.sqrt
 
-class MapRenderer(var pathColor: Color,
-                  var edgeTexture: Texture) {
+class MapRenderer(
+    var pathColor: Color,
+    var edgeTexture: Texture
+) {
 
     private val edgeRenderer = EdgeRenderer(this, 120)
     private val pathRenderer = PathRenderer(this, 120)
@@ -36,8 +38,10 @@ class MapRenderer(var pathColor: Color,
     fun flushPath() = pathRenderer.flush()
 }
 
-private class EdgeRenderer(val mapRenderer: MapRenderer,
-                           maxVertices: Int = 60) {
+private class EdgeRenderer(
+    val mapRenderer: MapRenderer,
+    maxVertices: Int = 60
+) {
 
     var projectionMatrix: Matrix4? = null
 
@@ -143,8 +147,10 @@ private class EdgeRenderer(val mapRenderer: MapRenderer,
     }
 }
 
-private class PathRenderer(val mapRenderer: MapRenderer,
-                           maxVertices: Int = 24) {
+private class PathRenderer(
+    val mapRenderer: MapRenderer,
+    maxVertices: Int = 24
+) {
 
     var projectionMatrix: Matrix4? = null
 
