@@ -54,4 +54,9 @@ object Solver {
                 .nor()
                 .scl(width / 2.0f)
     }
+
+    fun inverseLerp(x: Float, min: Float, max: Float) = (x - min) / (max - min)
+
+    fun inverseLerpClamped(x: Float, min: Float, max: Float) = MathUtils.clamp(
+            inverseLerp(x, min, max), 0.0f, 1.0f)
 }

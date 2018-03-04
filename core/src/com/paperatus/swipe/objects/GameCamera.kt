@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
+import com.paperatus.swipe.data.Solver
 
 private const val DISTANCE_X_MIN = 1.0f
 private const val DISTANCE_X_MAX = 15.0f
@@ -46,8 +47,8 @@ class GameCamera(width: Float, height: Float) :
             // Calculate the amount to change per second relative to the
             // difference between the player's position and the current position
 
-            x = inverseLerpClamped(Math.abs(deltaX), DISTANCE_X_MIN, DISTANCE_X_MAX)
-            y = inverseLerpClamped(Math.abs(deltaY), DISTANCE_Y_MIN, DISTANCE_Y_MAX)
+            x = Solver.inverseLerpClamped(Math.abs(deltaX), DISTANCE_X_MIN, DISTANCE_X_MAX)
+            y = Solver.inverseLerpClamped(Math.abs(deltaY), DISTANCE_Y_MIN, DISTANCE_Y_MAX)
 
             x = positionInterpolation
                     // Interpolate
@@ -74,7 +75,7 @@ class GameCamera(width: Float, height: Float) :
 
         // Project the value from the range [VELOCITY_MIN, VELOCITY_MAX] to
         // [ZOOM_MIN, ZOOM_MAX] to calculate the expected zoom
-        val velocityAlpha = inverseLerpClamped(velocity, VELOCITY_MIN, VELOCITY_MAX)
+        val velocityAlpha = Solver.inverseLerpClamped(velocity, VELOCITY_MIN, VELOCITY_MAX)
         val targetZoom = MathUtils.lerp(ZOOM_MIN, ZOOM_MAX, velocityAlpha)
 
         // Determine how much change is needed to reach the target zoom
@@ -86,8 +87,4 @@ class GameCamera(width: Float, height: Float) :
 
         zoom += interpolatedZoom * delta
     }
-
-    fun inverseLerp(x: Float, min: Float, max: Float) = (x - min) / (max - min)
-    fun inverseLerpClamped(x: Float, min: Float, max: Float) = MathUtils.clamp(
-            inverseLerp(x, min, max), 0.0f, 1.0f)
 }
