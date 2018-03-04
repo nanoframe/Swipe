@@ -22,11 +22,13 @@ class Destructible : GameObject("blockade.png"), PhysicsComponent.ContactListene
         })
     }
 
-    override fun onContactBegin(other: Body) {
-        val velocity = other.linearVelocity.len()
+    // TODO: Check if GameObject is a Player
+    override fun onContactBegin(other: GameObject) {
+        val body = other.getComponent<PhysicsComponent>()!!.getBody()
+        val velocity = body.linearVelocity.len()
         health -= DAMAGE_PER_VELOCITY * velocity
     }
 
-    override fun onContactEnd(other: Body) {
+    override fun onContactEnd(other: GameObject) {
     }
 }

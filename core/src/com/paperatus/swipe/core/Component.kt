@@ -69,16 +69,16 @@ abstract class PhysicsComponent : Component {
         contactListeners.removeValue(contactListener, true)
     }
 
-    fun postCollisionStart(other: Body) {
+    fun postCollisionStart(other: GameObject) {
         contactListeners.forEach { it.onContactBegin(other) }
     }
 
-    fun postCollisionEnd(other: Body) {
+    fun postCollisionEnd(other: GameObject) {
         contactListeners.forEach { it.onContactEnd(other) }
     }
 
     interface ContactListener {
-        fun onContactBegin(other: Body)
-        fun onContactEnd(other: Body)
+        fun onContactBegin(other: GameObject)
+        fun onContactEnd(other: GameObject)
     }
 }

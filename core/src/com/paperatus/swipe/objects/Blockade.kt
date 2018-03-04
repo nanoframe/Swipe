@@ -21,10 +21,10 @@ class Blockade : GameObject("blockade.png"), PhysicsComponent.ContactListener {
         })
     }
 
-    override fun onContactBegin(other: Body) {
+    override fun onContactBegin(other: GameObject) {
         isHit = true
     }
 
-    override fun onContactEnd(other: Body) {
+    override fun onContactEnd(other: GameObject) {
     }
 }

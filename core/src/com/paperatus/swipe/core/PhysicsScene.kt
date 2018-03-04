@@ -24,8 +24,10 @@ abstract class PhysicsScene(game: Game,
                     val object1 = body1.getGameObject()
                     val object2 = body2.getGameObject()
 
-                    object1?.getComponent<PhysicsComponent>()?.postCollisionStart(body2)
-                    object2?.getComponent<PhysicsComponent>()?.postCollisionStart(body1)
+                    if (object1 != null && object2 != null) {
+                        object1.getComponent<PhysicsComponent>()?.postCollisionStart(object2)
+                        object2.getComponent<PhysicsComponent>()?.postCollisionStart(object1)
+                    }
                 }
             }
 
@@ -36,8 +38,10 @@ abstract class PhysicsScene(game: Game,
                     val object1 = body1.getGameObject()
                     val object2 = body2.getGameObject()
 
-                    object1?.getComponent<PhysicsComponent>()?.postCollisionEnd(body2)
-                    object2?.getComponent<PhysicsComponent>()?.postCollisionEnd(body1)
+                    if (object1 != null && object2 != null) {
+                        object1.getComponent<PhysicsComponent>()?.postCollisionStart(object2)
+                        object2.getComponent<PhysicsComponent>()?.postCollisionStart(object1)
+                    }
                 }
             }
 
