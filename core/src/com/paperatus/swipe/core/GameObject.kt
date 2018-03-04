@@ -33,6 +33,9 @@ open class GameObject() : Subject() {
 
     private val components = ObjectMap<KClass<out Component>, Component>()
 
+    var shouldRemove = false
+        private set
+
     constructor(sprite: String) : this() {
         spriteName = sprite
     }
@@ -43,6 +46,10 @@ open class GameObject() : Subject() {
      * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
      */
     open fun update(delta: Float) {
+    }
+
+    fun requestRemove() {
+        shouldRemove = true
     }
 
     /**

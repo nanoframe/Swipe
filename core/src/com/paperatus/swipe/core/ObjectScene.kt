@@ -24,6 +24,9 @@ abstract class ObjectScene(protected val game: Game) : Scene {
         removeQueue.forEach {
             removeObject(it)
         }
+        gameObjects.forEach {
+            if (it.shouldRemove) removeObject(it)
+        }
         removeQueue.clear()
     }
 
