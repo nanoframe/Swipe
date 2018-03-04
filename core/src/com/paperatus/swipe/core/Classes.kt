@@ -1,5 +1,6 @@
 package com.paperatus.swipe.core
 
+import com.badlogic.gdx.physics.box2d.Body
 import ktx.collections.GdxArray
 
 data class Size(var width: Float = 0.0f, var height: Float = 0.0f) {
@@ -24,4 +25,9 @@ fun <T> GdxArray<T>.filterBy(condition: (it: T) -> Boolean): GdxArray<T> {
 inline fun <reified T> GdxArray<*>.filterByType(): GdxArray<T> {
     val arr = filterBy { it is T }
     return arr as GdxArray<T>
+}
+
+fun Body.getGameObject(): GameObject {
+    assert(userData is GameObject)
+    return userData as GameObject
 }

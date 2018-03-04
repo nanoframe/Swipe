@@ -21,8 +21,8 @@ abstract class PhysicsScene(game: Game,
                 contact?.let {
                     val body1 = it.fixtureA.body
                     val body2 = it.fixtureB.body
-                    val component1 = body1.userData
-                    val component2 = body2.userData
+                    val component1 = body1.getGameObject()
+                    val component2 = body2.getGameObject()
 
                     if (component1 is PhysicsComponent) {
                         component1.postCollisionStart(body2)
@@ -73,20 +73,20 @@ abstract class PhysicsScene(game: Game,
     override fun addObject(gameObject: GameObject) {
         super.addObject(gameObject)
 
-        if (gameObject.components.containsKey(PhysicsComponent::class)) {
-            val com = (gameObject.components[PhysicsComponent::class] as PhysicsComponent)
-            com.init(physicsWorld)
-            com.onInit?.invoke(com.getBody())
-            com.getBody().userData = com
+        val component = gameObject.getComponent<PhysicsComponent>()
+        if (component != null) {
+            component.init(physicsWorld)
+            component.onInit?.invoke(component.getBody())
+            component.getBody().userData = gameObject
         }
     }
 
     override fun removeObject(gameObject: GameObject, identity: Boolean): Boolean {
         val status = super.removeObject(gameObject, identity)
 
-        if (gameObject.components.containsKey(PhysicsComponent::class)) {
-            val com = (gameObject.components[PhysicsComponent::class] as PhysicsComponent)
-            com.destroy(physicsWorld)
+        val component = gameObject.getComponent<PhysicsComponent>()
+        if (component != null) {
+            component.destroy(physicsWorld)
         }
 
         return status

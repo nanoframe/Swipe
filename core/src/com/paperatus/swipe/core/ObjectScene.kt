@@ -103,7 +103,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     // TODO: Implement a map for each order for faster updates
     private fun updateComponents(order: Component.Order) {
         gameObjects.forEach { gameObject ->
-            gameObject.components.values().forEach { component ->
+            gameObject.getComponents().values().forEach { component ->
                 if (component.order == order) component.update(gameObject)
             }
         }

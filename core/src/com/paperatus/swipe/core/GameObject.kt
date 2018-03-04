@@ -31,7 +31,7 @@ open class GameObject() : Subject() {
         }
     val anchor = Vector2()
 
-    val components = ObjectMap<KClass<out Component>, Component>()
+    private val components = ObjectMap<KClass<out Component>, Component>()
 
     constructor(sprite: String) : this() {
         spriteName = sprite
@@ -83,6 +83,14 @@ open class GameObject() : Subject() {
      * called instead for a cleaner code.
      */
     fun detachComponent(type: KClass<out Component>) = components.remove(type)
+
+    inline fun <reified T : Component> getComponent() = getComponent(T::class)
+
+    fun <T : Component> getComponent(type: KClass<T>): T? {
+        return components[type, null] as T?
+    }
+
+    fun getComponents() = components
 
     /**
      * Sends a message to other components with an optional payload

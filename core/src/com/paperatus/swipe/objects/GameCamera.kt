@@ -67,8 +67,7 @@ class GameCamera(width: Float, height: Float) :
     }
 
     private fun updateZoom(delta: Float, player: GameObject) {
-        val physicsComponent: PhysicsComponent =
-                player.components[PhysicsComponent::class] as PhysicsComponent
+        val physicsComponent = player.getComponent<PhysicsComponent>()!!
 
         val velocity = MathUtils.clamp(physicsComponent.getBody().linearVelocity.len(),
                 VELOCITY_MIN, VELOCITY_MAX)

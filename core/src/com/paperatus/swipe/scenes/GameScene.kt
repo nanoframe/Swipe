@@ -111,7 +111,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         gameObjects.filterByType<Blockade>().forEach {
             if (!it.isHit) return@forEach
             queueRemove(it)
-            val p = player.components[PhysicsComponent::class] as PhysicsComponent
+            val p = player.getComponent<PhysicsComponent>()!!
             val body = p.getBody()
             body.applyForceToCenter(-body.linearVelocity * 5.0f, true)
         }
