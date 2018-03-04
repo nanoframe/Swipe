@@ -16,6 +16,9 @@ class Destructible : GameObject("blockade.png"), PhysicsComponent.ContactListene
         shape.setAsBox(1.5f, 1.5f)
         attachComponent<PhysicsComponent>(StaticPhysicsComponent(shape).apply {
             addContactListener(this@Destructible)
+            onInit = fun(body: Body) {
+                body.fixtureList[0].restitution = 0.8f
+            }
         })
     }
 

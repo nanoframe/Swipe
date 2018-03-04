@@ -14,6 +14,10 @@ class Blockade : GameObject("blockade.png"), PhysicsComponent.ContactListener {
         shape.setAsBox(1.5f, 1.5f)
         attachComponent<PhysicsComponent>(StaticPhysicsComponent(shape).apply {
             addContactListener(this@Blockade)
+            onInit = fun(body: Body) {
+                val fixture = body.fixtureList[0]
+                fixture.isSensor = true
+            }
         })
     }
 
