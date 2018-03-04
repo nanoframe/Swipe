@@ -1,5 +1,6 @@
 package com.paperatus.swipe.components
 
+import COMPONENT_MESSAGE_BLOCKADE_COLLISION
 import COMPONENT_MESSAGE_MOVEMENT
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
@@ -12,8 +13,11 @@ import com.paperatus.swipe.core.InputComponent
 class KeyInputComponent : InputComponent() {
 
     val direction = Vector2()
+    var disabledEnd: Long = -1
 
     override fun update(gameObject: GameObject) {
+        if (System.currentTimeMillis() - disabledEnd < 0) return
+
         direction.x = when {
             Gdx.input.isKeyPressed(Input.Keys.LEFT) -> -1.0f
             Gdx.input.isKeyPressed(Input.Keys.RIGHT) -> 1.0f
@@ -31,6 +35,11 @@ class KeyInputComponent : InputComponent() {
         gameObject.messageComponent(COMPONENT_MESSAGE_MOVEMENT, direction)
     }
 
+    // TODO: Inherit PlayerInputComponent to reduce repeated codes
     override fun receive(what: ComponentMessage, payload: Any?) {
+        when (what) {
+            COMPONENT_MESSAGE_BLOCKADE_COLLISION -> disabledEnd =
+                    System.currentTimeMillis() + 500L
+        }
     }
 }

@@ -1,23 +1,24 @@
 package com.paperatus.swipe.components
 
+import COMPONENT_MESSAGE_BLOCKADE_COLLISION
 import COMPONENT_MESSAGE_MOVEMENT
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
-import com.paperatus.swipe.core.Component
 import com.paperatus.swipe.core.ComponentMessage
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 import ktx.box2d.body
 import ktx.math.times
+import ktx.math.unaryMinus
 
 const val MAX_VELOCITY = 27.0f
 
 class PlayerPhysicsComponent : PhysicsComponent() {
 
-    private var physicsBody: Body? = null
+    private lateinit var physicsBody: Body
     val radius = 0.7f
 
     override fun init(world: World) {
@@ -31,25 +32,25 @@ class PlayerPhysicsComponent : PhysicsComponent() {
             linearDamping = 0.8f
         }
 
-        physicsBody!!.setTransform(0.0f, 2.0f, 0.0f)
+        physicsBody.setTransform(0.0f, 2.0f, 0.0f)
     }
 
     override fun destroy(world: World) {
         world.destroyBody(physicsBody)
     }
 
-    override fun getBody(): Body = physicsBody!!
+    override fun getBody(): Body = physicsBody
 
     override fun update(gameObject: GameObject) {
         gameObject.position.set(
-                physicsBody!!.position.x + gameObject.size.width *
+                physicsBody.position.x + gameObject.size.width *
                         (gameObject.anchor.x - 0.5f),
-                physicsBody!!.position.y + gameObject.size.height *
+                physicsBody.position.y + gameObject.size.height *
                         (gameObject.anchor.y - 0.5f)
         )
 
         // Rotate in the direction of movement
-        val velocity = physicsBody!!.linearVelocity
+        val velocity = physicsBody.linearVelocity
         val velocityLen2 = velocity.len2()
 
         if (!MathUtils.isEqual(velocityLen2, 0.0f)) {
@@ -60,7 +61,7 @@ class PlayerPhysicsComponent : PhysicsComponent() {
 
         // Limit the max velocity
         if (velocityLen2 > MAX_VELOCITY * MAX_VELOCITY) {
-            physicsBody!!.linearVelocity = velocity.nor() * MAX_VELOCITY
+            physicsBody.linearVelocity = velocity.nor() * MAX_VELOCITY
         }
     }
 
@@ -68,8 +69,13 @@ class PlayerPhysicsComponent : PhysicsComponent() {
         // Receive input events from the InputComponent
         when (what) {
             COMPONENT_MESSAGE_MOVEMENT -> {
-                physicsBody!!.applyForceToCenter(
+                physicsBody.applyForceToCenter(
                         payload as Vector2,
+                        true)
+            }
+            COMPONENT_MESSAGE_BLOCKADE_COLLISION -> {
+                physicsBody.applyForceToCenter(
+                        -physicsBody.linearVelocity * 2.0f,
                         true)
             }
         }

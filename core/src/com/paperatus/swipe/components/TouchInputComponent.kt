@@ -1,5 +1,6 @@
 package com.paperatus.swipe.components
 
+import COMPONENT_MESSAGE_BLOCKADE_COLLISION
 import COMPONENT_MESSAGE_MOVEMENT
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Vector2
@@ -21,7 +22,10 @@ class TouchInputComponent : InputComponent() {
     val direction = Vector2()
     var lastTouchTime = System.currentTimeMillis()
 
+    var disabledEnd: Long = -1
+
     override fun update(gameObject: GameObject) {
+        if (System.currentTimeMillis() - disabledEnd < 0) return
 
         if (Gdx.input.isTouched) {
             val currentTime = System.currentTimeMillis()
@@ -53,5 +57,9 @@ class TouchInputComponent : InputComponent() {
     }
 
     override fun receive(what: ComponentMessage, payload: Any?) {
+        when (what) {
+            COMPONENT_MESSAGE_BLOCKADE_COLLISION -> disabledEnd =
+                    System.currentTimeMillis() + 500L
+        }
     }
 }

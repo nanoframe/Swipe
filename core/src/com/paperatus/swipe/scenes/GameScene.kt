@@ -25,6 +25,7 @@ import com.paperatus.swipe.map.ProceduralMapGenerator
 import com.paperatus.swipe.objects.Blockade
 import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.GameCamera
+import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
 import ktx.math.times
 import ktx.math.unaryMinus
@@ -52,7 +53,9 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                         Application.ApplicationType.iOS -> TouchInputComponent()
                         else -> TouchInputComponent()
                     })
-            attachComponent<PhysicsComponent>(PlayerPhysicsComponent())
+            attachComponent<PhysicsComponent>(PlayerPhysicsComponent().apply {
+                addContactListener(PlayerCollisionResponse(player))
+            })
         }
 
         addObject(player)
@@ -106,14 +109,6 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             }
 
             if (shouldRemove) queueRemove(it)
-        }
-
-        gameObjects.filterByType<Blockade>().forEach {
-            if (!it.isHit) return@forEach
-            queueRemove(it)
-            val p = player.getComponent<PhysicsComponent>()!!
-            val body = p.getBody()
-            body.applyForceToCenter(-body.linearVelocity * 5.0f, true)
         }
     }
 
