@@ -6,29 +6,24 @@ import com.paperatus.swipe.components.StaticPhysicsComponent
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
-const val DAMAGE_PER_VELOCITY = 2.0f
-class Destructible : GameObject("blockade.png"), PhysicsComponent.ContactListener {
-
-    var health = 100.0f
+class Destructible : GameObject("blockade.png") {
 
     init {
         val shape = PolygonShape()
         shape.setAsBox(1.5f, 1.5f)
         attachComponent<PhysicsComponent>(StaticPhysicsComponent(shape).apply {
-            addContactListener(this@Destructible)
             onInit = fun(body: Body) {
-                body.fixtureList[0].restitution = 0.8f
+                val fixture = body.fixtureList[0]
+                fixture.isSensor = true
             }
+            addContactListener(object : PhysicsComponent.ContactListener {
+                override fun onContactBegin(other: GameObject) {
+                    requestRemove()
+                }
+
+                override fun onContactEnd(other: GameObject) {
+                }
+            })
         })
-    }
-
-    // TODO: Check if GameObject is a Player
-    override fun onContactBegin(other: GameObject) {
-        val body = other.getComponent<PhysicsComponent>()!!.getBody()
-        val velocity = body.linearVelocity.len()
-        health -= DAMAGE_PER_VELOCITY * velocity
-    }
-
-    override fun onContactEnd(other: GameObject) {
     }
 }

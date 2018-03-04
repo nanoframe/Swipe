@@ -20,8 +20,8 @@ import com.paperatus.swipe.core.filterByType
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
 import com.paperatus.swipe.map.ProceduralMapGenerator
-import com.paperatus.swipe.objects.Blockade
 import com.paperatus.swipe.objects.Destructible
+import com.paperatus.swipe.objects.RoadBlock
 import com.paperatus.swipe.objects.GameCamera
 import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
@@ -97,7 +97,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         camera.update(delta, player)
 
-        gameObjects.filterByType<Destructible>().forEach {
+        gameObjects.filterByType<RoadBlock>().forEach {
             val shouldRemove = when {
                 it.position.y < gameMap.getLimit() -> true
                 it.health <= 0 -> true
@@ -156,8 +156,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         override fun receive(what: Int, payload: Any?) {
 
             val pathObject: GameObject = when (what) {
-                Notification.BLOCKADE_SPAWN -> Blockade()
-                Notification.DESTRUCTIBLE_SPAWN -> Destructible()
+                Notification.BLOCKADE_SPAWN -> Destructible()
+                Notification.DESTRUCTIBLE_SPAWN -> RoadBlock()
                 else -> return
             }
 

@@ -59,14 +59,14 @@ class GameMap(
             val position = mapGenerator.nextDestructible()
             post(Notification.DESTRUCTIBLE_SPAWN, position)
 
-            log.debug { "Spawn Destructible at $position" }
+            log.debug { "Spawn RoadBlock at $position" }
         }
 
         if (mapGenerator.shouldSpawnBlockade(camera.position.y)) {
             val position = mapGenerator.nextBlockade()
             post(Notification.BLOCKADE_SPAWN, position)
 
-            log.debug { "Spawn Blockade at $position" }
+            log.debug { "Spawn Destructible at $position" }
         }
     }
 

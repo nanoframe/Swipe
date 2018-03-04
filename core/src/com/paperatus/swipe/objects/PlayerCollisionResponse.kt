@@ -8,7 +8,7 @@ import com.paperatus.swipe.core.PhysicsComponent
 class PlayerCollisionResponse(private val player: GameObject) : PhysicsComponent.ContactListener {
     override fun onContactBegin(other: GameObject) {
         val message: ComponentMessage = when (other) {
-            is Blockade -> Message.BLOCKADE_COLLISION
+            is Destructible -> Message.BLOCKADE_COLLISION
             else -> return
         }
 
