@@ -27,7 +27,6 @@ inline fun <reified T> GdxArray<*>.filterByType(): GdxArray<T> {
     return arr as GdxArray<T>
 }
 
-fun Body.getGameObject(): GameObject {
-    assert(userData is GameObject)
-    return userData as GameObject
+fun Body.getGameObject(): GameObject? {
+    return userData as? GameObject
 }

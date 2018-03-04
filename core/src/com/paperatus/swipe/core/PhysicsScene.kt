@@ -21,16 +21,11 @@ abstract class PhysicsScene(game: Game,
                 contact?.let {
                     val body1 = it.fixtureA.body
                     val body2 = it.fixtureB.body
-                    val component1 = body1.getGameObject()
-                    val component2 = body2.getGameObject()
+                    val object1 = body1.getGameObject()
+                    val object2 = body2.getGameObject()
 
-                    if (component1 is PhysicsComponent) {
-                        component1.postCollisionStart(body2)
-                    }
-
-                    if (component2 is PhysicsComponent) {
-                        component2.postCollisionStart(body1)
-                    }
+                    object1?.getComponent<PhysicsComponent>()?.postCollisionStart(body2)
+                    object2?.getComponent<PhysicsComponent>()?.postCollisionStart(body1)
                 }
             }
 
@@ -38,16 +33,11 @@ abstract class PhysicsScene(game: Game,
                 contact?.let {
                     val body1 = it.fixtureA.body
                     val body2 = it.fixtureB.body
-                    val component1 = body1.userData
-                    val component2 = body2.userData
+                    val object1 = body1.getGameObject()
+                    val object2 = body2.getGameObject()
 
-                    if (component1 is PhysicsComponent) {
-                        component1.postCollisionEnd(body2)
-                    }
-
-                    if (component2 is PhysicsComponent) {
-                        component2.postCollisionEnd(body1)
-                    }
+                    object1?.getComponent<PhysicsComponent>()?.postCollisionEnd(body2)
+                    object2?.getComponent<PhysicsComponent>()?.postCollisionEnd(body1)
                 }
             }
 
