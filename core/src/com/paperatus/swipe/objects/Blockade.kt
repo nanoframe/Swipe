@@ -7,7 +7,6 @@ import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
 class Blockade : GameObject("blockade.png") {
-    var isHit = false
 
     init {
         val shape = PolygonShape()
@@ -17,6 +16,15 @@ class Blockade : GameObject("blockade.png") {
                 val fixture = body.fixtureList[0]
                 fixture.isSensor = true
             }
+            addContactListener(object: PhysicsComponent.ContactListener {
+                override fun onContactBegin(other: GameObject) {
+                    requestRemove()
+                }
+
+                override fun onContactEnd(other: GameObject) {
+                }
+
+            })
         })
     }
 }
