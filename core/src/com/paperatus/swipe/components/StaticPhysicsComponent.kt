@@ -13,7 +13,7 @@ class StaticPhysicsComponent(private val shape: Shape) : PhysicsComponent() {
 
     override fun init(world: World) {
         val body = world.createBody(BodyDef())
-        val fixture = body.createFixture(shape, 0.0f)
+        body.createFixture(shape, 0.0f)
 
         shape.dispose()
 

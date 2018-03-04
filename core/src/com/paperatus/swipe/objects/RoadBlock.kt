@@ -22,6 +22,10 @@ class RoadBlock : GameObject("blockade.png"), PhysicsComponent.ContactListener {
         })
     }
 
+    override fun update(delta: Float) {
+        if (health <= 0) requestRemove()
+    }
+
     // TODO: Check if GameObject is a Player
     override fun onContactBegin(other: GameObject) {
         val body = other.getComponent<PhysicsComponent>()!!.getBody()

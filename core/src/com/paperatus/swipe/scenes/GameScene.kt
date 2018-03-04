@@ -16,7 +16,7 @@ import com.paperatus.swipe.core.Observer
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.TiledTexture
-import com.paperatus.swipe.core.filterByType
+import com.paperatus.swipe.core.filterBy
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
 import com.paperatus.swipe.map.ProceduralMapGenerator
@@ -97,10 +97,9 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         camera.update(delta, player)
 
-        gameObjects.filterByType<RoadBlock>().forEach {
+        gameObjects.filterBy { it is RoadBlock || it is Destructible }.forEach {
             val shouldRemove = when {
                 it.position.y < gameMap.getLimit() -> true
-                it.health <= 0 -> true
                 else -> false
             }
 
