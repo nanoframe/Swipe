@@ -1,14 +1,9 @@
 package com.paperatus.swipe.components
 
-import COMPONENT_MESSAGE_BLOCKADE_COLLISION
-import COMPONENT_MESSAGE_MOVEMENT
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.core.Component
-import com.paperatus.swipe.core.ComponentMessage
 import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.InputComponent
 
 class KeyInputComponent : GameInputComponent() {
 
@@ -30,6 +25,6 @@ class KeyInputComponent : GameInputComponent() {
 
         direction.scl(5.0f)
 
-        gameObject.messageComponent(COMPONENT_MESSAGE_MOVEMENT, direction)
+        gameObject.messageComponent(Message.MOVEMENT, direction)
     }
 }

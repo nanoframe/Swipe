@@ -1,6 +1,5 @@
 package com.paperatus.swipe.objects
 
-import COMPONENT_MESSAGE_BLOCKADE_COLLISION
 import com.paperatus.swipe.core.ComponentMessage
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
@@ -9,7 +8,7 @@ import com.paperatus.swipe.core.PhysicsComponent
 class PlayerCollisionResponse(private val player: GameObject) : PhysicsComponent.ContactListener {
     override fun onContactBegin(other: GameObject) {
         val message: ComponentMessage = when(other) {
-            is Blockade -> COMPONENT_MESSAGE_BLOCKADE_COLLISION
+            is Blockade -> Message.BLOCKADE_COLLISION
             else -> return
         }
 

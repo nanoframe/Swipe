@@ -1,9 +1,7 @@
 package com.paperatus.swipe.components
 
-import COMPONENT_MESSAGE_MOVEMENT
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.core.ComponentMessage
 import com.paperatus.swipe.core.GameObject
 import ktx.math.times
 
@@ -45,7 +43,7 @@ class TouchInputComponent : GameInputComponent() {
             direction.y = -direction.y // y-down to y-up
 
             // Inform other components about the touch event
-            gameObject.messageComponent(COMPONENT_MESSAGE_MOVEMENT, direction)
+            gameObject.messageComponent(Message.MOVEMENT, direction)
 
         }
     }

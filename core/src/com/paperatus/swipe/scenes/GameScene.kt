@@ -1,7 +1,5 @@
 package com.paperatus.swipe.scenes
 
-import NOTIFICATION_BLOCKADE_SPAWN
-import NOTIFICATION_DESTRUCTIBLE_SPAWN
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -27,8 +25,6 @@ import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.GameCamera
 import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
-import ktx.math.times
-import ktx.math.unaryMinus
 
 const val WORLD_SIZE = 50.0f // World height
 
@@ -160,8 +156,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         override fun receive(what: Int, payload: Any?) {
 
             val pathObject: GameObject = when(what) {
-                NOTIFICATION_BLOCKADE_SPAWN -> Blockade()
-                NOTIFICATION_DESTRUCTIBLE_SPAWN -> Destructible()
+                Notification.BLOCKADE_SPAWN -> Blockade()
+                Notification.DESTRUCTIBLE_SPAWN -> Destructible()
                 else -> return
             }
 

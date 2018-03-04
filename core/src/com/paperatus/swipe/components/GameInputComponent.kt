@@ -1,6 +1,5 @@
 package com.paperatus.swipe.components
 
-import COMPONENT_MESSAGE_BLOCKADE_COLLISION
 import com.paperatus.swipe.core.ComponentMessage
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.InputComponent
@@ -17,7 +16,7 @@ abstract class GameInputComponent : InputComponent() {
 
     override fun receive(what: ComponentMessage, payload: Any?) {
         when (what) {
-            COMPONENT_MESSAGE_BLOCKADE_COLLISION -> disabledEnd =
+            Message.BLOCKADE_COLLISION -> disabledEnd =
                     System.currentTimeMillis() + 500L
         }
     }

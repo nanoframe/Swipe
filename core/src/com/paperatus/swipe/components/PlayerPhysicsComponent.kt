@@ -1,7 +1,5 @@
 package com.paperatus.swipe.components
 
-import COMPONENT_MESSAGE_BLOCKADE_COLLISION
-import COMPONENT_MESSAGE_MOVEMENT
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
@@ -68,12 +66,12 @@ class PlayerPhysicsComponent : PhysicsComponent() {
     override fun receive(what: ComponentMessage, payload: Any?) {
         // Receive input events from the InputComponent
         when (what) {
-            COMPONENT_MESSAGE_MOVEMENT -> {
+            Message.MOVEMENT -> {
                 physicsBody.applyForceToCenter(
                         payload as Vector2,
                         true)
             }
-            COMPONENT_MESSAGE_BLOCKADE_COLLISION -> {
+            Message.BLOCKADE_COLLISION -> {
                 physicsBody.applyForceToCenter(
                         -physicsBody.linearVelocity * 2.0f,
                         true)
