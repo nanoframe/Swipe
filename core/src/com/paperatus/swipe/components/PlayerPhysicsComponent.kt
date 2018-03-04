@@ -1,11 +1,13 @@
 package com.paperatus.swipe.components
 
+import COMPONENT_MESSAGE_MOVEMENT
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.core.Component
+import com.paperatus.swipe.core.ComponentMessage
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 import ktx.box2d.body
@@ -62,10 +64,10 @@ class PlayerPhysicsComponent : PhysicsComponent() {
         }
     }
 
-    override fun receive(what: Component.Message, payload: Any?) {
+    override fun receive(what: ComponentMessage, payload: Any?) {
         // Receive input events from the InputComponent
         when (what) {
-            Component.Message.MOVEMENT -> {
+            COMPONENT_MESSAGE_MOVEMENT -> {
                 physicsBody!!.applyForceToCenter(
                         payload as Vector2,
                         true)

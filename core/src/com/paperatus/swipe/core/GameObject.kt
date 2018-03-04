@@ -98,7 +98,7 @@ open class GameObject() : Subject() {
      * @param what message type
      * @param payload the data of the message; defaults to null
      */
-    fun messageComponent(what: Component.Message, payload: Any? = null) {
+    fun messageComponent(what: ComponentMessage, payload: Any? = null) {
         components.keys().forEach {
             components[it].receive(what, payload)
         }

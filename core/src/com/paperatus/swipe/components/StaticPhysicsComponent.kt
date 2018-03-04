@@ -2,10 +2,9 @@ package com.paperatus.swipe.components
 
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.Shape
 import com.badlogic.gdx.physics.box2d.World
-import com.paperatus.swipe.core.Component
+import com.paperatus.swipe.core.ComponentMessage
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
@@ -32,7 +31,7 @@ class StaticPhysicsComponent(private val shape: Shape) : PhysicsComponent() {
                 0.0f)
     }
 
-    override fun receive(what: Component.Message, payload: Any?) {
+    override fun receive(what: ComponentMessage, payload: Any?) {
     }
 
     override fun getBody(): Body = physicsBody!!

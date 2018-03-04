@@ -4,15 +4,14 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 import ktx.collections.GdxArray
 
+typealias ComponentMessage = Int
+
 /**
  * Components that can be attached to a GameObject instance to extend functionality.
  *
  * @property order update order in which the component should be updated.
  */
 interface Component {
-    enum class Message {
-        MOVEMENT
-    }
 
     enum class Order {
         PRE_UPDATE, UPDATE, POST_UPDATE,
@@ -32,7 +31,7 @@ interface Component {
     /**
      * Receives a message sent by other components
      */
-    fun receive(what: Message, payload: Any? = null)
+    fun receive(what: ComponentMessage, payload: Any? = null)
 }
 
 /**
