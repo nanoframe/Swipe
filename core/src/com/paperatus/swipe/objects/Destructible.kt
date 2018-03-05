@@ -23,6 +23,7 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
                 fixture.isSensor = true
             }
             addContactListener(this@Destructible)
+            positioning = PhysicsComponent.Positioning.BODY_TO_OBJECT
         })
         anchor.set(0.5f, 0.5f)
     }

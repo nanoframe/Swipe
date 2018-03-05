@@ -19,6 +19,7 @@ class RoadBlock : GameObject(), PhysicsComponent.ContactListener {
             onInit = fun(body: Body) {
                 body.fixtureList[0].restitution = 0.8f
             }
+            positioning = PhysicsComponent.Positioning.BODY_TO_OBJECT
         })
     }
 

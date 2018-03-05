@@ -45,9 +45,38 @@ abstract class InputComponent : Component {
  * Provides a Physics system to a GameObject.
  */
 abstract class PhysicsComponent : Component {
+
+    enum class Positioning {
+        OBJECT_TO_BODY, BODY_TO_OBJECT
+    }
+
+    var positioning = Positioning.OBJECT_TO_BODY
+
     override val order = Component.Order.POST_UPDATE
     private val contactListeners = GdxArray<ContactListener>()
     var onInit: ((Body) -> Unit)? = null
+
+    override fun update(delta: Float, gameObject: GameObject) {
+        val physicsBody = getBody()
+        when (positioning) {
+            Positioning.OBJECT_TO_BODY -> {
+                gameObject.position.set(
+                        physicsBody.position.x + gameObject.size.width *
+                                (gameObject.anchor.x - 0.5f),
+                        physicsBody.position.y + gameObject.size.height *
+                                (gameObject.anchor.y - 0.5f)
+                )
+            }
+            Positioning.BODY_TO_OBJECT -> {
+                physicsBody.setTransform(
+                        gameObject.position.x + gameObject.size.width *
+                                (0.5f - gameObject.anchor.x),
+                        gameObject.position.y + gameObject.size.height *
+                                (0.5f - gameObject.anchor.y),
+                        0.0f)
+            }
+        }
+    }
 
     /**
      * Called upon initialization to create Body instances.

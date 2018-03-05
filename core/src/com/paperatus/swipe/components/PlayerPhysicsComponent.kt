@@ -40,12 +40,7 @@ class PlayerPhysicsComponent : PhysicsComponent() {
     override fun getBody(): Body = physicsBody
 
     override fun update(delta: Float, gameObject: GameObject) {
-        gameObject.position.set(
-                physicsBody.position.x + gameObject.size.width *
-                        (gameObject.anchor.x - 0.5f),
-                physicsBody.position.y + gameObject.size.height *
-                        (gameObject.anchor.y - 0.5f)
-        )
+        super.update(delta, gameObject)
 
         // Rotate in the direction of movement
         val velocity = physicsBody.linearVelocity
