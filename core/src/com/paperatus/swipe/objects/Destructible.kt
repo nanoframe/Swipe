@@ -6,7 +6,7 @@ import com.paperatus.swipe.components.StaticPhysicsComponent
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
-class Destructible : GameObject("blockade.png") {
+class Destructible : GameObject() {
 
     init {
         val shape = PolygonShape()

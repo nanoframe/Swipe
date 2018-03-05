@@ -81,3 +81,14 @@ abstract class PhysicsComponent : Component {
         fun onContactEnd(other: GameObject)
     }
 }
+
+abstract class RenderComponent : Component {
+    override val order = Component.Order.RENDER
+    abstract var spriteName: String
+}
+
+class SpriteRenderComponent(override var spriteName: String) : RenderComponent() {
+    override fun update(gameObject: GameObject) = Unit
+
+    override fun receive(what: ComponentMessage, payload: Any?) = Unit
+}

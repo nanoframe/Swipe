@@ -46,36 +46,47 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     override fun render(batch: SpriteBatch) {
         updateComponents(Component.Order.RENDER)
 
-        gameObjects.forEach {
-            assert(it.spriteName != "") {
-                "The sprite name cannot be empty!"
-            }
-            assert(game.assets.isLoaded(it.spriteName)) {
-                "Asset \"${it.spriteName}\" doesn't exist!"
-            }
+        gameObjects.forEach { gameObject ->
+            gameObject.getComponent<RenderComponent>()?.let {
+                val spriteName = it.spriteName
+                assert(spriteName != "") {
+                    "The sprite name cannot be empty!"
+                }
+                assert(game.assets.isLoaded(spriteName)) {
+                    "Asset \"$spriteName\" doesn't exist!"
+                }
 
-            val image: Any = game.assets[it.spriteName]
+                renderGameObject(batch, gameObject, spriteName)
+            }
+        }
+    }
 
+    private fun renderGameObject(batch: SpriteBatch,
+                                 gameObject: GameObject,
+                                 spriteName: String) {
+        val image: Any = game.assets[spriteName]
+
+        gameObject.apply {
             when (image) {
                 is Texture -> batch.draw(image,
-                        it.position.x - it.size.width * it.anchor.x,
-                        it.position.y - it.size.height * it.anchor.y,
-                        it.anchor.x * it.size.width, it.anchor.y * it.size.height,
-                        it.bounds.width, it.bounds.height,
+                        position.x - size.width * anchor.x,
+                        position.y - size.height * anchor.y,
+                        anchor.x * size.width, anchor.y * size.height,
+                        bounds.width, bounds.height,
                         1.0f, 1.0f,
-                        it.rotation,
+                        rotation,
                         0, 0, image.width, image.height,
                         false, false
                 )
                 is TextureRegion -> batch.draw(image,
-                        it.position.x, it.position.y,
+                        position.x, position.y,
                         0.5f, 0.5f,
-                        it.size.width, it.size.height,
+                        size.width, size.height,
                         1.0f, 1.0f,
-                        it.rotation
+                        rotation
                 )
                 else -> ktx.log.error(RuntimeException()) {
-                    "Asset '$it.spriteName' is of type ${image::class}!"
+                    "Asset '$spriteName' is of type ${image::class}!"
                 }
             }
         }

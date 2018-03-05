@@ -15,6 +15,8 @@ import com.paperatus.swipe.core.InputComponent
 import com.paperatus.swipe.core.Observer
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
+import com.paperatus.swipe.core.RenderComponent
+import com.paperatus.swipe.core.SpriteRenderComponent
 import com.paperatus.swipe.core.TiledTexture
 import com.paperatus.swipe.core.filterBy
 import com.paperatus.swipe.map.GameMap
@@ -31,7 +33,7 @@ const val WORLD_SIZE = 50.0f // World height
 class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
-    private val player: GameObject = GameObject("player.png")
+    private val player: GameObject = GameObject()
     private lateinit var gameMap: GameMap
 
     private lateinit var background: TiledTexture
@@ -52,6 +54,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             attachComponent<PhysicsComponent>(PlayerPhysicsComponent().apply {
                 addContactListener(PlayerCollisionResponse(player))
             })
+            attachComponent<RenderComponent>(SpriteRenderComponent("player.png"))
         }
 
         addObject(player)
@@ -155,8 +158,19 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         override fun receive(what: Int, payload: Any?) {
 
             val pathObject: GameObject = when (what) {
-                Notification.BLOCKADE_SPAWN -> Destructible()
-                Notification.DESTRUCTIBLE_SPAWN -> RoadBlock()
+                Notification.BLOCKADE_SPAWN -> {
+                    val d = Destructible()
+                    d.attachComponent<RenderComponent>(
+                            SpriteRenderComponent("blockade.png"))
+                    d
+                }
+
+                Notification.DESTRUCTIBLE_SPAWN -> {
+                    val r = RoadBlock()
+                    r.attachComponent<RenderComponent>(
+                            SpriteRenderComponent("blockade.png"))
+                    r
+                }
                 else -> return
             }
 
