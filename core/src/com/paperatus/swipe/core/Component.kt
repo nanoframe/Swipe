@@ -93,7 +93,7 @@ class SpriteRenderComponent(override var spriteName: String) : RenderComponent()
     override fun receive(what: ComponentMessage, payload: Any?) = Unit
 }
 
-class AnimationRenderComponent(private vararg var frames: String, val delay: Float) : RenderComponent() {
+class AnimationRenderComponent(val delay: Float, private vararg var frames: String) : RenderComponent() {
 
     override var spriteName = frames[0]
     private var timeElapsed = 0.0f

@@ -40,9 +40,11 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     /**
      * Renders every GameObject in [gameObjects].
      *
-     * Calling [render] will retrieve the [GameObject.spriteName] of the object
+     * Calling [render] will retrieve the [RenderComponent.spriteName] of the object
      * and render the image onto the screen. The asset should be loaded in
      * [com.paperatus.swipe.Game.assets].
+     *
+     * The GameObject will be skipped if it does not contain a RenderComponent component
      *
      * Overriding this method allows for custom rendering.
      *
