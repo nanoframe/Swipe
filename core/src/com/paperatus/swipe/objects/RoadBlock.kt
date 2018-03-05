@@ -9,7 +9,7 @@ import com.paperatus.swipe.core.PhysicsComponent
 const val DAMAGE_PER_VELOCITY = 2.0f
 class RoadBlock : GameObject("blockade.png"), PhysicsComponent.ContactListener {
 
-    var health = 100.0f
+    private var health = 100.0f
 
     init {
         val shape = PolygonShape()

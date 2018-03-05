@@ -103,6 +103,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                 else -> false
             }
 
+            // FIX: The program may crash if the object has been requested to be removed
             if (shouldRemove) queueRemove(it)
         }
     }

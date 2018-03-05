@@ -17,7 +17,12 @@ abstract class ObjectScene(protected val game: Game) : Scene {
 
     override fun preUpdate(delta: Float) = updateComponents(Component.Order.PRE_UPDATE)
 
-    override fun update(delta: Float) = updateComponents(Component.Order.UPDATE)
+    override fun update(delta: Float) {
+        gameObjects.forEach {
+            it.update(delta)
+        }
+        updateComponents(Component.Order.UPDATE)
+    }
 
     override fun postUpdate(delta: Float) {
         updateComponents(Component.Order.POST_UPDATE)
