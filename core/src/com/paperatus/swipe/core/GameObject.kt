@@ -18,9 +18,7 @@ import kotlin.reflect.KClass
  * @property anchor position where all transforms are relative to.
  * @property components Components that are attached to the GameObject
  */
-open class GameObject() : Subject() {
-    var spriteName: String = ""
-
+open class GameObject : Subject() {
     val position = Vector2()
     val size = Size()
     var rotation: Float = 0.0f
@@ -35,10 +33,6 @@ open class GameObject() : Subject() {
 
     var shouldRemove = false
         private set
-
-    constructor(sprite: String) : this() {
-        spriteName = sprite
-    }
 
     /**
      * Updates the GameObject.

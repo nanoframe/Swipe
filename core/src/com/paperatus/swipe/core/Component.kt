@@ -26,7 +26,7 @@ interface Component {
      *
      * @param gameObject current GameObject.
      */
-    fun update(gameObject: GameObject)
+    fun update(delta: Float, gameObject: GameObject)
 
     /**
      * Receives a message sent by other components
@@ -79,5 +79,34 @@ abstract class PhysicsComponent : Component {
     interface ContactListener {
         fun onContactBegin(other: GameObject)
         fun onContactEnd(other: GameObject)
+    }
+}
+
+abstract class RenderComponent : Component {
+    override val order = Component.Order.RENDER
+    abstract var spriteName: String
+}
+
+class SpriteRenderComponent(override var spriteName: String) : RenderComponent() {
+    override fun update(delta: Float, gameObject: GameObject) = Unit
+
+    override fun receive(what: ComponentMessage, payload: Any?) = Unit
+}
+
+class AnimationRenderComponent(val delay: Float, private vararg var frames: String) : RenderComponent() {
+
+    override var spriteName = frames[0]
+    private var timeElapsed = 0.0f
+    private var index = 0
+
+    override fun update(delta: Float, gameObject: GameObject) {
+        timeElapsed += delta
+        if (timeElapsed >= delay) {
+            index = (index + 1) % frames.size
+            spriteName = frames[index]
+        }
+    }
+
+    override fun receive(what: ComponentMessage, payload: Any?) {
     }
 }

@@ -15,7 +15,12 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     val gameObjects = GdxArray<GameObject>()
     private val removeQueue = GdxArray<GameObject>()
 
-    override fun preUpdate(delta: Float) = updateComponents(Component.Order.PRE_UPDATE)
+    private var componentDelta = 0.0f
+
+    override fun preUpdate(delta: Float) {
+        componentDelta = delta
+        updateComponents(Component.Order.PRE_UPDATE)
+    }
 
     override fun update(delta: Float) {
         gameObjects.forEach {
@@ -40,9 +45,11 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     /**
      * Renders every GameObject in [gameObjects].
      *
-     * Calling [render] will retrieve the [GameObject.spriteName] of the object
+     * Calling [render] will retrieve the [RenderComponent.spriteName] of the object
      * and render the image onto the screen. The asset should be loaded in
      * [com.paperatus.swipe.Game.assets].
+     *
+     * The GameObject will be skipped if it does not contain a RenderComponent component
      *
      * Overriding this method allows for custom rendering.
      *
@@ -51,36 +58,47 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     override fun render(batch: SpriteBatch) {
         updateComponents(Component.Order.RENDER)
 
-        gameObjects.forEach {
-            assert(it.spriteName != "") {
-                "The sprite name cannot be empty!"
-            }
-            assert(game.assets.isLoaded(it.spriteName)) {
-                "Asset \"${it.spriteName}\" doesn't exist!"
-            }
+        gameObjects.forEach { gameObject ->
+            gameObject.getComponent<RenderComponent>()?.let {
+                val spriteName = it.spriteName
+                assert(spriteName != "") {
+                    "The sprite name cannot be empty!"
+                }
+                assert(game.assets.isLoaded(spriteName)) {
+                    "Asset \"$spriteName\" doesn't exist!"
+                }
 
-            val image: Any = game.assets[it.spriteName]
+                renderGameObject(batch, gameObject, spriteName)
+            }
+        }
+    }
 
+    private fun renderGameObject(batch: SpriteBatch,
+                                 gameObject: GameObject,
+                                 spriteName: String) {
+        val image: Any = game.assets[spriteName]
+
+        gameObject.apply {
             when (image) {
                 is Texture -> batch.draw(image,
-                        it.position.x - it.size.width * it.anchor.x,
-                        it.position.y - it.size.height * it.anchor.y,
-                        it.anchor.x * it.size.width, it.anchor.y * it.size.height,
-                        it.bounds.width, it.bounds.height,
+                        position.x - size.width * anchor.x,
+                        position.y - size.height * anchor.y,
+                        anchor.x * size.width, anchor.y * size.height,
+                        bounds.width, bounds.height,
                         1.0f, 1.0f,
-                        it.rotation,
+                        rotation,
                         0, 0, image.width, image.height,
                         false, false
                 )
                 is TextureRegion -> batch.draw(image,
-                        it.position.x, it.position.y,
+                        position.x, position.y,
                         0.5f, 0.5f,
-                        it.size.width, it.size.height,
+                        size.width, size.height,
                         1.0f, 1.0f,
-                        it.rotation
+                        rotation
                 )
                 else -> ktx.log.error(RuntimeException()) {
-                    "Asset '$it.spriteName' is of type ${image::class}!"
+                    "Asset '$spriteName' is of type ${image::class}!"
                 }
             }
         }
@@ -112,7 +130,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     private fun updateComponents(order: Component.Order) {
         gameObjects.forEach { gameObject ->
             gameObject.getComponents().values().forEach { component ->
-                if (component.order == order) component.update(gameObject)
+                if (component.order == order) component.update(componentDelta, gameObject)
             }
         }
     }

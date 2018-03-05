@@ -7,7 +7,7 @@ import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
 const val DAMAGE_PER_VELOCITY = 2.0f
-class RoadBlock : GameObject("blockade.png"), PhysicsComponent.ContactListener {
+class RoadBlock : GameObject(), PhysicsComponent.ContactListener {
 
     private var health = 100.0f
 
