@@ -61,7 +61,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     override fun create() {
-        background = TiledTexture(game.assets["background.png", Texture::class.java])
+        background = TiledTexture(game.assets["background.png"])
         background.direction = TiledTexture.Direction.Y
 
         background.repeatCount = 640.0f / 15.0f

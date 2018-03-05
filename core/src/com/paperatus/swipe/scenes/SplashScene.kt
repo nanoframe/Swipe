@@ -1,6 +1,5 @@
 package com.paperatus.swipe.scenes
 
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.paperatus.swipe.Game
 import com.paperatus.swipe.core.Scene
@@ -8,14 +7,13 @@ import com.paperatus.swipe.core.Scene
 class SplashScene(private val game: Game) : Scene {
 
     override fun create() {
-        game.assets.load("player.png", Texture::class.java)
-        game.assets.load("background.png", Texture::class.java)
-        game.assets.load("edge.png", Texture::class.java)
-        game.assets.load("blockade.png", Texture::class.java)
+        game.assets.loadTexture("player.png")
+        game.assets.loadTexture("background.png")
+        game.assets.loadTexture("edge.png")
+        game.assets.loadTexture("blockade.png")
     }
 
     override fun update(delta: Float) {
-        game.assets.finishLoading()
         game.sceneController.createScenes()
         game.sceneController.setScene<GameScene>()
     }

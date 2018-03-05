@@ -3,7 +3,7 @@ package com.paperatus.swipe
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.assets.AssetManager
+import com.paperatus.swipe.core.Assets
 import com.paperatus.swipe.core.SceneController
 import com.paperatus.swipe.scenes.GameScene
 import com.paperatus.swipe.scenes.SplashScene
@@ -11,7 +11,7 @@ import com.paperatus.swipe.scenes.SplashScene
 class Game : ApplicationListener {
 
     val sceneController = SceneController()
-    val assets = AssetManager()
+    val assets = Assets()
 
     override fun create() {
         Gdx.app.logLevel = Application.LOG_DEBUG
