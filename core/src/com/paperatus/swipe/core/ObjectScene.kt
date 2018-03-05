@@ -91,7 +91,8 @@ abstract class ObjectScene(protected val game: Game) : Scene {
                         false, false
                 )
                 is TextureRegion -> batch.draw(image,
-                        position.x, position.y,
+                        position.x - size.width * anchor.x,
+                        position.y - size.height * anchor.y,
                         0.5f, 0.5f,
                         size.width, size.height,
                         1.0f, 1.0f,

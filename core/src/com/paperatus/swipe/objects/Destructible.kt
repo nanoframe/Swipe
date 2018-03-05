@@ -24,6 +24,7 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
             }
             addContactListener(this@Destructible)
         })
+        anchor.set(0.5f, 0.5f)
     }
 
     override fun onContactBegin(other: GameObject) {

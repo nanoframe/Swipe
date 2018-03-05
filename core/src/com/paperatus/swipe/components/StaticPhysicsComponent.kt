@@ -24,10 +24,11 @@ class StaticPhysicsComponent(private val shape: Shape) : PhysicsComponent() {
         world.destroyBody(physicsBody)
     }
 
+    // TODO: Create base function to set the position of the physics body
     override fun update(delta: Float, gameObject: GameObject) {
         physicsBody!!.setTransform(
-                gameObject.position.x + gameObject.size.width / 2.0f,
-                gameObject.position.y + gameObject.size.height / 2.0f,
+                gameObject.position.x,
+                gameObject.position.y,
                 0.0f)
     }
 
