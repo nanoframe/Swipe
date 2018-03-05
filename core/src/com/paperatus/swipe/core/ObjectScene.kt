@@ -15,7 +15,12 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     val gameObjects = GdxArray<GameObject>()
     private val removeQueue = GdxArray<GameObject>()
 
-    override fun preUpdate(delta: Float) = updateComponents(Component.Order.PRE_UPDATE)
+    private var componentDelta = 0.0f
+
+    override fun preUpdate(delta: Float) {
+        componentDelta = delta
+        updateComponents(Component.Order.PRE_UPDATE)
+    }
 
     override fun update(delta: Float) = updateComponents(Component.Order.UPDATE)
 
@@ -118,7 +123,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     private fun updateComponents(order: Component.Order) {
         gameObjects.forEach { gameObject ->
             gameObject.getComponents().values().forEach { component ->
-                if (component.order == order) component.update(gameObject)
+                if (component.order == order) component.update(componentDelta, gameObject)
             }
         }
     }

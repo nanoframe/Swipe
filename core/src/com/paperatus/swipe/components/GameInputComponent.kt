@@ -10,7 +10,7 @@ abstract class GameInputComponent : InputComponent() {
 
     abstract fun updateInput(gameObject: GameObject)
 
-    override fun update(gameObject: GameObject) {
+    override fun update(delta: Float, gameObject: GameObject) {
         if (System.currentTimeMillis() - disabledEnd >= 0) updateInput(gameObject)
     }
 

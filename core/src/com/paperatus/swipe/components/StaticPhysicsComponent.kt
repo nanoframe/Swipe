@@ -24,7 +24,7 @@ class StaticPhysicsComponent(private val shape: Shape) : PhysicsComponent() {
         world.destroyBody(physicsBody)
     }
 
-    override fun update(gameObject: GameObject) {
+    override fun update(delta: Float, gameObject: GameObject) {
         physicsBody!!.setTransform(
                 gameObject.position.x + gameObject.size.width / 2.0f,
                 gameObject.position.y + gameObject.size.height / 2.0f,

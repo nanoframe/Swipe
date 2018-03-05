@@ -39,7 +39,7 @@ class PlayerPhysicsComponent : PhysicsComponent() {
 
     override fun getBody(): Body = physicsBody
 
-    override fun update(gameObject: GameObject) {
+    override fun update(delta: Float, gameObject: GameObject) {
         gameObject.position.set(
                 physicsBody.position.x + gameObject.size.width *
                         (gameObject.anchor.x - 0.5f),
