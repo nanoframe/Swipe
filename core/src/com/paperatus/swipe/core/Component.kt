@@ -93,7 +93,8 @@ class SpriteRenderComponent(override var spriteName: String) : RenderComponent()
     override fun receive(what: ComponentMessage, payload: Any?) = Unit
 }
 
-class AnimationRenderComponent(val delay: Float, private vararg var frames: String) : RenderComponent() {
+class AnimationRenderComponent(val delay: Float,
+                               private vararg var frames: String) : RenderComponent() {
 
     override var spriteName = frames[0]
     private var timeElapsed = 0.0f
@@ -103,6 +104,31 @@ class AnimationRenderComponent(val delay: Float, private vararg var frames: Stri
         timeElapsed += delta
         if (timeElapsed >= delay) {
             index = (index + 1) % frames.size
+            spriteName = frames[index]
+        }
+    }
+
+    override fun receive(what: ComponentMessage, payload: Any?) {
+    }
+}
+
+class AnimateOnceRenderComponent(val delay: Float,
+                                 private vararg var frames: String) : RenderComponent() {
+    var onFinish: (() -> Unit)? = null
+
+    override var spriteName = frames[0]
+    private var timeElapsed = 0.0f
+    private var index = 0
+
+    override fun update(delta: Float, gameObject: GameObject) {
+        timeElapsed += delta
+        if (timeElapsed >= delay) {
+            if (index + 1 >= frames.size) {
+                onFinish?.invoke()
+                return
+            }
+
+            index++
             spriteName = frames[index]
         }
     }
