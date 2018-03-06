@@ -69,18 +69,9 @@ abstract class ObjectScene(protected val game: Game) : Scene {
                 }
 
                 // Apply custom rendering params if requested
-                it.customParams?.let {
-                    batch.end()
-                    batch.begin()
-                    it.invoke(batch)
-                }
-
+                it.customParams?.applyParams(batch)
                 renderGameObject(batch, gameObject, spriteName)
-
-                it.customParams?.let {_ ->
-                    batch.end()
-                    batch.begin()
-                }
+                it.customParams?.resetParams(batch)
 
                 Unit
             }

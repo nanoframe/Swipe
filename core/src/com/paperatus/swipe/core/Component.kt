@@ -115,7 +115,7 @@ abstract class PhysicsComponent : Component {
 abstract class RenderComponent : Component {
     override val order = Component.Order.RENDER
     abstract var spriteName: String
-    var customParams: ((SpriteBatch) -> Unit)? = null
+    var customParams: RenderParams? = null
 }
 
 class SpriteRenderComponent(override var spriteName: String) : RenderComponent() {
