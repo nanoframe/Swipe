@@ -9,7 +9,7 @@ import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.RenderComponent
 import com.paperatus.swipe.data.ExplosionParticleBlending
 
-private val explosionAnimation = Array(137) {
+private val explosionAnimation = Array(127) {
     "destructible/explosion$it"
 }
 
