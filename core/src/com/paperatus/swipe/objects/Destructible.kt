@@ -7,6 +7,7 @@ import com.paperatus.swipe.core.AnimateOnceRenderComponent
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.RenderComponent
+import com.paperatus.swipe.data.ExplosionParticleBlending
 
 private val explosionAnimation = Array(137) {
     "destructible/explosion$it"
@@ -31,14 +32,15 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
     override fun onContactBegin(other: GameObject) {
         size.set(10.0f, 10.0f)
         detachComponent<RenderComponent>()
-        attachComponent<RenderComponent>(AnimateOnceRenderComponent(
-                1.0f / 60.0f,
-                *explosionAnimation
-        ).also {
-            it.onFinish = fun () {
+
+        val animation = AnimateOnceRenderComponent(1.0f / 60.0f, *explosionAnimation)
+        animation.apply {
+            onFinish = fun () {
                 requestRemove()
             }
-        })
+            customParams = ExplosionParticleBlending()
+        }
+        attachComponent<RenderComponent>(animation)
     }
 
     override fun onContactEnd(other: GameObject) {
