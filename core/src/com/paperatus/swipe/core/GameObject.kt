@@ -77,6 +77,7 @@ open class GameObject : Subject() {
      */
     inline fun <reified T : Component> detachComponent(): Component = detachComponent(T::class)
 
+    // TODO: Add callback for attaching/detaching components on the component
     /**
      * Detaches a Component from the GameObject instance.
      *
