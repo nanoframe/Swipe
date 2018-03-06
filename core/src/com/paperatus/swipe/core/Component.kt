@@ -1,5 +1,6 @@
 package com.paperatus.swipe.core
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 import ktx.collections.GdxArray
@@ -114,6 +115,7 @@ abstract class PhysicsComponent : Component {
 abstract class RenderComponent : Component {
     override val order = Component.Order.RENDER
     abstract var spriteName: String
+    var customParams: ((SpriteBatch) -> Unit)? = null
 }
 
 class SpriteRenderComponent(override var spriteName: String) : RenderComponent() {

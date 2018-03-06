@@ -68,7 +68,21 @@ abstract class ObjectScene(protected val game: Game) : Scene {
                     "Asset \"$spriteName\" doesn't exist!"
                 }
 
+                // Apply custom rendering params if requested
+                it.customParams?.let {
+                    batch.end()
+                    batch.begin()
+                    it.invoke(batch)
+                }
+
                 renderGameObject(batch, gameObject, spriteName)
+
+                it.customParams?.let {_ ->
+                    batch.end()
+                    batch.begin()
+                }
+
+                Unit
             }
         }
     }
