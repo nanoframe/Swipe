@@ -10,17 +10,13 @@ object Actions {
 }
 
 interface Action {
-    fun step(delta: Float)
+    fun update(delta: Float)
 }
 
 // Action group
 
 abstract class ActionGroup : Action {
     private val actionList = GdxArray<Action>()
-
-    override fun step(delta: Float) {
-
-    }
 
     fun delay(duration: Float) {
         add(DelayAction(duration))
@@ -44,13 +40,16 @@ abstract class ActionGroup : Action {
 }
 
 class Sequence : ActionGroup() {
+    override fun update(delta: Float) {
+
+    }
 
 }
 
 // Actions that can modify the state of the GameObject
 
 abstract class TimeAction(val duration: Float) : Action {
-    override fun step(delta: Float) = Unit
+    override fun update(delta: Float) = Unit
 }
 
 class MoveTo(val x: Float, val y: Float, duration: Float) : TimeAction(duration) {
