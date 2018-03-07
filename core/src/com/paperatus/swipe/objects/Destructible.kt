@@ -3,7 +3,7 @@ package com.paperatus.swipe.objects
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.paperatus.swipe.components.StaticPhysicsComponent
-import com.paperatus.swipe.core.AnimateOnceRenderComponent
+import com.paperatus.swipe.core.AnimationRenderComponent
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.RenderComponent
@@ -33,12 +33,16 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
         size.set(10.0f, 10.0f)
         detachComponent<RenderComponent>()
 
-        val animation = AnimateOnceRenderComponent(1.0f / 60.0f, *explosionAnimation)
+        val animation = AnimationRenderComponent(
+                1.0f / 60.0f,
+                false,
+                *explosionAnimation)
         animation.apply {
             onFinish = fun () {
                 requestRemove()
             }
             customParams = ExplosionParticleBlending()
+            start()
         }
         attachComponent<RenderComponent>(animation)
     }

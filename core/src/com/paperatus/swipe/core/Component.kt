@@ -1,5 +1,6 @@
 package com.paperatus.swipe.core
 
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
@@ -112,58 +113,54 @@ abstract class PhysicsComponent : Component {
     }
 }
 
-abstract class RenderComponent : Component {
-    override val order = Component.Order.RENDER
-    abstract var spriteName: String
-    var customParams: RenderParams? = null
-}
+open class RenderComponent(val renderMode: Mode = Mode.SPRITE, open var sprite: String? = null) : Component {
+    enum class Mode {
+        SPRITE, CUSTOM
+    }
 
-class SpriteRenderComponent(override var spriteName: String) : RenderComponent() {
     override fun update(delta: Float, gameObject: GameObject) = Unit
 
     override fun receive(what: ComponentMessage, payload: Any?) = Unit
+
+
+    override val order = Component.Order.RENDER
+    var customParams: RenderParams? = null
 }
 
 class AnimationRenderComponent(val delay: Float,
-                               private vararg var frames: String) : RenderComponent() {
+                               val repeat: Boolean = true,
+                               private vararg var frames: String) : RenderComponent(Mode.SPRITE) {
 
-    override var spriteName = frames[0]
-    private var timeElapsed = 0.0f
-    private var index = 0
-
-    override fun update(delta: Float, gameObject: GameObject) {
-        timeElapsed += delta
-        if (timeElapsed >= delay) {
-            index = (index + 1) % frames.size
-            spriteName = frames[index]
-        }
-    }
-
-    override fun receive(what: ComponentMessage, payload: Any?) {
-    }
-}
-
-class AnimateOnceRenderComponent(val delay: Float,
-                                 private vararg var frames: String) : RenderComponent() {
     var onFinish: (() -> Unit)? = null
 
-    override var spriteName = frames[0]
+    var isRunning = false
+        private set
+
+    override var sprite: String? = frames[0]
     private var timeElapsed = 0.0f
     private var index = 0
 
     override fun update(delta: Float, gameObject: GameObject) {
+        if (!isRunning) return
+
         timeElapsed += delta
         if (timeElapsed >= delay) {
-            if (index + 1 >= frames.size) {
+            if (!repeat && index + 1 >= frames.size) {
                 onFinish?.invoke()
-                return
+                isRunning = false
+            } else {
+                index = (index + 1) % frames.size
             }
-
-            index++
-            spriteName = frames[index]
+            sprite = frames[index]
         }
     }
 
-    override fun receive(what: ComponentMessage, payload: Any?) {
+    fun start() {
+        index = 0
+        isRunning = true
+    }
+
+    fun stop() {
+        isRunning = false
     }
 }

@@ -60,10 +60,14 @@ abstract class ObjectScene(protected val game: Game) : Scene {
 
         gameObjects.forEach { gameObject ->
             gameObject.getComponent<RenderComponent>()?.let {
-                val spriteName = it.spriteName
+                if (it.renderMode == RenderComponent.Mode.CUSTOM) return
+                val spriteName = it.sprite
+                        ?: throw RuntimeException("GameObject.spriteName isn't initialized!")
+
                 assert(spriteName != "") {
                     "The sprite name cannot be empty!"
                 }
+
                 assert(game.assets.isLoaded(spriteName)) {
                     "Asset \"$spriteName\" doesn't exist!"
                 }

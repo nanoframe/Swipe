@@ -15,7 +15,6 @@ import com.paperatus.swipe.core.Observer
 import com.paperatus.swipe.core.PhysicsComponent
 import com.paperatus.swipe.core.PhysicsScene
 import com.paperatus.swipe.core.RenderComponent
-import com.paperatus.swipe.core.SpriteRenderComponent
 import com.paperatus.swipe.core.TiledTexture
 import com.paperatus.swipe.core.filterBy
 import com.paperatus.swipe.map.GameMap
@@ -53,7 +52,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             attachComponent<PhysicsComponent>(PlayerPhysicsComponent().apply {
                 addContactListener(PlayerCollisionResponse(player))
             })
-            attachComponent<RenderComponent>(SpriteRenderComponent("player.png"))
+            attachComponent<RenderComponent>(RenderComponent(sprite = "player.png"))
         }
 
         addObject(player)
@@ -161,14 +160,14 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                 Notification.BLOCKADE_SPAWN -> {
                     val d = Destructible()
                     d.attachComponent<RenderComponent>(
-                            SpriteRenderComponent("blockade.png"))
+                            RenderComponent(sprite = "blockade.png"))
                     d
                 }
 
                 Notification.DESTRUCTIBLE_SPAWN -> {
                     val r = RoadBlock()
                     r.attachComponent<RenderComponent>(
-                            SpriteRenderComponent("blockade.png"))
+                            RenderComponent(sprite = "blockade.png"))
                     r
                 }
                 else -> return
