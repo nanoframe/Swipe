@@ -60,7 +60,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
 
         gameObjects.forEach { gameObject ->
             gameObject.getComponent<RenderComponent>()?.let {
-                if (it.renderMode == RenderComponent.Mode.CUSTOM) return
+                if (it.renderMode == RenderComponent.Mode.CUSTOM) return@forEach
                 val spriteName = it.sprite
                         ?: throw RuntimeException("GameObject.spriteName isn't initialized!")
 
