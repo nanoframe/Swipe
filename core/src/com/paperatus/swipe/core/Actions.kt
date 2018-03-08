@@ -44,7 +44,7 @@ abstract class ActionGroup : Action {
     private fun add(action: Action) = actionList.add(action)
 }
 
-class Sequence : ActionGroup() {
+class Sequence internal constructor() : ActionGroup() {
 
     private lateinit var subject: GameObject
 
@@ -98,7 +98,7 @@ abstract class TimeAction(private val duration: Float) : Action {
     abstract fun step(alpha: Float)
 }
 
-class MoveTo(val x: Float, val y: Float, duration: Float) : TimeAction(duration) {
+class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) : TimeAction(duration) {
     private var g: GameObject? = null
     private var startX: Float = 0.0f
     private var startY: Float = 0.0f
@@ -119,6 +119,6 @@ class MoveTo(val x: Float, val y: Float, duration: Float) : TimeAction(duration)
 
 // Others
 
-class DelayAction(duration: Float = 0.0f) : TimeAction(duration) {
+class DelayAction internal constructor(duration: Float = 0.0f) : TimeAction(duration) {
     override fun step(alpha: Float) = Unit
 }
