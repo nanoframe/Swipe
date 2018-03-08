@@ -63,6 +63,8 @@ open class GameObject : Subject() {
         activeAction = null
     }
 
+    fun isActionActive() = activeAction != null
+
     private fun updateAction(delta: Float) = activeAction?.let {
         it.update(delta)
         if (it.isFinished()) stopAction()
