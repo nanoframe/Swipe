@@ -18,22 +18,10 @@ interface Action {
     fun isFinished() : Boolean
 }
 
-// Action group
-
 abstract class ActionGroup : Action {
     protected val actionList = GdxArray<Action>()
 
-    fun delay(duration: Float) {
-        add(DelayAction(duration))
-    }
-
-    fun moveTo(position: Vector2, duration: Float) {
-        moveTo(position.x, position.y, duration)
-    }
-
-    fun moveTo(x: Float, y: Float, duration: Float) {
-        add(MoveTo(x, y, duration))
-    }
+    // Action groups
 
     fun sequence(actions: Sequence.() -> Unit) {
         val s = Sequence()
@@ -41,8 +29,45 @@ abstract class ActionGroup : Action {
         add(s)
     }
 
+    // State actions
+
+    fun moveTo(x: Float, y: Float, duration: Float) {
+        add(MoveTo(x, y, duration))
+    }
+
+    fun moveTo(position: Vector2, duration: Float) {
+        moveTo(position.x, position.y, duration)
+    }
+
+    // Others
+
+    fun delay(duration: Float) {
+        add(DelayAction(duration))
+    }
+
     private fun add(action: Action) = actionList.add(action)
 }
+
+abstract class TimeAction(internal val duration: Float) : Action {
+    internal var currentDuration = 0.0f
+
+    override fun start(gameObject: GameObject) {
+    }
+
+    override fun update(delta: Float) {
+        currentDuration += delta
+        step((currentDuration / duration).coerceAtMost(1.0f))
+    }
+
+    override fun end() {
+    }
+
+    override fun isFinished() = (currentDuration / duration) >= 1.0f
+
+    abstract fun step(alpha: Float)
+}
+
+// Action groups
 
 class Sequence internal constructor() : ActionGroup() {
 
@@ -85,25 +110,6 @@ class Sequence internal constructor() : ActionGroup() {
 }
 
 // Actions that can modify the state of the GameObject
-
-abstract class TimeAction(internal val duration: Float) : Action {
-    internal var currentDuration = 0.0f
-
-    override fun start(gameObject: GameObject) {
-    }
-
-    override fun update(delta: Float) {
-        currentDuration += delta
-        step((currentDuration / duration).coerceAtMost(1.0f))
-    }
-
-    override fun end() {
-    }
-
-    override fun isFinished() = (currentDuration / duration) >= 1.0f
-
-    abstract fun step(alpha: Float)
-}
 
 class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) : TimeAction(duration) {
     private var g: GameObject? = null
