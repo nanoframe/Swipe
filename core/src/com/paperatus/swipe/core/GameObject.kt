@@ -9,7 +9,6 @@ import kotlin.reflect.KClass
 /**
  * Interface for objects that can be rendered onto the scene.
  *
- * @property spriteName the filename of the image of the object.
  * An empty string or a nonexistent file will throw an exception.
  * @property position position of the GameObject.
  * @property size size of the GameObject to render
@@ -31,8 +30,7 @@ open class GameObject : Subject() {
     val anchor = Vector2()
 
     private val components = ObjectMap<KClass<out Component>, Component>()
-    var activeAction: Action? = null
-        private set
+    private var activeAction: Action? = null
 
     var shouldRemove = false
         private set
