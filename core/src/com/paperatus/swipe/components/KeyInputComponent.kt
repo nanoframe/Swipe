@@ -23,7 +23,7 @@ class KeyInputComponent : GameInputComponent() {
             else -> 0.0f
         }
 
-        direction.scl(5.0f)
+        direction.scl(10.0f)
 
         gameObject.messageComponent(Message.MOVEMENT, direction)
     }

@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.ObjectMap
-import kotlin.math.max
+import kotlin.math.min
 import kotlin.reflect.KClass
 
 /**
@@ -103,7 +103,7 @@ class SceneController : Disposable {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         if (!paused) activeScene?.let {
-            val delta = max(Gdx.graphics.deltaTime, maxDeltaTime)
+            val delta = min(Gdx.graphics.deltaTime, maxDeltaTime)
             it.preUpdate(delta)
             it.update(delta)
             it.postUpdate(delta)

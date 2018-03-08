@@ -10,7 +10,7 @@ import ktx.math.times
  */
 class TouchInputComponent : GameInputComponent() {
     companion object {
-        const val SPEED_MULTIPLIER = 20.0f
+        const val SPEED_MULTIPLIER = 40.0f
         const val MAX_TOUCH_TIME = 1000.0f
     }
 
