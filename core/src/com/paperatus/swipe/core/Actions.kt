@@ -58,18 +58,25 @@ class Sequence internal constructor() : ActionGroup() {
     override fun update(delta: Float) {
         if (isFinished()) return
 
+        // Calculate the amount of time the action has went over
+        // if the action has been completed
+        val timeOffset = activeAction?.let {
+            if (!it.isFinished()) return@let 0.0f
+
+            it.end()
+            activeAction = null
+            index++
+
+            return@let if (it is TimeAction) it.currentDuration - it.duration
+            else 0.0f
+        } ?: 0.0f
+
         activeAction = activeAction ?: actionList[index].apply {
             start(subject)
         }
 
         val action = activeAction!!
-        action.update(delta)
-
-        if (action.isFinished()) {
-            action.end()
-            activeAction = null
-            index++
-        }
+        action.update(delta + timeOffset)
     }
 
     override fun end() = Unit
@@ -79,8 +86,8 @@ class Sequence internal constructor() : ActionGroup() {
 
 // Actions that can modify the state of the GameObject
 
-abstract class TimeAction(private val duration: Float) : Action {
-    private var currentDuration = 0.0f
+abstract class TimeAction(internal val duration: Float) : Action {
+    internal var currentDuration = 0.0f
 
     override fun start(gameObject: GameObject) {
     }
