@@ -50,6 +50,7 @@ abstract class ActionGroup : Action {
 
 abstract class TimeAction(internal val duration: Float) : Action {
     internal var currentDuration = 0.0f
+        private set
 
     override fun start(gameObject: GameObject) {
     }
@@ -81,8 +82,6 @@ class Sequence internal constructor() : ActionGroup() {
     }
 
     override fun update(delta: Float) {
-        if (isFinished()) return
-
         // Calculate the amount of time the action has went over
         // if the action has been completed
         val timeOffset = activeAction?.let {
@@ -95,6 +94,8 @@ class Sequence internal constructor() : ActionGroup() {
             return@let if (it is TimeAction) it.currentDuration - it.duration
             else 0.0f
         } ?: 0.0f
+
+        if (isFinished()) return
 
         activeAction = activeAction ?: actionList[index].apply {
             start(subject)
