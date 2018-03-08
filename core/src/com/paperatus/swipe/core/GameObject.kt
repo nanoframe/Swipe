@@ -1,5 +1,6 @@
 package com.paperatus.swipe.core
 
+import Action
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ObjectMap
@@ -30,6 +31,8 @@ open class GameObject : Subject() {
     val anchor = Vector2()
 
     private val components = ObjectMap<KClass<out Component>, Component>()
+    var activeAction: Action? = null
+        private set
 
     var shouldRemove = false
         private set
@@ -40,11 +43,33 @@ open class GameObject : Subject() {
      * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
      */
     open fun update(delta: Float) {
+        updateAction(delta)
     }
 
     fun requestRemove() {
         shouldRemove = true
     }
+
+    fun runAction(action: Action) {
+        activeAction?.let {
+            ktx.log.info("[WARN]") {
+                "The current active action on a GameObject will be replaced!\n"
+            }
+        }
+
+        action.start(this)
+        activeAction = action
+    }
+
+    fun stopAction() {
+        activeAction = null
+    }
+
+    private fun updateAction(delta: Float) = activeAction?.let {
+        it.update(delta)
+        if (it.isFinished()) stopAction()
+    }
+
 
     /**
      * Attaches a Component onto the GameObject instance.
