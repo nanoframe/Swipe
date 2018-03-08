@@ -1,4 +1,6 @@
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
+import com.paperatus.swipe.core.GameObject
 import ktx.collections.GdxArray
 
 object Actions {
@@ -10,13 +12,16 @@ object Actions {
 }
 
 interface Action {
+    fun start(gameObject: GameObject)
     fun update(delta: Float)
+    fun end(gameObject: GameObject)
+    fun isFinished() : Boolean
 }
 
 // Action group
 
 abstract class ActionGroup : Action {
-    private val actionList = GdxArray<Action>()
+    protected val actionList = GdxArray<Action>()
 
     fun delay(duration: Float) {
         add(DelayAction(duration))
@@ -40,25 +45,69 @@ abstract class ActionGroup : Action {
 }
 
 class Sequence : ActionGroup() {
-    override fun update(delta: Float) {
 
+    private var index = 0
+    override fun start(gameObject: GameObject) = Unit
+
+    override fun update(delta: Float) {
+        if (isFinished()) return
+        actionList[index].let {
+            it.update(delta)
+            if (it.isFinished()) index++
+        }
     }
 
+    override fun end(gameObject: GameObject) = Unit
+
+    override fun isFinished() = index >= actionList.size
 }
 
 // Actions that can modify the state of the GameObject
 
-abstract class TimeAction(val duration: Float) : Action {
-    override fun update(delta: Float) = Unit
+abstract class TimeAction(private val duration: Float) : Action {
+    private var currentDuration = 0.0f
+
+    override fun start(gameObject: GameObject) {
+    }
+
+    override fun update(delta: Float) {
+        currentDuration += delta
+        step((currentDuration / duration).coerceAtMost(1.0f))
+    }
+
+    override fun end(gameObject: GameObject) {
+    }
+
+    override fun isFinished() = (currentDuration / duration) >= 1.0f
+
+    abstract fun step(alpha: Float)
 }
 
 class MoveTo(val x: Float, val y: Float, duration: Float) : TimeAction(duration) {
+    private var g: GameObject? = null
+    private var startX: Float = 0.0f
+    private var startY: Float = 0.0f
+
+    override fun start(gameObject: GameObject) {
+        g = gameObject
+        startX = gameObject.position.x
+        startY = gameObject.position.y
+    }
+
+    override fun step(alpha: Float) {
+        val newX = MathUtils.lerp(startX, x, alpha)
+        val newY = MathUtils.lerp(startY, y, alpha)
+        g!!.position.set(newX, newY)
+    }
 
 }
 
 // Others
 
-class DelayAction(duration: Float = 0.0f) : TimeAction(duration)
+class DelayAction(duration: Float = 0.0f) : TimeAction(duration) {
+    override fun step(alpha: Float) {
+    }
+}
 
 fun temp() {
     val a = Actions.sequence {
