@@ -129,6 +129,9 @@ class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) :
         g!!.position.set(newX, newY)
     }
 
+    override fun end() {
+        g!!.position.set(x, y)
+    }
 }
 
 // Others
