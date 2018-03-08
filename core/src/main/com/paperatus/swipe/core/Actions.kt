@@ -9,6 +9,11 @@ object Actions {
         sequence.init()
         return sequence
     }
+
+    fun moveTo(x: Float, y: Float, duration: Float) = MoveTo(x, y, duration)
+
+    fun moveTo(position: Vector2, duration: Float) =
+            moveTo(position.x, position.y, duration)
 }
 
 interface Action {
@@ -33,10 +38,6 @@ abstract class ActionGroup : Action {
 
     fun moveTo(x: Float, y: Float, duration: Float) {
         add(MoveTo(x, y, duration))
-    }
-
-    fun moveTo(position: Vector2, duration: Float) {
-        moveTo(position.x, position.y, duration)
     }
 
     // Others
