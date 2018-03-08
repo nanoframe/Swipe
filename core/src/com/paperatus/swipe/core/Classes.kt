@@ -27,6 +27,9 @@ inline fun <reified T> GdxArray<*>.filterByType(): GdxArray<T> {
     return arr as GdxArray<T>
 }
 
+fun <T> GdxArray<T>.getOrNull(index: Int) : T? =
+        if (index >= size) null else this[index]
+
 fun Body.getGameObject(): GameObject? {
     return userData as? GameObject
 }

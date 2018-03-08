@@ -14,7 +14,7 @@ object Actions {
 interface Action {
     fun start(gameObject: GameObject)
     fun update(delta: Float)
-    fun end(gameObject: GameObject)
+    fun end()
     fun isFinished() : Boolean
 }
 
@@ -46,18 +46,33 @@ abstract class ActionGroup : Action {
 
 class Sequence : ActionGroup() {
 
+    private lateinit var subject: GameObject
+
     private var index = 0
-    override fun start(gameObject: GameObject) = Unit
+    private var activeAction: Action? = null
+
+    override fun start(gameObject: GameObject) {
+        subject = gameObject
+    }
 
     override fun update(delta: Float) {
         if (isFinished()) return
-        actionList[index].let {
-            it.update(delta)
-            if (it.isFinished()) index++
+
+        activeAction = activeAction ?: actionList[index].apply {
+            start(subject)
+        }
+
+        val action = activeAction!!
+        action.update(delta)
+
+        if (action.isFinished()) {
+            action.end()
+            activeAction = null
+            index++
         }
     }
 
-    override fun end(gameObject: GameObject) = Unit
+    override fun end() = Unit
 
     override fun isFinished() = index >= actionList.size
 }
@@ -75,7 +90,7 @@ abstract class TimeAction(private val duration: Float) : Action {
         step((currentDuration / duration).coerceAtMost(1.0f))
     }
 
-    override fun end(gameObject: GameObject) {
+    override fun end() {
     }
 
     override fun isFinished() = (currentDuration / duration) >= 1.0f
@@ -105,17 +120,5 @@ class MoveTo(val x: Float, val y: Float, duration: Float) : TimeAction(duration)
 // Others
 
 class DelayAction(duration: Float = 0.0f) : TimeAction(duration) {
-    override fun step(alpha: Float) {
-    }
-}
-
-fun temp() {
-    val a = Actions.sequence {
-        delay(0.5f)
-        moveTo(-1.0f, -2.0f, 1.0f)
-        sequence {
-            moveTo(0.0f, 1.0f, 0.0f)
-            moveTo(2.0f, 1.0f, 9.0f)
-        }
-    }
+    override fun step(alpha: Float) = Unit
 }
