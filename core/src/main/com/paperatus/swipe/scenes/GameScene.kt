@@ -171,7 +171,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             val endSize = MathUtils.random(0.5f, 1.2f)
             val duration = MathUtils.random(0.07f, 0.18f)
             val positionOffset = Vector2(
-                    MathUtils.random(-0.3f, 0.3f),
+                    MathUtils.random(-0.5f, 0.5f),
                     0.0f
             )
 
