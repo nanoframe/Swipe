@@ -23,6 +23,7 @@ import com.paperatus.swipe.map.ProceduralMapGenerator
 import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.RoadBlock
 import com.paperatus.swipe.objects.GameCamera
+import com.paperatus.swipe.objects.Player
 import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
 
@@ -31,7 +32,7 @@ const val WORLD_SIZE = 50.0f // World height
 class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
-    private val player: GameObject = GameObject()
+    private val player: GameObject = Player()
     private lateinit var gameMap: GameMap
 
     private lateinit var background: TiledTexture
@@ -53,6 +54,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                 addContactListener(PlayerCollisionResponse(player))
             })
             attachComponent<RenderComponent>(RenderComponent(sprite = "player.png"))
+
+            addObserver(ParticleSpawner())
         }
 
         addObject(player)
@@ -151,6 +154,17 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     override fun dispose() {
+    }
+
+    inner class ParticleSpawner : Observer {
+        override fun receive(what: Int, payload: Any?) {
+            if (what != Notification.PARTICLE_SPAWN) return
+
+        }
+
+        private fun createParticle() = GameObject().apply {
+
+        }
     }
 
     inner class PathObjectSpawner : Observer {
