@@ -14,6 +14,10 @@ object Actions {
 
     fun moveTo(position: Vector2, duration: Float) =
             moveTo(position.x, position.y, duration)
+
+    fun scaleTo(x: Float, y: Float, duration: Float) = ScaleTo(x, y, duration)
+
+    fun scaleTo(scl: Float, duration: Float) = scaleTo(scl, scl, duration)
 }
 
 interface Action {
@@ -38,6 +42,17 @@ abstract class ActionGroup : Action {
 
     fun moveTo(x: Float, y: Float, duration: Float) {
         add(MoveTo(x, y, duration))
+    }
+
+    fun moveTo(position: Vector2, duration: Float) =
+            moveTo(position.x, position.y, duration)
+
+    fun scaleTo(x: Float, y: Float, duration: Float) {
+        add(ScaleTo(x, y, duration))
+    }
+
+    fun scaleTo(scl: Float, duration: Float) {
+        scaleTo(scl, scl, duration)
     }
 
     // Others
@@ -132,6 +147,30 @@ class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) :
 
     override fun end() {
         g!!.position.set(x, y)
+    }
+}
+
+class ScaleTo internal constructor(val x: Float,
+                                   val y: Float,
+                                   duration: Float) : TimeAction(duration) {
+    private var g: GameObject? = null
+    private var startX = 0.0f
+    private var startY = 0.0f
+
+    override fun start(gameObject: GameObject) {
+        g = gameObject
+        startX = gameObject.size.width
+        startY = gameObject.size.height
+    }
+
+    override fun step(alpha: Float) {
+        val newX = MathUtils.lerp(startX, startX * x, alpha)
+        val newY = MathUtils.lerp(startY, startY * y, alpha)
+        g!!.size.set(newX, newY)
+    }
+
+    override fun end() {
+        g!!.size.set(startX * x, startY * y)
     }
 }
 
