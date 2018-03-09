@@ -4,8 +4,8 @@ import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
 private const val PARTICLE_INITIAL_FREQUENCY: Float = 1.0f // per second
-private const val PARTICLE_VELOCITY_MULTIPLIER: Float = 0.5f
-private const val PARTICLE_MAX_FREQUENCY: Float = 10.0f
+private const val PARTICLE_VELOCITY_MULTIPLIER: Float = 2.0f
+private const val PARTICLE_MAX_FREQUENCY: Float = 25.0f
 class Player : GameObject() {
 
     private var elapsed = 0.0f

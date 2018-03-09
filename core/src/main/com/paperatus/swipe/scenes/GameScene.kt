@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.Game
 import com.paperatus.swipe.components.KeyInputComponent
@@ -26,6 +27,7 @@ import com.paperatus.swipe.objects.GameCamera
 import com.paperatus.swipe.objects.Player
 import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
+import ktx.math.plus
 
 const val WORLD_SIZE = 50.0f // World height
 
@@ -165,13 +167,22 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         }
 
         private fun createParticle(p: Vector2) = GameObject().apply {
-            position.set(p)
-            size.set(0.5f, 0.5f)
+            val startSize = MathUtils.random(0.05f, 0.21f)
+            val endSize = MathUtils.random(0.5f, 1.2f)
+            val duration = MathUtils.random(0.07f, 0.18f)
+            val positionOffset = Vector2(
+                    MathUtils.random(-0.3f, 0.3f),
+                    0.0f
+            )
+
+            position.set(p + positionOffset)
+            size.set(startSize, startSize)
             anchor.set(0.5f, 0.5f)
             attachComponent<RenderComponent>(particleRenderer)
 
             runAction(Actions.sequence {
-                scaleTo(2.0f/0.5f, 0.2f)
+                scaleTo(endSize / startSize, duration)
+                delay(0.1f)
                 execute { requestRemove() }
             })
         }
