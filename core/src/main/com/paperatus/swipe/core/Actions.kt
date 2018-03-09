@@ -57,7 +57,7 @@ abstract class ActionGroup : Action {
 
     // Others
 
-    fun execute(func: (GameObject) -> Unit) {
+    fun execute(func: GameObject.() -> Unit) {
         add(ExecuteAction(func))
     }
 
@@ -180,9 +180,9 @@ class ScaleTo internal constructor(val x: Float,
 
 // Others
 
-class ExecuteAction internal constructor(val func: (GameObject) -> Unit) : Action {
+class ExecuteAction internal constructor(private val func: GameObject.() -> Unit) : Action {
     override fun start(gameObject: GameObject) {
-        func(gameObject)
+        gameObject.func()
     }
 
     override fun update(delta: Float) = Unit
