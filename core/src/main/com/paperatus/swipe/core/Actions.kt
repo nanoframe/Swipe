@@ -57,6 +57,10 @@ abstract class ActionGroup : Action {
 
     // Others
 
+    fun execute(func: (GameObject) -> Unit) {
+        add(ExecuteAction(func))
+    }
+
     fun delay(duration: Float) {
         add(DelayAction(duration))
     }
@@ -175,6 +179,18 @@ class ScaleTo internal constructor(val x: Float,
 }
 
 // Others
+
+class ExecuteAction internal constructor(val func: (GameObject) -> Unit) : Action {
+    override fun start(gameObject: GameObject) {
+        func(gameObject)
+    }
+
+    override fun update(delta: Float) = Unit
+
+    override fun end() = Unit
+
+    override fun isFinished() = true
+}
 
 class DelayAction internal constructor(duration: Float = 0.0f) : TimeAction(duration) {
     override fun step(alpha: Float) = Unit
