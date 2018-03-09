@@ -157,13 +157,23 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     inner class ParticleSpawner : Observer {
+        private val particleRenderer = RenderComponent(sprite="particle.png")
+
         override fun receive(what: Int, payload: Any?) {
             if (what != Notification.PARTICLE_SPAWN) return
-
+            addObject(createParticle(player.position))
         }
 
-        private fun createParticle() = GameObject().apply {
+        private fun createParticle(p: Vector2) = GameObject().apply {
+            position.set(p)
+            size.set(0.5f, 0.5f)
+            anchor.set(0.5f, 0.5f)
+            attachComponent<RenderComponent>(particleRenderer)
 
+            runAction(Actions.sequence {
+                scaleTo(2.0f/0.5f, 0.2f)
+                execute { requestRemove() }
+            })
         }
     }
 
