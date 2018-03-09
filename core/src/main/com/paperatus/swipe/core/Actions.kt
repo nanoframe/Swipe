@@ -18,6 +18,8 @@ object Actions {
     fun scaleTo(x: Float, y: Float, duration: Float) = ScaleTo(x, y, duration)
 
     fun scaleTo(scl: Float, duration: Float) = scaleTo(scl, scl, duration)
+
+    fun sizeTo(width: Float, height: Float, duration: Float) = SizeTo(width, height, duration)
 }
 
 interface Action {
@@ -53,6 +55,10 @@ abstract class ActionGroup : Action {
 
     fun scaleTo(scl: Float, duration: Float) {
         scaleTo(scl, scl, duration)
+    }
+
+    fun sizeTo(width: Float, height: Float, duration: Float) {
+        add(SizeTo(width, height, duration))
     }
 
     // Others
@@ -175,6 +181,30 @@ class ScaleTo internal constructor(val x: Float,
 
     override fun end() {
         g!!.size.set(startX * x, startY * y)
+    }
+}
+
+class SizeTo internal constructor(val width: Float,
+                                  val height: Float,
+                                  duration: Float) : TimeAction(duration) {
+    private var g: GameObject? = null
+    private var startWidth = 0.0f
+    private var startHeight = 0.0f
+
+    override fun start(gameObject: GameObject) {
+        g = gameObject
+        startWidth = gameObject.size.width
+        startHeight = gameObject.size.height
+    }
+
+    override fun step(alpha: Float) {
+        val newWidth = MathUtils.lerp(startWidth, width, alpha)
+        val newHeight = MathUtils.lerp(startHeight, height, alpha)
+        g!!.size.set(newWidth, newHeight)
+    }
+
+    override fun end() {
+        g!!.size.set(width, height)
     }
 }
 
