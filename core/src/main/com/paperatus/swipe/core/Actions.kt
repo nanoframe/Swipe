@@ -136,6 +136,35 @@ class Sequence internal constructor() : ActionGroup() {
     override fun isFinished() = index >= actionList.size
 }
 
+class Spawn internal constructor() : ActionGroup() {
+    private lateinit var subject: GameObject
+    private var finished: Boolean = false
+
+    override fun start(gameObject: GameObject) {
+        subject = gameObject
+        actionList.forEach {
+            it.start(subject)
+        }
+    }
+
+    override fun update(delta: Float) {
+        // Calculate the amount of time the action has went over
+        // if the action has been completed
+
+        if (isFinished()) return
+
+        finished = true
+        actionList.forEach {
+            it.update(delta)
+            finished = (it.isFinished() and finished)
+        }
+    }
+
+    override fun end() = Unit
+
+    override fun isFinished() = finished
+}
+
 // Actions that can modify the state of the GameObject
 
 class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) : TimeAction(duration) {
