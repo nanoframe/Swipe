@@ -6,11 +6,11 @@ buildscript {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
-        google()
+        //google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'org.multi-os-engine:moe-gradle:1.4.0'
+        //classpath 'com.android.tools.build:gradle:3.0.1'
+        //classpath 'org.multi-os-engine:moe-gradle:1.4.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     }
@@ -51,7 +51,7 @@ project(":desktop") {
     }
 }
 
-
+/*
 project(":android") {
     apply plugin: "android"
     apply plugin: "kotlin-android"
@@ -75,7 +75,7 @@ project(":android") {
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     }
 }
-
+*/
 
 project(":core") {
     apply plugin: "kotlin"
@@ -91,7 +91,7 @@ project(":core") {
         compile "io.github.libktx:ktx-math:$ktxVersion"
     }
 }
-
+/*
 project(":ios-moe") {
     apply plugin: "moe"
 
@@ -105,4 +105,4 @@ project(":ios-moe") {
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     }
 }
-
+*/
