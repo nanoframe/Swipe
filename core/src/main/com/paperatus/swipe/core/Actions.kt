@@ -1,6 +1,7 @@
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.core.GameObject
+import com.paperatus.swipe.core.InvalidActionException
 import ktx.collections.GdxArray
 
 object Actions {
@@ -22,15 +23,28 @@ object Actions {
     fun sizeTo(width: Float, height: Float, duration: Float) = SizeTo(width, height, duration)
 }
 
-interface Action {
-    fun start(gameObject: GameObject)
-    fun update(delta: Float)
-    fun end()
-    fun isFinished() : Boolean
+abstract class Action {
+    private var rawGameObject: GameObject? = null
+    val gameObject get() = rawGameObject!!
+
+    abstract fun start()
+    abstract fun update(delta: Float)
+    abstract fun end()
+    abstract fun isFinished() : Boolean
+
+    fun setGameObject(gameObject: GameObject?) {
+        rawGameObject = gameObject
+    }
 }
 
-abstract class ActionGroup : Action {
+abstract class ActionGroup : Action() {
     protected val actionList = GdxArray<Action>()
+
+    override fun start() {
+        actionList.forEach {
+            it.setGameObject(gameObject)
+        }
+    }
 
     // Action groups
 
@@ -74,11 +88,15 @@ abstract class ActionGroup : Action {
     private fun add(action: Action) = actionList.add(action)
 }
 
-abstract class TimeAction(internal val duration: Float) : Action {
+abstract class TimeAction(internal val duration: Float) : Action() {
     internal var currentDuration = 0.0f
         private set
 
-    override fun start(gameObject: GameObject) {
+    init {
+        if (duration < 0.0f) throw InvalidActionException("Duration $duration is < 0!")
+    }
+
+    override fun start() {
     }
 
     override fun update(delta: Float) {
@@ -98,14 +116,8 @@ abstract class TimeAction(internal val duration: Float) : Action {
 
 class Sequence internal constructor() : ActionGroup() {
 
-    private lateinit var subject: GameObject
-
     private var index = 0
     private var activeAction: Action? = null
-
-    override fun start(gameObject: GameObject) {
-        subject = gameObject
-    }
 
     override fun update(delta: Float) {
         // Calculate the amount of time the action has went over
@@ -124,7 +136,7 @@ class Sequence internal constructor() : ActionGroup() {
         if (isFinished()) return
 
         activeAction = activeAction ?: actionList[index].apply {
-            start(subject)
+            start()
         }
 
         val action = activeAction!!
@@ -137,13 +149,12 @@ class Sequence internal constructor() : ActionGroup() {
 }
 
 class Spawn internal constructor() : ActionGroup() {
-    private lateinit var subject: GameObject
     private var finished: Boolean = false
 
-    override fun start(gameObject: GameObject) {
-        subject = gameObject
+    override fun start() {
+        super.start()
         actionList.forEach {
-            it.start(subject)
+            it.start()
         }
     }
 
@@ -168,12 +179,10 @@ class Spawn internal constructor() : ActionGroup() {
 // Actions that can modify the state of the GameObject
 
 class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) : TimeAction(duration) {
-    private var g: GameObject? = null
     private var startX: Float = 0.0f
     private var startY: Float = 0.0f
 
-    override fun start(gameObject: GameObject) {
-        g = gameObject
+    override fun start() {
         startX = gameObject.position.x
         startY = gameObject.position.y
     }
@@ -181,23 +190,21 @@ class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) :
     override fun step(alpha: Float) {
         val newX = MathUtils.lerp(startX, x, alpha)
         val newY = MathUtils.lerp(startY, y, alpha)
-        g!!.position.set(newX, newY)
+        gameObject.position.set(newX, newY)
     }
 
     override fun end() {
-        g!!.position.set(x, y)
+        gameObject.position.set(x, y)
     }
 }
 
 class ScaleTo internal constructor(val x: Float,
                                    val y: Float,
                                    duration: Float) : TimeAction(duration) {
-    private var g: GameObject? = null
     private var startX = 0.0f
     private var startY = 0.0f
 
-    override fun start(gameObject: GameObject) {
-        g = gameObject
+    override fun start() {
         startX = gameObject.size.width
         startY = gameObject.size.height
     }
@@ -205,23 +212,21 @@ class ScaleTo internal constructor(val x: Float,
     override fun step(alpha: Float) {
         val newX = MathUtils.lerp(startX, startX * x, alpha)
         val newY = MathUtils.lerp(startY, startY * y, alpha)
-        g!!.size.set(newX, newY)
+        gameObject.size.set(newX, newY)
     }
 
     override fun end() {
-        g!!.size.set(startX * x, startY * y)
+        gameObject.size.set(startX * x, startY * y)
     }
 }
 
 class SizeTo internal constructor(val width: Float,
                                   val height: Float,
                                   duration: Float) : TimeAction(duration) {
-    private var g: GameObject? = null
     private var startWidth = 0.0f
     private var startHeight = 0.0f
 
-    override fun start(gameObject: GameObject) {
-        g = gameObject
+    override fun start() {
         startWidth = gameObject.size.width
         startHeight = gameObject.size.height
     }
@@ -229,18 +234,18 @@ class SizeTo internal constructor(val width: Float,
     override fun step(alpha: Float) {
         val newWidth = MathUtils.lerp(startWidth, width, alpha)
         val newHeight = MathUtils.lerp(startHeight, height, alpha)
-        g!!.size.set(newWidth, newHeight)
+        gameObject.size.set(newWidth, newHeight)
     }
 
     override fun end() {
-        g!!.size.set(width, height)
+        gameObject.size.set(width, height)
     }
 }
 
 // Others
 
-class ExecuteAction internal constructor(private val func: GameObject.() -> Unit) : Action {
-    override fun start(gameObject: GameObject) {
+class ExecuteAction internal constructor(private val func: GameObject.() -> Unit) : Action() {
+    override fun start() {
         gameObject.func()
     }
 

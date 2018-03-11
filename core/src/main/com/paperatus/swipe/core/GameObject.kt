@@ -55,11 +55,13 @@ open class GameObject : Subject() {
             }
         }
 
-        action.start(this)
+        action.setGameObject(this)
+        action.start()
         activeAction = action
     }
 
     fun stopAction() {
+        activeAction?.setGameObject(null)
         activeAction = null
     }
 
