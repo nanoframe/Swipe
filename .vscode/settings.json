@@ -1,0 +1,8 @@
+{
+    "code-runner.customCommand": "./gradlew desktop:run",
+    "code-runner.ignoreSelection": true,
+    "code-runner.executorMapByFileExtension": {
+        ".kt": "echo $fileName && ./gradlew desktop:run",
+        ".kts": "kotlinc -script",
+    }
+}
