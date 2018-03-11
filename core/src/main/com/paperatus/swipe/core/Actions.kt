@@ -11,6 +11,12 @@ object Actions {
         return sequence
     }
 
+    fun spawn(init: Spawn.() -> Unit): ActionGroup {
+        val spawn = Spawn()
+        spawn.init()
+        return spawn
+    }
+
     fun moveTo(x: Float, y: Float, duration: Float) = MoveTo(x, y, duration)
 
     fun moveTo(position: Vector2, duration: Float) =
@@ -52,6 +58,12 @@ abstract class ActionGroup : Action() {
         val s = Sequence()
         s.actions()
         add(s)
+    }
+
+    fun spawn(init: Spawn.() -> Unit): ActionGroup {
+        val spawn = Spawn()
+        spawn.init()
+        return spawn
     }
 
     // State actions
