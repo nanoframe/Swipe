@@ -159,7 +159,6 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     inner class ParticleSpawner : Observer {
-        private val particleRenderer = RenderComponent(sprite="particle.png")
 
         override fun receive(what: Int, payload: Any?) {
             if (what != Notification.PARTICLE_SPAWN) return
@@ -168,8 +167,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         private fun createParticle(p: Vector2) = GameObject().apply {
             val startSize = MathUtils.random(0.05f, 0.21f)
-            val endSize = MathUtils.random(0.5f, 1.2f)
-            val duration = MathUtils.random(0.07f, 0.18f)
+            val endSize = MathUtils.random(0.8f, 1.7f)
+            val duration = MathUtils.random(0.3f, 0.9f)
             val positionOffset = Vector2(
                     MathUtils.random(-0.5f, 0.5f),
                     0.0f
@@ -178,11 +177,13 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             position.set(p + positionOffset)
             size.set(startSize, startSize)
             anchor.set(0.5f, 0.5f)
-            attachComponent<RenderComponent>(particleRenderer)
+            attachComponent<RenderComponent>(RenderComponent(sprite="particle.png"))
 
             runAction(Actions.sequence {
-                scaleTo(endSize / startSize, duration)
-                delay(0.1f)
+                spawn {
+                    scaleTo(endSize / startSize, duration)
+                    fade(1.5f)
+                }
                 execute { requestRemove() }
             })
         }
