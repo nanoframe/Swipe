@@ -118,13 +118,14 @@ open class RenderComponent(val renderMode: Mode = Mode.SPRITE, open var sprite: 
         SPRITE, CUSTOM
     }
 
+    var customParams = GdxArray<RenderParams>()
+
     override fun update(delta: Float, gameObject: GameObject) = Unit
 
     override fun receive(what: ComponentMessage, payload: Any?) = Unit
 
 
     override val order = Component.Order.RENDER
-    var customParams: RenderParams? = null
 }
 
 class AnimationRenderComponent(val delay: Float,

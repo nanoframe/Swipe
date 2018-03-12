@@ -73,9 +73,9 @@ abstract class ObjectScene(protected val game: Game) : Scene {
                 }
 
                 // Apply custom rendering params if requested
-                it.customParams?.applyParams(batch)
+                it.customParams.forEach { it.applyParams(batch) }
                 renderGameObject(batch, gameObject, spriteName)
-                it.customParams?.resetParams(batch)
+                it.customParams.forEach { it.resetParams(batch) }
 
                 Unit
             }
