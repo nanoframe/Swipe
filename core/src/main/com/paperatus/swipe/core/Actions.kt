@@ -1,3 +1,4 @@
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.core.GameObject
@@ -18,18 +19,37 @@ object Actions {
         return spawn
     }
 
-    fun moveTo(x: Float, y: Float, duration: Float) = MoveTo(x, y, duration)
+    fun moveTo(x: Float,
+               y: Float,
+               duration: Float,
+               interpolation: Interpolation = Interpolation.linear) =
+            MoveTo(x, y, duration, interpolation)
 
-    fun moveTo(position: Vector2, duration: Float) =
-            moveTo(position.x, position.y, duration)
+    fun moveTo(position: Vector2,
+               duration: Float,
+               interpolation: Interpolation = Interpolation.linear) =
+            moveTo(position.x, position.y, duration, interpolation)
 
-    fun scaleTo(x: Float, y: Float, duration: Float) = ScaleTo(x, y, duration)
+    fun scaleTo(x: Float,
+                y: Float,
+                duration: Float,
+                interpolation: Interpolation = Interpolation.linear) =
+            ScaleTo(x, y, duration, interpolation)
 
-    fun scaleTo(scl: Float, duration: Float) = scaleTo(scl, scl, duration)
+    fun scaleTo(scl: Float,
+                duration: Float,
+                interpolation: Interpolation = Interpolation.linear) =
+            scaleTo(scl, scl, duration, interpolation)
 
-    fun sizeTo(width: Float, height: Float, duration: Float) = SizeTo(width, height, duration)
+    fun sizeTo(width: Float,
+               height: Float,
+               duration: Float,
+               interpolation: Interpolation = Interpolation.linear) =
+            SizeTo(width, height, duration, interpolation)
 
-    fun fade(duration: Float) = FadeAction(duration)
+    fun fade(duration: Float,
+             interpolation: Interpolation = Interpolation.linear) =
+            FadeAction(duration, interpolation)
 }
 
 abstract class Action {
@@ -63,27 +83,45 @@ abstract class ActionGroup : Action() {
 
     // State actions
 
-    fun moveTo(x: Float, y: Float, duration: Float) =
-        add(Actions.moveTo(x, y, duration))
+    fun moveTo(x: Float,
+               y: Float,
+               duration: Float,
+               interpolation: Interpolation = Interpolation.linear) =
+        add(Actions.moveTo(x, y, duration, interpolation))
 
-    fun moveTo(position: Vector2, duration: Float) =
-            moveTo(position.x, position.y, duration)
+    fun moveTo(position: Vector2,
+               duration: Float,
+               interpolation: Interpolation = Interpolation.linear) =
+            moveTo(position.x, position.y, duration, interpolation)
 
-    fun scaleTo(x: Float, y: Float, duration: Float) =
-            add(Actions.scaleTo(x, y, duration))
+    fun scaleTo(x: Float,
+                y: Float,
+                duration: Float,
+                interpolation: Interpolation = Interpolation.linear) =
+            add(Actions.scaleTo(x, y, duration, interpolation))
 
-    fun scaleTo(scl: Float, duration: Float) = scaleTo(scl, scl, duration)
+    fun scaleTo(scl: Float,
+                duration: Float,
+                interpolation: Interpolation = Interpolation.linear) =
+            scaleTo(scl, scl, duration, interpolation)
 
-    fun sizeTo(width: Float, height: Float, duration: Float) =
-            add(Actions.sizeTo(width, height, duration))
+    fun sizeTo(width: Float,
+               height: Float,
+               duration: Float,
+               interpolation: Interpolation = Interpolation.linear) =
+            add(Actions.sizeTo(width, height, duration, interpolation))
 
-    fun fade(duration: Float) = add(Actions.fade(duration))
+    fun fade(duration: Float,
+             interpolation: Interpolation = Interpolation.linear) =
+            add(Actions.fade(duration, interpolation))
 
     // Others
 
     fun execute(func: GameObject.() -> Unit) = add(ExecuteAction(func))
 
-    fun delay(duration: Float) = add(DelayAction(duration))
+    fun delay(duration: Float,
+              interpolation: Interpolation = Interpolation.linear) =
+            add(DelayAction(duration, interpolation))
 
     private fun add(action: Action) = actionList.add(action)
 }
@@ -91,6 +129,8 @@ abstract class ActionGroup : Action() {
 abstract class TimeAction(internal val duration: Float) : Action() {
     internal var currentDuration = 0.0f
         private set
+
+    abstract var interpolation: Interpolation
 
     init {
         if (duration < 0.0f) throw InvalidActionException("Duration $duration is < 0!")
@@ -101,7 +141,8 @@ abstract class TimeAction(internal val duration: Float) : Action() {
 
     override fun update(delta: Float) {
         currentDuration += delta
-        step((currentDuration / duration).coerceAtMost(1.0f))
+        val alpha = interpolation.apply(currentDuration / duration)
+        step(alpha.coerceAtMost(1.0f))
     }
 
     override fun end() {
@@ -178,7 +219,10 @@ class Spawn internal constructor() : ActionGroup() {
 
 // Actions that can modify the state of the GameObject
 
-class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) : TimeAction(duration) {
+class MoveTo internal constructor(val x: Float,
+                                  val y: Float,
+                                  duration: Float,
+                                  override var interpolation: Interpolation) : TimeAction(duration) {
     private var startX: Float = 0.0f
     private var startY: Float = 0.0f
 
@@ -200,7 +244,8 @@ class MoveTo internal constructor(val x: Float, val y: Float, duration: Float) :
 
 class ScaleTo internal constructor(val x: Float,
                                    val y: Float,
-                                   duration: Float) : TimeAction(duration) {
+                                   duration: Float,
+                                   override var interpolation: Interpolation) : TimeAction(duration) {
     private var startX = 0.0f
     private var startY = 0.0f
 
@@ -222,7 +267,8 @@ class ScaleTo internal constructor(val x: Float,
 
 class SizeTo internal constructor(val width: Float,
                                   val height: Float,
-                                  duration: Float) : TimeAction(duration) {
+                                  duration: Float,
+                                  override var interpolation: Interpolation) : TimeAction(duration) {
     private var startWidth = 0.0f
     private var startHeight = 0.0f
 
@@ -242,12 +288,14 @@ class SizeTo internal constructor(val width: Float,
     }
 }
 
-class FadeAction internal constructor(duration: Float) : TimeAction(duration) {
+class FadeAction internal constructor(duration: Float,
+                                      override var interpolation: Interpolation) : TimeAction(duration) {
     private var startAlpha: Float = 0.0f
     private var renderComponent: RenderComponent? = null
 
     override fun start() {
-        renderComponent = gameObject.getComponent<RenderComponent>() ?: throw InvalidActionException("The given component does not have a RenderComponent!")
+        renderComponent = gameObject.getComponent() ?:
+                throw InvalidActionException("The given component does not have a RenderComponent!")
         startAlpha = renderComponent!!.alpha
     }
 
@@ -275,6 +323,7 @@ class ExecuteAction internal constructor(private val func: GameObject.() -> Unit
     override fun isFinished() = true
 }
 
-class DelayAction internal constructor(duration: Float) : TimeAction(duration) {
+class DelayAction internal constructor(duration: Float,
+                                       override var interpolation: Interpolation) : TimeAction(duration) {
     override fun step(alpha: Float) = Unit
 }
