@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.Game
@@ -168,7 +169,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         private fun createParticle(p: Vector2) = GameObject().apply {
             val startSize = MathUtils.random(0.05f, 0.21f)
             val endSize = MathUtils.random(0.8f, 1.7f)
-            val duration = MathUtils.random(0.3f, 0.9f)
+            val duration = MathUtils.random(0.5f, 1.2f)
             val positionOffset = Vector2(
                     MathUtils.random(-0.5f, 0.5f),
                     0.0f
@@ -181,7 +182,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
             runAction(Actions.sequence {
                 spawn {
-                    scaleTo(endSize / startSize, duration)
+                    scaleTo(endSize / startSize, duration, Interpolation.pow2Out)
                     fade(1.5f)
                 }
                 execute { requestRemove() }
