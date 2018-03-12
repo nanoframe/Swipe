@@ -47,6 +47,11 @@ object Actions {
                interpolation: Interpolation = Interpolation.linear) =
             SizeTo(width, height, duration, interpolation)
 
+    fun sizeTo(square: Float,
+               duration: Float,
+               interpolation: Interpolation = Interpolation.linear) =
+            sizeTo(square, square, duration, interpolation)
+
     fun fade(duration: Float,
              interpolation: Interpolation = Interpolation.linear) =
             FadeAction(duration, interpolation)
@@ -111,6 +116,11 @@ abstract class ActionGroup : Action() {
                interpolation: Interpolation = Interpolation.linear) =
             add(Actions.sizeTo(width, height, duration, interpolation))
 
+    fun sizeTo(square: Float,
+               duration: Float,
+               interpolation: Interpolation = Interpolation.linear) =
+            sizeTo(square, square, duration, interpolation)
+
     fun fade(duration: Float,
              interpolation: Interpolation = Interpolation.linear) =
             add(Actions.fade(duration, interpolation))
@@ -141,8 +151,8 @@ abstract class TimeAction(internal val duration: Float) : Action() {
 
     override fun update(delta: Float) {
         currentDuration += delta
-        val alpha = interpolation.apply(currentDuration / duration)
-        step(alpha.coerceAtMost(1.0f))
+        val alpha = (currentDuration / duration).coerceAtMost(1.0f)
+        step(interpolation.apply(alpha))
     }
 
     override fun end() {

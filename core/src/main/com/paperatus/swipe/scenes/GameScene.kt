@@ -167,7 +167,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         }
 
         private fun createParticle(p: Vector2) = GameObject().apply {
-            val startSize = MathUtils.random(0.05f, 0.21f)
+            val startSize = MathUtils.random(0.09f, 0.21f)
             val endSize = MathUtils.random(0.8f, 1.7f)
             val duration = MathUtils.random(0.5f, 1.2f)
             val positionOffset = Vector2(
@@ -182,7 +182,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
             runAction(Actions.sequence {
                 spawn {
-                    scaleTo(endSize / startSize, duration, Interpolation.pow2Out)
+                    sizeTo(endSize, duration, Interpolation.pow2Out)
                     fade(1.5f)
                 }
                 execute { requestRemove() }
