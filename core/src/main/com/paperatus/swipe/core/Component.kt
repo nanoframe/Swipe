@@ -118,12 +118,16 @@ open class RenderComponent(val renderMode: Mode = Mode.SPRITE, open var sprite: 
         SPRITE, CUSTOM
     }
 
-    var customParams = GdxArray<RenderParams>()
+    val customParams = GdxArray<RenderParams>()
 
     override fun update(delta: Float, gameObject: GameObject) = Unit
 
     override fun receive(what: ComponentMessage, payload: Any?) = Unit
 
+    fun addRenderParams(params: RenderParams) = customParams.add(params)
+
+    fun removeRenderParams(params: RenderParams, identity: Boolean = true) =
+            customParams.removeValue(params, identity)
 
     override val order = Component.Order.RENDER
 }

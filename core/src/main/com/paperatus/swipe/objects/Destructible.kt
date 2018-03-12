@@ -41,7 +41,7 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
             onFinish = fun () {
                 requestRemove()
             }
-            customParams = ExplosionParticleBlending()
+            addRenderParams(ExplosionParticleBlending())
             start()
         }
         attachComponent<RenderComponent>(animation)
