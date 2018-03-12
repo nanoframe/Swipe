@@ -1,6 +1,6 @@
 package com.paperatus.swipe.core
 
-import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
@@ -118,7 +118,29 @@ open class RenderComponent(val renderMode: Mode = Mode.SPRITE, open var sprite: 
         SPRITE, CUSTOM
     }
 
+    var alpha = 1.0f
     val customParams = GdxArray<RenderParams>()
+
+    private val internalParams = object : RenderParams {
+        private val originalColor = Color()
+
+        override fun applyParams(batch: SpriteBatch) {
+            originalColor.set(batch.color)
+            batch.setColor(
+                    originalColor.r,
+                    originalColor.g,
+                    originalColor.b,
+                    alpha)
+        }
+
+        override fun resetParams(batch: SpriteBatch) {
+            batch.color = originalColor
+        }
+    }
+
+    init {
+        customParams.add(internalParams)
+    }
 
     override fun update(delta: Float, gameObject: GameObject) = Unit
 
