@@ -2,6 +2,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.InvalidActionException
+import com.paperatus.swipe.core.RenderComponent
 import ktx.collections.GdxArray
 
 object Actions {
@@ -27,6 +28,8 @@ object Actions {
     fun scaleTo(scl: Float, duration: Float) = scaleTo(scl, scl, duration)
 
     fun sizeTo(width: Float, height: Float, duration: Float) = SizeTo(width, height, duration)
+
+    fun fade(duration: Float) = FadeAction(duration)
 }
 
 abstract class Action {
@@ -36,7 +39,7 @@ abstract class Action {
     abstract fun start()
     abstract fun update(delta: Float)
     abstract fun end()
-    abstract fun isFinished() : Boolean
+    abstract fun isFinished(): Boolean
 
     fun setGameObject(gameObject: GameObject?) {
         rawGameObject = gameObject
@@ -54,48 +57,33 @@ abstract class ActionGroup : Action() {
 
     // Action groups
 
-    fun sequence(actions: Sequence.() -> Unit) {
-        val s = Sequence()
-        s.actions()
-        add(s)
-    }
+    fun sequence(actions: Sequence.() -> Unit) = add(Sequence().also{ it.actions() })
 
-    fun spawn(init: Spawn.() -> Unit): ActionGroup {
-        val spawn = Spawn()
-        spawn.init()
-        return spawn
-    }
+    fun spawn(actions: Spawn.() -> Unit) = add(Spawn().also{ it.actions() })
 
     // State actions
 
-    fun moveTo(x: Float, y: Float, duration: Float) {
-        add(MoveTo(x, y, duration))
-    }
+    fun moveTo(x: Float, y: Float, duration: Float) =
+        add(Actions.moveTo(x, y, duration))
 
     fun moveTo(position: Vector2, duration: Float) =
             moveTo(position.x, position.y, duration)
 
-    fun scaleTo(x: Float, y: Float, duration: Float) {
-        add(ScaleTo(x, y, duration))
-    }
+    fun scaleTo(x: Float, y: Float, duration: Float) =
+            add(Actions.scaleTo(x, y, duration))
 
-    fun scaleTo(scl: Float, duration: Float) {
-        scaleTo(scl, scl, duration)
-    }
+    fun scaleTo(scl: Float, duration: Float) = scaleTo(scl, scl, duration)
 
-    fun sizeTo(width: Float, height: Float, duration: Float) {
-        add(SizeTo(width, height, duration))
-    }
+    fun sizeTo(width: Float, height: Float, duration: Float) =
+            add(Actions.sizeTo(width, height, duration))
+
+    fun fade(duration: Float) = add(Actions.fade(duration))
 
     // Others
 
-    fun execute(func: GameObject.() -> Unit) {
-        add(ExecuteAction(func))
-    }
+    fun execute(func: GameObject.() -> Unit) = add(ExecuteAction(func))
 
-    fun delay(duration: Float) {
-        add(DelayAction(duration))
-    }
+    fun delay(duration: Float) = add(DelayAction(duration))
 
     private fun add(action: Action) = actionList.add(action)
 }
@@ -254,6 +242,25 @@ class SizeTo internal constructor(val width: Float,
     }
 }
 
+class FadeAction internal constructor(duration: Float) : TimeAction(duration) {
+    private var startAlpha: Float = 0.0f
+    private var renderComponent: RenderComponent? = null
+
+    override fun start() {
+        renderComponent = gameObject.getComponent<RenderComponent>() ?: throw InvalidActionException("The given component does not have a RenderComponent!")
+        startAlpha = renderComponent!!.alpha
+    }
+
+    override fun step(alpha: Float) {
+        renderComponent!!.alpha = MathUtils.lerp(startAlpha, 0.0f, alpha)
+    }
+
+    override fun end() {
+        renderComponent!!.alpha = 0.0f
+        renderComponent = null
+    }
+}
+
 // Others
 
 class ExecuteAction internal constructor(private val func: GameObject.() -> Unit) : Action() {
@@ -268,6 +275,6 @@ class ExecuteAction internal constructor(private val func: GameObject.() -> Unit
     override fun isFinished() = true
 }
 
-class DelayAction internal constructor(duration: Float = 0.0f) : TimeAction(duration) {
+class DelayAction internal constructor(duration: Float) : TimeAction(duration) {
     override fun step(alpha: Float) = Unit
 }
