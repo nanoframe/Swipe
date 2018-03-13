@@ -93,9 +93,12 @@ open class GameObject : Subject() {
      * @param component the component to attach to the GameObject.
      */
     fun attachComponent(component: Component, type: KClass<out Component>) {
-        assert(!components.containsKey(type)) {
-            "A component of type ${type.java.simpleName} is currently attached to this instance!"
+        if (components.containsKey(type)) {
+            throw ComponentException(
+                    "A component of type ${type.java.simpleName}" +
+                    "is currently attached to this instance!")
         }
+
         components.put(type, component)
     }
 

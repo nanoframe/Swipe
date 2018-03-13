@@ -13,7 +13,7 @@ class Assets {
     private val disposables = GdxArray<Disposable>()
 
     operator fun <T : Any> get(filename: String): T {
-        assert(isLoaded(filename))
+        if (!isLoaded(filename)) throw AssetNotLoadedException("Asset $filename isn't loaded!")
         val obj = files[filename]
         return obj as T
     }

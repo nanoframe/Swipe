@@ -64,10 +64,10 @@ private class EdgeRenderer(
     private var size = 0
 
     init {
-        assert(maxVertices % 3 == 0)
-        assert(shader.isCompiled) {
-            shader.log
-        }
+        if (maxVertices % 3 != 0) throw RuntimeException(
+                "maxVertices must be a factor of 3!"
+        )
+        if (!shader.isCompiled) throw RuntimeException(shader.log)
 
         mapRenderer.edgeTexture.setWrap(
                 Texture.TextureWrap.Repeat,
@@ -168,10 +168,10 @@ private class PathRenderer(
     private var size = 0
 
     init {
-        assert(maxVertices % 3 == 0)
-        assert(shader.isCompiled) {
-            shader.log
-        }
+        if (maxVertices % 3 != 0) throw RuntimeException(
+                "maxVertices must be a factor of 3!"
+        )
+        if (!shader.isCompiled) throw RuntimeException(shader.log)
     }
 
     fun flush() {

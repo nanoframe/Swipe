@@ -41,9 +41,8 @@ object Solver {
             x = (y2 - y1 + m1 * x1 - m2 * x2) / (m1 - m2)
             y = m1 * (x - x1) + y1
         }
-
-        assert(!x.isNaN() && !x.isInfinite())
-        assert(!y.isNaN() && !y.isInfinite())
+        if (x.isNaN() || x.isInfinite() || y.isNaN() || y.isInfinite())
+            throw RuntimeException()
 
         out.set(x, y)
     }
