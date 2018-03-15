@@ -20,7 +20,7 @@ open class GameObject : Subject() {
 
     private val components = ObjectMap<KClass<out Component>, Component>()
     private var activeAction: Action? = null
-    private val children = GdxArray<GameObject>()
+    val children = GdxArray<GameObject>()
     var parent: GameObject? = null
         private set
 
