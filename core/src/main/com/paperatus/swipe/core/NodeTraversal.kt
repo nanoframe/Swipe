@@ -2,7 +2,7 @@ package com.paperatus.swipe.core
 
 class NodeTraversal {
 
-    var nodeCallback: Callback? = null
+    private var nodeCallback: Callback? = null
 
     fun traverse(callback: Callback, root: GameObject, data: Any = Unit) {
         nodeCallback = callback
