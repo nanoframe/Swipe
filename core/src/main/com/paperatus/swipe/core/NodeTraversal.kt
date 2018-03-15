@@ -4,7 +4,7 @@ class NodeTraversal {
 
     var callback: Callback? = null
 
-    tailrec fun traverse(root: GameObject) {
+    fun traverse(root: GameObject) {
         root.children.forEach {
             callback?.onTraverse(it)
             traverse(it)
