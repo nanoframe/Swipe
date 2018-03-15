@@ -21,6 +21,8 @@ open class GameObject : Subject() {
     private val components = ObjectMap<KClass<out Component>, Component>()
     private var activeAction: Action? = null
     private val children = GdxArray<GameObject>()
+    var parent: GameObject? = null
+        private set
 
     init {
         attachComponent(TransformComponent())
@@ -66,9 +68,17 @@ open class GameObject : Subject() {
         if (it.isFinished()) stopAction()
     }
 
-    fun addChild(child: GameObject) = children.add(child)
+    fun addChild(child: GameObject) {
+        if (child.parent != null) throw RuntimeException("GameObject already has a parent!")
+        child.parent = this
+        children.add(child)
+    }
 
-    fun addChild(child: GameObject, at: Int) = children.insert(at, child)
+    fun addChild(child: GameObject, at: Int) {
+        if (child.parent != null) throw RuntimeException("GameObject already has a parent!")
+        child.parent = this
+        children.insert(at, child)
+    }
 
     fun removeChild(child: GameObject, identity: Boolean = true) = children.removeValue(child, identity)
 
