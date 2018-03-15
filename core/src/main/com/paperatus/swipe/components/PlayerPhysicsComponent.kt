@@ -47,7 +47,7 @@ class PlayerPhysicsComponent : PhysicsComponent() {
         val velocityLen2 = velocity.len2()
 
         if (!MathUtils.isEqual(velocityLen2, 0.0f)) {
-            gameObject.rotation = (MathUtils.atan2(
+            gameObject.transform.rotation = (MathUtils.atan2(
                     velocity.y, velocity.x) -
                     MathUtils.PI / 2.0f) * MathUtils.radDeg
         }

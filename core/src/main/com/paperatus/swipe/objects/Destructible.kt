@@ -26,11 +26,11 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
             addContactListener(this@Destructible)
             positioning = PhysicsComponent.Positioning.BODY_TO_OBJECT
         })
-        anchor.set(0.5f, 0.5f)
+        transform.anchor.set(0.5f, 0.5f)
     }
 
     override fun onContactBegin(other: GameObject) {
-        size.set(10.0f, 10.0f)
+        transform.size.set(10.0f, 10.0f)
         detachComponent<RenderComponent>()
 
         val animation = AnimationRenderComponent(

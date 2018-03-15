@@ -11,24 +11,9 @@ import kotlin.reflect.KClass
  * Interface for objects that can be rendered onto the scene.
  *
  * An empty string or a nonexistent file will throw an exception.
- * @property position position of the GameObject.
- * @property size size of the GameObject to render
- * @property rotation rotation of the GameObject, in degrees CCW.
- * @property bounds the boundaries of the GameObject.
- * Provides the GameObject's size.
- * @property anchor position where all transforms are relative to.
  * @property components Components that are attached to the GameObject
  */
 open class GameObject : Subject() {
-    val position = Vector2()
-    val size = Size()
-    var rotation: Float = 0.0f
-    val bounds = Rectangle()
-        get() {
-            field.set(position.x, position.y, size.width, size.height)
-            return field
-        }
-    val anchor = Vector2()
 
     val transform
         get() = getComponent<TransformComponent>()!!

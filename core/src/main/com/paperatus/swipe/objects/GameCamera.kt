@@ -39,8 +39,8 @@ class GameCamera(width: Float, height: Float) :
     }
 
     private fun updatePosition(delta: Float, player: GameObject) {
-        val deltaX = player.position.x - (position.x + POSITION_X_OFFSET)
-        val deltaY = player.position.y - (position.y + POSITION_Y_OFFSET)
+        val deltaX = player.transform.position.x - (position.x + POSITION_X_OFFSET)
+        val deltaY = player.transform.position.y - (position.y + POSITION_Y_OFFSET)
 
         // Position interpolation
         tempPosition.apply {

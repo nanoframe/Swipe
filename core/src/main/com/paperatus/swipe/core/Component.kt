@@ -41,9 +41,9 @@ class TransformComponent : Component {
     override val order = Component.Order.MANUAL
 
     val position = Vector2()
-    val scale = Vector2()
+    val size = Size()
     var rotation: Float = 0.0f
-    val origin = Vector2()
+    val anchor = Vector2()
 
     override fun update(delta: Float, gameObject: GameObject) = Unit
 
@@ -76,21 +76,22 @@ abstract class PhysicsComponent : Component {
 
     override fun update(delta: Float, gameObject: GameObject) {
         val physicsBody = getBody()
+        val transform = gameObject.transform
         when (positioning) {
             Positioning.OBJECT_TO_BODY -> {
-                gameObject.position.set(
-                        physicsBody.position.x + gameObject.size.width *
-                                (gameObject.anchor.x - 0.5f),
-                        physicsBody.position.y + gameObject.size.height *
-                                (gameObject.anchor.y - 0.5f)
+                gameObject.transform.position.set(
+                        physicsBody.position.x + transform.size.width *
+                                (transform.anchor.x - 0.5f),
+                        physicsBody.position.y + transform.size.height *
+                                (transform.anchor.y - 0.5f)
                 )
             }
             Positioning.BODY_TO_OBJECT -> {
                 physicsBody.setTransform(
-                        gameObject.position.x + gameObject.size.width *
-                                (0.5f - gameObject.anchor.x),
-                        gameObject.position.y + gameObject.size.height *
-                                (0.5f - gameObject.anchor.y),
+                        transform.position.x + transform.size.width *
+                                (0.5f - transform.anchor.x),
+                        transform.position.y + transform.size.height *
+                                (0.5f - transform.anchor.y),
                         0.0f)
             }
         }

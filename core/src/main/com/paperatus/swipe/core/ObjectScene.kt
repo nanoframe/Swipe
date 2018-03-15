@@ -87,22 +87,24 @@ abstract class ObjectScene(protected val game: Game) : Scene {
         gameObject.apply {
             when (image) {
                 is Texture -> batch.draw(image,
-                        position.x - size.width * anchor.x,
-                        position.y - size.height * anchor.y,
-                        anchor.x * size.width, anchor.y * size.height,
-                        bounds.width, bounds.height,
+                        transform.position.x - transform.size.width * transform.anchor.x,
+                        transform.position.y - transform.size.height * transform.anchor.y,
+                        transform.anchor.x * transform.size.width,
+                        transform.anchor.y * transform.size.height,
+                        transform.size.width, transform.size.height,
                         1.0f, 1.0f,
-                        rotation,
+                        transform.rotation,
                         0, 0, image.width, image.height,
                         false, false
                 )
                 is TextureRegion -> batch.draw(image,
-                        position.x - size.width * anchor.x,
-                        position.y - size.height * anchor.y,
-                        anchor.x * size.width, anchor.y * size.height,
-                        size.width, size.height,
+                        transform.position.x - transform.size.width * transform.anchor.x,
+                        transform.position.y - transform.size.height * transform.anchor.y,
+                        transform.anchor.x * transform.size.width,
+                        transform.anchor.y * transform.size.height,
+                        transform.size.width, transform.size.height,
                         1.0f, 1.0f,
-                        rotation
+                        transform.rotation
                 )
                 else -> ktx.log.error(RuntimeException()) {
                     "Asset '$spriteName' is of type ${image::class}!"

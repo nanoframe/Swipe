@@ -237,18 +237,18 @@ class MoveTo internal constructor(val x: Float,
     private var startY: Float = 0.0f
 
     override fun start() {
-        startX = gameObject.position.x
-        startY = gameObject.position.y
+        startX = gameObject.transform.position.x
+        startY = gameObject.transform.position.y
     }
 
     override fun step(alpha: Float) {
         val newX = MathUtils.lerp(startX, x, alpha)
         val newY = MathUtils.lerp(startY, y, alpha)
-        gameObject.position.set(newX, newY)
+        gameObject.transform.position.set(newX, newY)
     }
 
     override fun end() {
-        gameObject.position.set(x, y)
+        gameObject.transform.position.set(x, y)
     }
 }
 
@@ -260,18 +260,18 @@ class ScaleTo internal constructor(val x: Float,
     private var startY = 0.0f
 
     override fun start() {
-        startX = gameObject.size.width
-        startY = gameObject.size.height
+        startX = gameObject.transform.size.width
+        startY = gameObject.transform.size.height
     }
 
     override fun step(alpha: Float) {
         val newX = MathUtils.lerp(startX, startX * x, alpha)
         val newY = MathUtils.lerp(startY, startY * y, alpha)
-        gameObject.size.set(newX, newY)
+        gameObject.transform.size.set(newX, newY)
     }
 
     override fun end() {
-        gameObject.size.set(startX * x, startY * y)
+        gameObject.transform.size.set(startX * x, startY * y)
     }
 }
 
@@ -283,18 +283,18 @@ class SizeTo internal constructor(val width: Float,
     private var startHeight = 0.0f
 
     override fun start() {
-        startWidth = gameObject.size.width
-        startHeight = gameObject.size.height
+        startWidth = gameObject.transform.size.width
+        startHeight = gameObject.transform.size.height
     }
 
     override fun step(alpha: Float) {
         val newWidth = MathUtils.lerp(startWidth, width, alpha)
         val newHeight = MathUtils.lerp(startHeight, height, alpha)
-        gameObject.size.set(newWidth, newHeight)
+        gameObject.transform.size.set(newWidth, newHeight)
     }
 
     override fun end() {
-        gameObject.size.set(width, height)
+        gameObject.transform.size.set(width, height)
     }
 }
 

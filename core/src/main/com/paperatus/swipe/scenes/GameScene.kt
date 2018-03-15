@@ -44,8 +44,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         debug { "Created GameScene instance" }
 
         player.apply {
-            anchor.set(0.5f, 0.5f)
-            size.set(2.0f, 2.0f)
+            transform.anchor.set(0.5f, 0.5f)
+            transform.size.set(2.0f, 2.0f)
             attachComponent<InputComponent>(
                     when (Gdx.app.type) {
                         Application.ApplicationType.Desktop -> KeyInputComponent()
@@ -96,7 +96,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         background.position.set(
                 -background.width / 2.0f,
                 -background.height / 2.0f +
-                        (player.position.y / backgroundTileSize).toInt() *
+                        (player.transform.position.y / backgroundTileSize).toInt() *
                         backgroundTileSize
         )
 
@@ -106,7 +106,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         gameObjects.filterBy { it is RoadBlock || it is Destructible }.forEach {
             val shouldRemove = when {
-                it.position.y < gameMap.getLimit() -> true
+                it.transform.position.y < gameMap.getLimit() -> true
                 else -> false
             }
 
@@ -163,7 +163,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         override fun receive(what: Int, payload: Any?) {
             if (what != Notification.PARTICLE_SPAWN) return
-            addObject(createParticle(player.position))
+            addObject(createParticle(player.transform.position))
         }
 
         private fun createParticle(p: Vector2) = GameObject().apply {
@@ -175,9 +175,9 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                     0.0f
             )
 
-            position.set(p + positionOffset)
-            size.set(startSize, startSize)
-            anchor.set(0.5f, 0.5f)
+            transform.position.set(p + positionOffset)
+            transform.size.set(startSize, startSize)
+            transform.anchor.set(0.5f, 0.5f)
             attachComponent<RenderComponent>(RenderComponent(sprite="particle.png"))
 
             runAction(Actions.sequence {
@@ -211,8 +211,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             }
 
             addObject(pathObject.apply {
-                size.set(3.0f, 2.789f)
-                position.set(payload as Vector2)
+                transform.size.set(3.0f, 2.789f)
+                transform.position.set(payload as Vector2)
             })
         }
     }
