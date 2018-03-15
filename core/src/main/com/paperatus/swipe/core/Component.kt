@@ -2,6 +2,7 @@ package com.paperatus.swipe.core
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
 import ktx.collections.GdxArray
@@ -34,6 +35,21 @@ interface Component {
      * Receives a message sent by other components
      */
     fun receive(what: ComponentMessage, payload: Any? = null)
+}
+
+class TransformComponent : Component {
+    override val order = Component.Order.MANUAL
+
+    val position = Vector2()
+    val scale = Vector2()
+    var rotation: Float = 0.0f
+    val origin = Vector2()
+
+    override fun update(delta: Float, gameObject: GameObject) = Unit
+
+    override fun receive(what: ComponentMessage, payload: Any?) {
+    }
+
 }
 
 /**

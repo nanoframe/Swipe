@@ -30,9 +30,16 @@ open class GameObject : Subject() {
         }
     val anchor = Vector2()
 
+    val transform
+        get() = getComponent<TransformComponent>()!!
+
     private val components = ObjectMap<KClass<out Component>, Component>()
     private var activeAction: Action? = null
     private val children = GdxArray<GameObject>()
+
+    init {
+        attachComponent(TransformComponent())
+    }
 
     var shouldRemove = false
         private set
