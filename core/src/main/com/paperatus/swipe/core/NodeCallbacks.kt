@@ -3,13 +3,15 @@ package com.paperatus.swipe.core
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.Game
 import kotlin.reflect.KClass
 
 private val COMPONENT_ORDER: Array<KClass<out Component>> = arrayOf(
         InputComponent::class,
         Component::class, // Used to update the GameObject itself
-        PhysicsComponent::class
+        PhysicsComponent::class,
+        TransformComponent::class
 )
 
 class NodeUpdater : NodeTraversal.Callback {
@@ -50,16 +52,20 @@ class NodeRenderer(val game: Game) : NodeTraversal.Callback {
         }
     }
 
+    private val tempPosition = Vector2()
     private fun renderGameObject(batch: SpriteBatch,
                                  gameObject: GameObject,
                                  spriteName: String) {
+        tempPosition.set(gameObject.transform.position)
+        tempPosition.mul(gameObject.parent!!.transform.transformMatrix)
+
         val image: Any = game.assets[spriteName]
 
         gameObject.apply {
             when (image) {
                 is Texture -> batch.draw(image,
-                        transform.position.x - transform.size.width * transform.anchor.x,
-                        transform.position.y - transform.size.height * transform.anchor.y,
+                        tempPosition.x - transform.size.width * transform.anchor.x,
+                        tempPosition.y - transform.size.height * transform.anchor.y,
                         transform.anchor.x * transform.size.width,
                         transform.anchor.y * transform.size.height,
                         transform.size.width, transform.size.height,
@@ -69,8 +75,8 @@ class NodeRenderer(val game: Game) : NodeTraversal.Callback {
                         false, false
                 )
                 is TextureRegion -> batch.draw(image,
-                        transform.position.x - transform.size.width * transform.anchor.x,
-                        transform.position.y - transform.size.height * transform.anchor.y,
+                        tempPosition.x - transform.size.width * transform.anchor.x,
+                        tempPosition.y - transform.size.height * transform.anchor.y,
                         transform.anchor.x * transform.size.width,
                         transform.anchor.y * transform.size.height,
                         transform.size.width, transform.size.height,
