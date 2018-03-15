@@ -2,6 +2,7 @@ package com.paperatus.swipe.core
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.World
@@ -41,11 +42,28 @@ class TransformComponent : Component {
     override val order = Component.Order.MANUAL
 
     val position = Vector2()
+    val scale = Vector2()
     val size = Size()
     var rotation: Float = 0.0f
     val anchor = Vector2()
+    val transformMatrix = Matrix3()
 
-    override fun update(delta: Float, gameObject: GameObject) = Unit
+    var dirty = false
+
+    override fun update(delta: Float, gameObject: GameObject) {
+        if (dirty) {
+            dirty = false
+            val parent = gameObject.parent!!
+
+            transformMatrix.apply {
+                idt()
+                scale(scale)
+                rotateRad(rotation)
+                translate(position)
+                mulLeft(parent.transform.transformMatrix)
+            }
+        }
+    }
 
     override fun receive(what: ComponentMessage, payload: Any?) {
     }
