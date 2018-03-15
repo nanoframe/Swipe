@@ -44,8 +44,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         debug { "Created GameScene instance" }
 
         player.apply {
+            transform.worldSize.set(2.0f, 2.0f)
             transform.anchor.set(0.5f, 0.5f)
-            transform.size.set(2.0f, 2.0f)
             attachComponent<InputComponent>(
                     when (Gdx.app.type) {
                         Application.ApplicationType.Desktop -> KeyInputComponent()
@@ -170,8 +170,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         }
 
         private fun createParticle(p: Vector2) = GameObject().apply {
-            val startSize = MathUtils.random(0.09f, 0.21f)
-            val endSize = MathUtils.random(0.8f, 1.7f)
+            val startScale = MathUtils.random(0.1f, 0.2f)
+            val endScale = MathUtils.random(0.5f, 1.0f)
             val duration = MathUtils.random(0.5f, 1.2f)
             val positionOffset = Vector2(
                     MathUtils.random(-0.5f, 0.5f),
@@ -179,13 +179,14 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             )
 
             transform.position.set(p + positionOffset)
-            transform.size.set(startSize, startSize)
+            transform.worldSize.set(1.7f, 1.7f)
+            transform.scale.set(startScale)
             transform.anchor.set(0.5f, 0.5f)
             attachComponent<RenderComponent>(RenderComponent(sprite="particle.png"))
 
             runAction(Actions.sequence {
                 spawn {
-                    sizeTo(endSize, duration, Interpolation.pow2Out)
+                    scaleTo(endScale, duration, Interpolation.pow2Out)
                     fade(1.5f)
                 }
                 execute { requestRemove() }
@@ -214,7 +215,6 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             }
 
             addObject(pathObject.apply {
-                transform.size.set(3.0f, 2.789f)
                 transform.position.set(payload as Vector2)
             })
         }

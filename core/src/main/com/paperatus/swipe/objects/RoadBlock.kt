@@ -12,6 +12,7 @@ class RoadBlock : GameObject(), PhysicsComponent.ContactListener {
     private var health = 100.0f
 
     init {
+        transform.worldSize.set(3.0f, 2.789f)
         transform.anchor.set(0.5f, 0.5f)
         val shape = PolygonShape()
         shape.setAsBox(1.5f, 1.5f)

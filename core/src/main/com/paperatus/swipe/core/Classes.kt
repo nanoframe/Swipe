@@ -1,5 +1,6 @@
 package com.paperatus.swipe.core
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import ktx.collections.GdxArray
 
@@ -8,6 +9,10 @@ data class Size(var width: Float = 0.0f, var height: Float = 0.0f) {
         width = w
         height = h
     }
+}
+
+class Scale : Vector2(1.0f, 1.0f) {
+    fun set(scale: Float) = set(scale, scale)
 }
 
 private val temp = GdxArray<Any>()

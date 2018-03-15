@@ -31,24 +31,31 @@ interface Component {
 class TransformComponent : Component {
 
     val position = Vector2()
-    val scale = Vector2(1.0f, 1.0f)
-    val size = Size()
-    var rotation: Float = 0.0f
+    val scale = Scale()
+    val worldSize = Size()
     val anchor = Vector2()
-    val transformMatrix = Matrix3()
+    var rotation: Float = 0.0f
+        set(value) { field = value; dirty = true }
 
-    var dirty = true
+    private val _position = Vector2()
+    private val _scale = Scale()
+
+    val transformMatrix = Matrix3()
+    private var dirty = true
 
     override fun update(delta: Float, gameObject: GameObject) {
+        updateVector(_position, position)
+        updateVector(_scale, scale)
+
         if (dirty) {
             dirty = false
             val parent = gameObject.parent!!
 
             transformMatrix.apply {
                 idt()
-                scale(scale)
+                scale(_scale)
                 rotateRad(rotation)
-                translate(position)
+                translate(_position)
                 mulLeft(parent.transform.transformMatrix)
             }
         }
@@ -57,6 +64,12 @@ class TransformComponent : Component {
     override fun receive(what: ComponentMessage, payload: Any?) {
     }
 
+    fun updateVector(main: Vector2, new: Vector2) {
+        if (!main.epsilonEquals(new)) {
+            dirty = true
+            main.set(new)
+        }
+    }
 }
 
 /**
@@ -84,17 +97,17 @@ abstract class PhysicsComponent : Component {
         when (positioning) {
             Positioning.OBJECT_TO_BODY -> {
                 gameObject.transform.position.set(
-                        physicsBody.position.x + transform.size.width *
+                        physicsBody.position.x + transform.worldSize.width *
                                 (transform.anchor.x - 0.5f),
-                        physicsBody.position.y + transform.size.height *
+                        physicsBody.position.y + transform.worldSize.height *
                                 (transform.anchor.y - 0.5f)
                 )
             }
             Positioning.BODY_TO_OBJECT -> {
                 physicsBody.setTransform(
-                        transform.position.x + transform.size.width *
+                        transform.position.x + transform.worldSize.width *
                                 (0.5f - transform.anchor.x),
-                        transform.position.y + transform.size.height *
+                        transform.position.y + transform.worldSize.height *
                                 (0.5f - transform.anchor.y),
                         0.0f)
             }

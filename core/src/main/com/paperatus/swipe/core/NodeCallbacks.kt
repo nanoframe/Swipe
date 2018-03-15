@@ -62,24 +62,27 @@ class NodeRenderer(val game: Game) : NodeTraversal.Callback {
         val image: Any = game.assets[spriteName]
 
         gameObject.apply {
+            val width = transform.worldSize.width * transform.scale.x
+            val height = transform.worldSize.height * transform.scale.y
+
             when (image) {
                 is Texture -> batch.draw(image,
-                        tempPosition.x - transform.size.width * transform.anchor.x,
-                        tempPosition.y - transform.size.height * transform.anchor.y,
-                        transform.anchor.x * transform.size.width,
-                        transform.anchor.y * transform.size.height,
-                        transform.size.width, transform.size.height,
+                        tempPosition.x - width * transform.anchor.x,
+                        tempPosition.y - height * transform.anchor.y,
+                        transform.anchor.x * width,
+                        transform.anchor.y * height,
+                        width, height,
                         1.0f, 1.0f,
                         transform.rotation,
                         0, 0, image.width, image.height,
                         false, false
                 )
                 is TextureRegion -> batch.draw(image,
-                        tempPosition.x - transform.size.width * transform.anchor.x,
-                        tempPosition.y - transform.size.height * transform.anchor.y,
-                        transform.anchor.x * transform.size.width,
-                        transform.anchor.y * transform.size.height,
-                        transform.size.width, transform.size.height,
+                        tempPosition.x - width * transform.anchor.x,
+                        tempPosition.y - height * transform.anchor.y,
+                        transform.anchor.x * width,
+                        transform.anchor.y * height,
+                        width, height,
                         1.0f, 1.0f,
                         transform.rotation
                 )

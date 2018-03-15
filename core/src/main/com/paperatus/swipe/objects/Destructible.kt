@@ -30,7 +30,7 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
     }
 
     override fun onContactBegin(other: GameObject) {
-        transform.size.set(10.0f, 10.0f)
+        transform.worldSize.set(3.0f, 2.789f)
         detachComponent<RenderComponent>()
 
         val animation = AnimationRenderComponent(
