@@ -42,13 +42,13 @@ class TransformComponent : Component {
     override val order = Component.Order.MANUAL
 
     val position = Vector2()
-    val scale = Vector2()
+    val scale = Vector2(1.0f, 1.0f)
     val size = Size()
     var rotation: Float = 0.0f
     val anchor = Vector2()
     val transformMatrix = Matrix3()
 
-    var dirty = false
+    var dirty = true
 
     override fun update(delta: Float, gameObject: GameObject) {
         if (dirty) {
@@ -62,6 +62,7 @@ class TransformComponent : Component {
                 translate(position)
                 mulLeft(parent.transform.transformMatrix)
             }
+            println("$transformMatrix \n")
         }
     }
 
