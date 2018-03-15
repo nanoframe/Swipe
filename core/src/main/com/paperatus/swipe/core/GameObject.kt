@@ -4,6 +4,7 @@ import Action
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ObjectMap
+import ktx.collections.GdxArray
 import kotlin.reflect.KClass
 
 /**
@@ -31,6 +32,7 @@ open class GameObject : Subject() {
 
     private val components = ObjectMap<KClass<out Component>, Component>()
     private var activeAction: Action? = null
+    private val children = GdxArray<GameObject>()
 
     var shouldRemove = false
         private set
@@ -71,6 +73,14 @@ open class GameObject : Subject() {
         it.update(delta)
         if (it.isFinished()) stopAction()
     }
+
+    fun addChild(child: GameObject) = children.add(child)
+
+    fun addChild(child: GameObject, at: Int) = children.insert(at, child)
+
+    fun removeChild(child: GameObject, identity: Boolean = true) = children.removeValue(child, identity)
+
+    fun removeAt(index: Int) = children.removeIndex(index)
 
 
     /**
