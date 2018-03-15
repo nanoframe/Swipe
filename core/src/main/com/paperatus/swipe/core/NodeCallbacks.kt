@@ -4,6 +4,13 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.paperatus.swipe.Game
+import kotlin.reflect.KClass
+
+private val COMPONENT_ORDER: Array<KClass<out Component>> = arrayOf(
+        InputComponent::class,
+        Component::class, // Used to update the GameObject itself
+        PhysicsComponent::class
+)
 
 class NodeUpdater : NodeTraversal.Callback {
     override fun onTraverse(gameObject: GameObject, data: Any) {
@@ -11,16 +18,19 @@ class NodeUpdater : NodeTraversal.Callback {
 
         // TODO: Add a custom component update - update components in specified order
         // Ex. Update all inputs first, then the GO itself, then the physics
-        gameObject.getComponents().forEach {
-            it.value.update(delta, gameObject)
+        for (i in 0 until COMPONENT_ORDER.size) {
+            val order = COMPONENT_ORDER[i]
+            if (order == Component::class) {
+                gameObject.update(delta)
+                continue
+            }
+
+            gameObject.getComponent(order)?.update(delta, gameObject)
         }
-        gameObject.update(delta)
     }
 }
 
 class NodeRenderer(val game: Game) : NodeTraversal.Callback {
-
-    var batch: SpriteBatch? = null
 
     override fun onTraverse(gameObject: GameObject, data: Any) {
         val batch = data as SpriteBatch
