@@ -12,18 +12,8 @@ typealias ComponentMessage = Int
 
 /**
  * Components that can be attached to a GameObject instance to extend functionality.
- *
- * @property order update order in which the component should be updated.
  */
 interface Component {
-
-    enum class Order {
-        PRE_UPDATE, UPDATE, POST_UPDATE,
-        PRE_RENDER, RENDER, POST_RENDER,
-        MANUAL
-    }
-
-    val order: Order
 
     /**
      * Updates the given GameObject.
@@ -39,7 +29,6 @@ interface Component {
 }
 
 class TransformComponent : Component {
-    override val order = Component.Order.MANUAL
 
     val position = Vector2()
     val scale = Vector2(1.0f, 1.0f)
@@ -73,9 +62,7 @@ class TransformComponent : Component {
 /**
  * Handles user input.
  */
-abstract class InputComponent : Component {
-    override val order = Component.Order.PRE_UPDATE
-}
+abstract class InputComponent : Component
 
 /**
  * Provides a Physics system to a GameObject.
@@ -88,7 +75,6 @@ abstract class PhysicsComponent : Component {
 
     var positioning = Positioning.OBJECT_TO_BODY
 
-    override val order = Component.Order.POST_UPDATE
     private val contactListeners = GdxArray<ContactListener>()
     var onInit: ((Body) -> Unit)? = null
 
@@ -185,8 +171,6 @@ open class RenderComponent(val renderMode: Mode = Mode.SPRITE, open var sprite: 
 
     fun removeRenderParams(params: RenderParams, identity: Boolean = true) =
             customParams.removeValue(params, identity)
-
-    override val order = Component.Order.RENDER
 }
 
 class AnimationRenderComponent(val delay: Float,
