@@ -25,6 +25,7 @@ import com.paperatus.swipe.map.ProceduralMapGenerator
 import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.RoadBlock
 import com.paperatus.swipe.objects.GameCamera
+import com.paperatus.swipe.objects.ParticleGenerator
 import com.paperatus.swipe.objects.Player
 import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
@@ -34,10 +35,11 @@ const val WORLD_SIZE = 50.0f // World height
 
 class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
-    private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private val player: GameObject = Player()
-    private lateinit var gameMap: GameMap
+    private val particles = ParticleGenerator()
 
+    private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
+    private lateinit var gameMap: GameMap
     private lateinit var background: TiledTexture
 
     init {
@@ -46,6 +48,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         player.apply {
             transform.worldSize.set(2.0f, 2.0f)
             transform.anchor.set(0.5f, 0.5f)
+
             attachComponent<InputComponent>(
                     when (Gdx.app.type) {
                         Application.ApplicationType.Desktop -> KeyInputComponent()
@@ -58,10 +61,11 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             })
             attachComponent<RenderComponent>(RenderComponent(sprite = "player.png"))
 
-            addObserver(ParticleSpawner())
+            addObserver(particles)
         }
 
         addObject(player)
+        addObject(particles)
     }
 
     override fun create() {
@@ -157,41 +161,6 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     override fun dispose() {
-    }
-
-    val particles = GameObject().also {
-        addObject(it)
-    }
-    inner class ParticleSpawner : Observer {
-
-        override fun receive(what: Int, payload: Any?) {
-            if (what != Notification.PARTICLE_SPAWN) return
-            particles.addChild(createParticle(player.transform.position))
-        }
-
-        private fun createParticle(p: Vector2) = GameObject().apply {
-            val startScale = MathUtils.random(0.1f, 0.2f)
-            val endScale = MathUtils.random(0.5f, 1.0f)
-            val duration = MathUtils.random(0.5f, 1.2f)
-            val positionOffset = Vector2(
-                    MathUtils.random(-0.5f, 0.5f),
-                    0.0f
-            )
-
-            transform.position.set(p + positionOffset)
-            transform.worldSize.set(1.7f, 1.7f)
-            transform.scale.set(startScale)
-            transform.anchor.set(0.5f, 0.5f)
-            attachComponent<RenderComponent>(RenderComponent(sprite="particle.png"))
-
-            runAction(Actions.sequence {
-                spawn {
-                    scaleTo(endScale, duration, Interpolation.pow2Out)
-                    fade(1.5f)
-                }
-                execute { requestRemove() }
-            })
-        }
     }
 
     inner class PathObjectSpawner : Observer {

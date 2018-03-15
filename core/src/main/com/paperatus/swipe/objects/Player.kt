@@ -1,5 +1,6 @@
 package com.paperatus.swipe.objects
 
+import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
@@ -22,7 +23,7 @@ class Player : GameObject() {
         val spawnTimes = 1.0f / frequency
         if (elapsed >= spawnTimes) {
             elapsed -= spawnTimes
-            post(Notification.PARTICLE_SPAWN)
+            post(Notification.PARTICLE_SPAWN, transform.position)
         }
     }
 }
