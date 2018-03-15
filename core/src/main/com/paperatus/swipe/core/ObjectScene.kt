@@ -1,46 +1,48 @@
 package com.paperatus.swipe.core
 
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.paperatus.swipe.Game
 import ktx.collections.GdxArray
 
 /**
  * Contains game components for updating and rendering.
- *
- * @property gameObjects contains GameObjects that will be rendered every frame
  */
 abstract class ObjectScene(protected val game: Game) : Scene {
-    val gameObjects = GdxArray<GameObject>()
-    private val removeQueue = GdxArray<GameObject>()
+    val root = GameObject()
+    //private val removeQueue = GdxArray<GameObject>()
 
-    private var componentDelta = 0.0f
+    private val nodeTraversal = NodeTraversal()
+    private val nodeUpdater = NodeUpdater()
+    private val nodeRenderer = NodeRenderer(game)
+
+    //private var componentDelta = 0.0f
 
     override fun preUpdate(delta: Float) {
-        componentDelta = delta
-        updateComponents(Component.Order.PRE_UPDATE)
+        //componentDelta = delta
+        //updateComponents(Component.Order.PRE_UPDATE)
     }
 
     override fun update(delta: Float) {
-        gameObjects.forEach {
-            it.update(delta)
-        }
-        updateComponents(Component.Order.UPDATE)
+        //gameObjects.forEach {
+        //    it.update(delta)
+        //}
+        //updateComponents(Component.Order.UPDATE)
+        nodeTraversal.callback = nodeUpdater
+        nodeTraversal.traverse(root, delta)
     }
 
     override fun postUpdate(delta: Float) {
-        updateComponents(Component.Order.POST_UPDATE)
-        removeQueue.forEach {
-            removeObject(it)
-        }
-        gameObjects.forEach {
-            if (it.shouldRemove) removeObject(it)
-        }
-        removeQueue.clear()
+        //updateComponents(Component.Order.POST_UPDATE)
+        //removeQueue.forEach {
+        //    removeObject(it)
+        //}
+        //gameObjects.forEach {
+        //    if (it.shouldRemove) removeObject(it)
+        //}
+        //removeQueue.clear()
     }
 
-    override fun preRender(batch: SpriteBatch) = updateComponents(Component.Order.PRE_RENDER)
+    override fun preRender(batch: SpriteBatch) = Unit//updateComponents(Component.Order.PRE_RENDER)
 
     /**
      * Renders every GameObject in [gameObjects].
@@ -56,71 +58,20 @@ abstract class ObjectScene(protected val game: Game) : Scene {
      * @param batch the SpriteBatch to render onto.
      */
     override fun render(batch: SpriteBatch) {
-        updateComponents(Component.Order.RENDER)
-
-        gameObjects.forEach { gameObject ->
-            gameObject.getComponent<RenderComponent>()?.let {
-                if (it.renderMode == RenderComponent.Mode.CUSTOM) return@forEach
-                val spriteName = it.sprite
-                        ?: throw RenderException("Sprite name is null")
-
-                if (spriteName == "") throw RenderException("Sprite name cannot be empty")
-                if (!game.assets.isLoaded(spriteName)) throw AssetNotLoadedException(
-                        "Sprite $spriteName isn't loaded!"
-                )
-
-                // Apply custom rendering params if requested
-                it.customParams.forEach { it.applyParams(batch) }
-                renderGameObject(batch, gameObject, spriteName)
-                it.customParams.forEach { it.resetParams(batch) }
-
-                Unit
-            }
-        }
+        nodeTraversal.callback = nodeRenderer
+        nodeTraversal.traverse(root, batch)
     }
 
-    private fun renderGameObject(batch: SpriteBatch,
-                                 gameObject: GameObject,
-                                 spriteName: String) {
-        val image: Any = game.assets[spriteName]
 
-        gameObject.apply {
-            when (image) {
-                is Texture -> batch.draw(image,
-                        transform.position.x - transform.size.width * transform.anchor.x,
-                        transform.position.y - transform.size.height * transform.anchor.y,
-                        transform.anchor.x * transform.size.width,
-                        transform.anchor.y * transform.size.height,
-                        transform.size.width, transform.size.height,
-                        1.0f, 1.0f,
-                        transform.rotation,
-                        0, 0, image.width, image.height,
-                        false, false
-                )
-                is TextureRegion -> batch.draw(image,
-                        transform.position.x - transform.size.width * transform.anchor.x,
-                        transform.position.y - transform.size.height * transform.anchor.y,
-                        transform.anchor.x * transform.size.width,
-                        transform.anchor.y * transform.size.height,
-                        transform.size.width, transform.size.height,
-                        1.0f, 1.0f,
-                        transform.rotation
-                )
-                else -> ktx.log.error(RuntimeException()) {
-                    "Asset '$spriteName' is of type ${image::class}!"
-                }
-            }
-        }
-    }
 
-    override fun postRender(batch: SpriteBatch) = updateComponents(Component.Order.POST_RENDER)
+    override fun postRender(batch: SpriteBatch) = Unit//updateComponents(Component.Order.POST_RENDER)
 
     /**
      * Adds a GameObject to the ObjectScene.
      *
      * @param gameObject the GameObject to add.
      */
-    open fun addObject(gameObject: GameObject) = gameObjects.add(gameObject)
+    open fun addObject(gameObject: GameObject) = root.addChild(gameObject)
 
     /**
      * Removes the GameObject from the ObjectScene.
@@ -129,20 +80,20 @@ abstract class ObjectScene(protected val game: Game) : Scene {
      * @param identity true will use == to compare, false will use .equals().
      */
     open fun removeObject(gameObject: GameObject, identity: Boolean = true) =
-            gameObjects.removeValue(gameObject, identity)
+            root.removeChild(gameObject, identity)
 
-    open fun queueRemove(gameObject: GameObject) {
-        removeQueue.add(gameObject)
-    }
+    //open fun queueRemove(gameObject: GameObject) {
+        //removeQueue.add(gameObject)
+    //}
 
     // TODO: Implement a map for each order for faster updates
-    private fun updateComponents(order: Component.Order) {
-        gameObjects.forEach { gameObject ->
-            gameObject.getComponents().values().forEach { component ->
-                if (component.order == order) component.update(componentDelta, gameObject)
-            }
-        }
-    }
+//    private fun updateComponents(order: Component.Order) {
+//        gameObjects.forEach { gameObject ->
+//            gameObject.getComponents().values().forEach { component ->
+//                if (component.order == order) component.update(componentDelta, gameObject)
+//            }
+//        }
+//    }
 
     inline fun <T : Any> GdxArray<T>.operate(action: GdxArray<T>.() -> Unit) = action()
 }
