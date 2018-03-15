@@ -16,8 +16,6 @@ class NodeUpdater : NodeTraversal.Callback {
     override fun onTraverse(gameObject: GameObject, data: Any) {
         val delta = data as Float
 
-        // TODO: Add a custom component update - update components in specified order
-        // Ex. Update all inputs first, then the GO itself, then the physics
         for (i in 0 until COMPONENT_ORDER.size) {
             val order = COMPONENT_ORDER[i]
             if (order == Component::class) {
