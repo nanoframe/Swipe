@@ -9,39 +9,14 @@ import ktx.collections.GdxArray
  */
 abstract class ObjectScene(protected val game: Game) : Scene {
     val root = GameObject()
-    //private val removeQueue = GdxArray<GameObject>()
 
     private val nodeTraversal = NodeTraversal()
     private val nodeUpdater = NodeUpdater()
     private val nodeRenderer = NodeRenderer(game)
 
-    //private var componentDelta = 0.0f
-
-    override fun preUpdate(delta: Float) {
-        //componentDelta = delta
-        //updateComponents(Component.Order.PRE_UPDATE)
-    }
-
     override fun update(delta: Float) {
-        //gameObjects.forEach {
-        //    it.update(delta)
-        //}
-        //updateComponents(Component.Order.UPDATE)
         nodeTraversal.traverse(nodeUpdater, root, delta)
     }
-
-    override fun postUpdate(delta: Float) {
-        //updateComponents(Component.Order.POST_UPDATE)
-        //removeQueue.forEach {
-        //    removeObject(it)
-        //}
-        //gameObjects.forEach {
-        //    if (it.shouldRemove) removeObject(it)
-        //}
-        //removeQueue.clear()
-    }
-
-    override fun preRender(batch: SpriteBatch) = Unit//updateComponents(Component.Order.PRE_RENDER)
 
     /**
      * Renders every GameObject in [gameObjects].
@@ -59,10 +34,6 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     override fun render(batch: SpriteBatch) {
         nodeTraversal.traverse(nodeRenderer, root, batch)
     }
-
-
-
-    override fun postRender(batch: SpriteBatch) = Unit//updateComponents(Component.Order.POST_RENDER)
 
     /**
      * Adds a GameObject to the ObjectScene.

@@ -119,11 +119,10 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 //        }
     }
 
-    override fun preRender(batch: SpriteBatch) {
-        batch.projectionMatrix = camera.combined
-    }
-
     override fun render(batch: SpriteBatch) {
+        batch.projectionMatrix = camera.combined
+
+        batch.begin()
         background.draw(batch)
         batch.end()
         gameMap.renderPath()
@@ -131,11 +130,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         super.render(batch)
         batch.end()
         gameMap.renderEdge()
-        batch.begin()
-    }
 
-    override fun postRender(batch: SpriteBatch) {
-        super.postRender(batch)
         debugRender(camera)
     }
 
