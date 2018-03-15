@@ -62,7 +62,6 @@ class TransformComponent : Component {
                 translate(position)
                 mulLeft(parent.transform.transformMatrix)
             }
-            println("$transformMatrix \n")
         }
     }
 

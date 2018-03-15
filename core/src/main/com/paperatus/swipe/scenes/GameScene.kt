@@ -159,9 +159,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     override fun dispose() {
     }
 
-    val particles = GameObject().apply {
-        transform.position.set(-5.0f, 5.0f)
-        addObject(this)
+    val particles = GameObject().also {
+        addObject(it)
     }
     inner class ParticleSpawner : Observer {
 
