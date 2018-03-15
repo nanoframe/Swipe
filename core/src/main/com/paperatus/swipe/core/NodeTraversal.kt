@@ -10,10 +10,10 @@ class NodeTraversal {
         nodeCallback = null
     }
 
-    private fun traverse(root: GameObject, data: Any = Unit) {
+    private fun traverse(root: GameObject, data: Any) {
         root.children.forEach {
             nodeCallback!!.onTraverse(it, data)
-            traverse(it)
+            traverse(it, data)
         }
     }
 
