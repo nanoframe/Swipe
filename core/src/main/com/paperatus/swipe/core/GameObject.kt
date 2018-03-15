@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.ObjectMap
 import ktx.collections.GdxArray
 import kotlin.reflect.KClass
 
+private val temp = GdxArray<GameObject>()
+
 /**
  * Interface for objects that can be rendered onto the scene.
  *
@@ -20,7 +22,7 @@ open class GameObject : Subject() {
 
     private val components = ObjectMap<KClass<out Component>, Component>()
     private var activeAction: Action? = null
-    val children = GdxArray<GameObject>()
+    val children = GdxArray<GameObject>() // TODO: Implement custom data structure
     var parent: GameObject? = null
         private set
 
@@ -28,8 +30,7 @@ open class GameObject : Subject() {
         attachComponent(TransformComponent())
     }
 
-    var shouldRemove = false
-        private set
+    private var shouldRemove = false
 
     /**
      * Updates the GameObject.
@@ -37,6 +38,15 @@ open class GameObject : Subject() {
      * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
      */
     open fun update(delta: Float) {
+        children.forEach {
+            if (it.shouldRemove) {
+                temp.add(it)
+            }
+        }
+        temp.forEach {
+            children.removeValue(it, true)
+        }
+
         updateAction(delta)
     }
 
