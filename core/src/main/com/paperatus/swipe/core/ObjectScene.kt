@@ -27,8 +27,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
         //    it.update(delta)
         //}
         //updateComponents(Component.Order.UPDATE)
-        nodeTraversal.callback = nodeUpdater
-        nodeTraversal.traverse(root, delta)
+        nodeTraversal.traverse(nodeUpdater, root, delta)
     }
 
     override fun postUpdate(delta: Float) {
@@ -58,8 +57,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
      * @param batch the SpriteBatch to render onto.
      */
     override fun render(batch: SpriteBatch) {
-        nodeTraversal.callback = nodeRenderer
-        nodeTraversal.traverse(root, batch)
+        nodeTraversal.traverse(nodeRenderer, root, batch)
     }
 
 
