@@ -29,6 +29,10 @@ open class NodeUpdater : NodeTraversal.Callback {
 
             gameObject.getComponent(order)?.update(delta, gameObject)
         }
+
+        if (gameObject.shouldRemove) {
+            gameObject.parent!!.removeChild(gameObject)
+        }
     }
 }
 
@@ -42,6 +46,10 @@ class NodePhysicsUpdater(private val world: World) : NodeUpdater() {
         }
 
         super.onTraverse(gameObject, data)
+
+        if (gameObject.shouldRemove) {
+            gameObject.getComponent<PhysicsComponent>()?.destroy(world)
+        }
     }
 }
 

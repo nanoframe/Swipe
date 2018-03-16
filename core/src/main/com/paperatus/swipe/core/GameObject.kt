@@ -7,8 +7,6 @@ import com.badlogic.gdx.utils.ObjectMap
 import ktx.collections.GdxArray
 import kotlin.reflect.KClass
 
-private val temp = GdxArray<GameObject>()
-
 /**
  * Interface for objects that can be rendered onto the scene.
  *
@@ -39,15 +37,6 @@ open class GameObject : Subject() {
      * @param [delta] the time since the last frame; capped at [SceneController.maxDeltaTime]
      */
     open fun update(delta: Float) {
-        children.forEach {
-            if (it.shouldRemove) {
-                temp.add(it)
-            }
-        }
-        temp.forEach {
-            children.removeValue(it, true)
-        }
-
         updateAction(delta)
     }
 
