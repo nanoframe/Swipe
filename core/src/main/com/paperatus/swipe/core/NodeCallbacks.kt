@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.Game
+import ktx.collections.GdxArray
 import kotlin.reflect.KClass
 
 private val COMPONENT_ORDER: Array<KClass<out Component>> = arrayOf(
@@ -17,6 +18,7 @@ private val COMPONENT_ORDER: Array<KClass<out Component>> = arrayOf(
 )
 
 open class NodeUpdater : NodeTraversal.Callback {
+
     override fun onTraverse(gameObject: GameObject, data: Any) {
         val delta = data as Float
 
@@ -29,11 +31,9 @@ open class NodeUpdater : NodeTraversal.Callback {
 
             gameObject.getComponent(order)?.update(delta, gameObject)
         }
-
-        if (gameObject.shouldRemove) {
-            gameObject.parent!!.removeChild(gameObject)
-        }
     }
+
+    override fun canTraverse(gameObject: GameObject) = gameObject.parent != null
 }
 
 class NodePhysicsUpdater(private val world: World) : NodeUpdater() {
@@ -46,8 +46,32 @@ class NodePhysicsUpdater(private val world: World) : NodeUpdater() {
         }
 
         super.onTraverse(gameObject, data)
+    }
+}
 
-        if (gameObject.shouldRemove) {
+open class NodeRemover : NodeTraversal.Callback {
+
+    private val temp = GdxArray<GameObject>()
+    override fun onTraverse(gameObject: GameObject, data: Any) {
+        gameObject.children.forEach {
+            if (it.parent == null) {
+                temp.add(it)
+            }
+        }
+
+        temp.forEach {
+            gameObject.removeChild(it)
+        }
+        temp.clear()
+    }
+
+    override fun canTraverse(gameObject: GameObject) = true
+}
+
+class NodePhysicsRemover(private val world: World) : NodeRemover() {
+    override fun onTraverse(gameObject: GameObject, data: Any) {
+        super.onTraverse(gameObject, data)
+        if (gameObject.parent == null) {
             gameObject.getComponent<PhysicsComponent>()?.destroy(world)
         }
     }
@@ -115,4 +139,6 @@ class NodeRenderer(val game: Game) : NodeTraversal.Callback {
             }
         }
     }
+
+    override fun canTraverse(gameObject: GameObject) = true
 }

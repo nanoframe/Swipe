@@ -10,12 +10,14 @@ import ktx.collections.GdxArray
 abstract class ObjectScene(protected val game: Game) : Scene {
     val root = GameObject()
 
-    private val nodeTraversal = NodeTraversal()
+    protected val nodeTraversal = NodeTraversal()
     protected open val nodeUpdater = NodeUpdater()
+    protected open val nodeRemover = NodeRemover()
     protected open val nodeRenderer = NodeRenderer(game)
 
     override fun update(delta: Float) {
         nodeTraversal.traverse(nodeUpdater, root, delta)
+        nodeTraversal.traverse(nodeRemover, root)
     }
 
     /**

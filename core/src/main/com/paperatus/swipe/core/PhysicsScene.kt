@@ -19,6 +19,7 @@ abstract class PhysicsScene(
     protected val physicsWorld = World(gravity, doSleep)
 
     override val nodeUpdater = NodePhysicsUpdater(physicsWorld)
+    override val nodeRemover = NodePhysicsRemover(physicsWorld)
 
     init {
         physicsWorld.setContactListener(object : ContactListener {

@@ -13,11 +13,12 @@ class NodeTraversal {
     private fun traverse(root: GameObject, data: Any) {
         root.children.forEach {
             nodeCallback!!.onTraverse(it, data)
-            traverse(it, data)
+            if (nodeCallback!!.canTraverse(it)) traverse(it, data)
         }
     }
 
     interface Callback {
+        fun canTraverse(gameObject: GameObject): Boolean
         fun onTraverse(gameObject: GameObject, data: Any)
     }
 }

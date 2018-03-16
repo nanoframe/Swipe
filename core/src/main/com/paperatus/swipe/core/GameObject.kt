@@ -28,9 +28,6 @@ open class GameObject : Subject() {
         attachComponent(TransformComponent())
     }
 
-    var shouldRemove = false
-        private set
-
     /**
      * Updates the GameObject.
      *
@@ -41,7 +38,7 @@ open class GameObject : Subject() {
     }
 
     fun requestRemove() {
-        shouldRemove = true
+        parent = null
     }
 
     fun runAction(action: Action) {
