@@ -11,7 +11,9 @@ data class Size(var width: Float = 0.0f, var height: Float = 0.0f) {
     }
 }
 
-class Scale : Vector2(1.0f, 1.0f) {
+class Scale(x: Float = 1.0f, y: Float = 1.0f) : Vector2(x, y) {
+    constructor(scl: Float) : this(scl, scl)
+
     fun set(scale: Float) = set(scale, scale)
 }
 

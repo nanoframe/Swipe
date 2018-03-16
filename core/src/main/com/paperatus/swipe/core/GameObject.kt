@@ -57,6 +57,7 @@ open class GameObject : Subject() {
     }
 
     fun stopAction() {
+        activeAction?.end()
         activeAction?.setGameObject(null)
         activeAction = null
     }
