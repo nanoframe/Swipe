@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.World
 import com.paperatus.swipe.Game
 import kotlin.reflect.KClass
 
@@ -11,10 +12,11 @@ private val COMPONENT_ORDER: Array<KClass<out Component>> = arrayOf(
         InputComponent::class,
         Component::class, // Used to update the GameObject itself
         PhysicsComponent::class,
-        TransformComponent::class
+        TransformComponent::class,
+        RenderComponent::class
 )
 
-class NodeUpdater : NodeTraversal.Callback {
+open class NodeUpdater : NodeTraversal.Callback {
     override fun onTraverse(gameObject: GameObject, data: Any) {
         val delta = data as Float
 
@@ -27,6 +29,19 @@ class NodeUpdater : NodeTraversal.Callback {
 
             gameObject.getComponent(order)?.update(delta, gameObject)
         }
+    }
+}
+
+class NodePhysicsUpdater(private val world: World) : NodeUpdater() {
+    override fun onTraverse(gameObject: GameObject, data: Any) {
+        gameObject.getComponent<PhysicsComponent>()?.let {
+            it.takeIf { !it.initialized }?.let {
+                it.init(world)
+                it.physicsBody.userData = gameObject
+            }
+        }
+
+        super.onTraverse(gameObject, data)
     }
 }
 

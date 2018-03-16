@@ -14,7 +14,7 @@ class Player : GameObject() {
     override fun update(delta: Float) {
         elapsed = (elapsed + delta).coerceAtMost(2.0f)
 
-        val velocity = getComponent<PhysicsComponent>()!!.getBody().linearVelocity.len()
+        val velocity = getComponent<PhysicsComponent>()!!.physicsBody.linearVelocity.len()
         val frequency =
                 (PARTICLE_INITIAL_FREQUENCY *
                 velocity *

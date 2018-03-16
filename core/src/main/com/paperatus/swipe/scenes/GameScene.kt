@@ -26,6 +26,7 @@ import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.RoadBlock
 import com.paperatus.swipe.objects.GameCamera
 import com.paperatus.swipe.objects.ParticleGenerator
+import com.paperatus.swipe.objects.PathObjectGenerator
 import com.paperatus.swipe.objects.Player
 import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
@@ -37,14 +38,13 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
     private val player: GameObject = Player()
     private val particles = ParticleGenerator()
+    private val pathObjects = PathObjectGenerator()
 
     private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private lateinit var gameMap: GameMap
     private lateinit var background: TiledTexture
 
     init {
-        debug { "Created GameScene instance" }
-
         player.apply {
             transform.worldSize.set(2.0f, 2.0f)
             transform.anchor.set(0.5f, 0.5f)
@@ -66,25 +66,26 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         addObject(player)
         addObject(particles)
+        addObject(pathObjects)
     }
 
     override fun create() {
+        debug { "Created GameScene instance" }
+
         background = TiledTexture(game.assets["background.png"])
         background.direction = TiledTexture.Direction.Y
-
         background.repeatCount = 640.0f / 15.0f
 
-        val mapData = MapData(
-                Color(
-                        204.0f / 255.0f,
-                        230.0f / 255.0f,
-                        228.0f / 255.0f,
-                        1.0f),
+        val mapData = MapData(Color(
+                204.0f / 255.0f,
+                230.0f / 255.0f,
+                228.0f / 255.0f,
+                1.0f),
                 game.assets["edge.png"]
         )
         val mapGenerator = ProceduralMapGenerator()
         gameMap = GameMap(mapData, mapGenerator)
-        gameMap.addObserver(PathObjectSpawner())
+        gameMap.addObserver(pathObjects)
         gameMap.create()
     }
 
@@ -156,31 +157,5 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     override fun dispose() {
-    }
-
-    inner class PathObjectSpawner : Observer {
-        override fun receive(what: Int, payload: Any?) {
-
-            val pathObject: GameObject = when (what) {
-                Notification.BLOCKADE_SPAWN -> {
-                    val d = Destructible()
-                    d.attachComponent<RenderComponent>(
-                            RenderComponent(sprite = "blockade.png"))
-                    d
-                }
-
-                Notification.DESTRUCTIBLE_SPAWN -> {
-                    val r = RoadBlock()
-                    r.attachComponent<RenderComponent>(
-                            RenderComponent(sprite = "blockade.png"))
-                    r
-                }
-                else -> return
-            }
-
-            addObject(pathObject.apply {
-                transform.position.set(payload as Vector2)
-            })
-        }
     }
 }

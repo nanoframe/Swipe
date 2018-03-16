@@ -30,7 +30,8 @@ open class GameObject : Subject() {
         attachComponent(TransformComponent())
     }
 
-    private var shouldRemove = false
+    var shouldRemove = false
+        private set
 
     /**
      * Updates the GameObject.

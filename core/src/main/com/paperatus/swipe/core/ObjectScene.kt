@@ -11,8 +11,8 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     val root = GameObject()
 
     private val nodeTraversal = NodeTraversal()
-    private val nodeUpdater = NodeUpdater()
-    private val nodeRenderer = NodeRenderer(game)
+    protected open val nodeUpdater = NodeUpdater()
+    protected open val nodeRenderer = NodeRenderer(game)
 
     override fun update(delta: Float) {
         nodeTraversal.traverse(nodeUpdater, root, delta)

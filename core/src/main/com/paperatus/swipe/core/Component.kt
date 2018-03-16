@@ -2,9 +2,14 @@ package com.paperatus.swipe.core
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.CircleShape
+import com.badlogic.gdx.physics.box2d.PolygonShape
+import com.badlogic.gdx.physics.box2d.Shape
 import com.badlogic.gdx.physics.box2d.World
 import ktx.collections.GdxArray
 
@@ -80,19 +85,23 @@ abstract class InputComponent : Component
 /**
  * Provides a Physics system to a GameObject.
  */
-abstract class PhysicsComponent : Component {
+open class PhysicsComponent(private val data: PhysicsBodyData) : Component {
 
     enum class Positioning {
         OBJECT_TO_BODY, BODY_TO_OBJECT
     }
 
+    private var _physicsBody: Body? = null
+    val physicsBody get() = _physicsBody!!
+    var initialized = false
+        private set
+
+    var onInit: ((Body) -> Unit)? = null
     var positioning = Positioning.OBJECT_TO_BODY
 
     private val contactListeners = GdxArray<ContactListener>()
-    var onInit: ((Body) -> Unit)? = null
 
     override fun update(delta: Float, gameObject: GameObject) {
-        val physicsBody = getBody()
         val transform = gameObject.transform
         when (positioning) {
             Positioning.OBJECT_TO_BODY -> {
@@ -119,11 +128,56 @@ abstract class PhysicsComponent : Component {
      *
      * @param world Box2D game world.
      */
-    abstract fun init(world: World)
+    fun init(world: World) {
+        if (initialized) throw RuntimeException()
 
-    abstract fun destroy(world: World)
+        val bodyDef = BodyDef()
+        bodyDef.type = when(data.bodyType) {
+            PhysicsBodyData.Type.STATIC -> BodyDef.BodyType.StaticBody
+            PhysicsBodyData.Type.DYNAMIC -> BodyDef.BodyType.DynamicBody
+            PhysicsBodyData.Type.KINEMATIC -> BodyDef.BodyType.KinematicBody
+        }
+        bodyDef.linearDamping = data.linearDampening
+        bodyDef.angularDamping = data.angularDampening
+        bodyDef.fixedRotation = data.fixedRotation
 
-    abstract fun getBody(): Body
+        val dataShape = data.shape
+
+        val body = world.createBody(bodyDef)
+        val shape: Shape
+        val area: Float
+
+        when (dataShape) {
+            is Circle -> {
+                val circle = CircleShape()
+                circle.radius = dataShape.radius
+                shape = circle
+                area = MathUtils.PI * circle.radius * circle.radius
+            }
+            is Square -> {
+                val square = PolygonShape()
+                square.setAsBox(dataShape.width / 2.0f, dataShape.height / 2.0f)
+                shape = square
+                area = dataShape.width * dataShape.height
+            }
+            else -> throw RuntimeException()
+        }
+
+        val fixture = body.createFixture(shape, data.mass / area)
+        fixture.isSensor = data.isSensor
+        fixture.restitution = data.restitution
+        shape.dispose()
+
+        body.position.set(data.position)
+
+        _physicsBody = body
+        onInit?.invoke(physicsBody)
+        initialized = true
+    }
+
+    fun destroy(world: World) {
+        world.destroyBody(physicsBody)
+    }
 
     fun addContactListener(contactListener: ContactListener) {
         contactListeners.add(contactListener)
@@ -141,9 +195,40 @@ abstract class PhysicsComponent : Component {
         contactListeners.forEach { it.onContactEnd(other) }
     }
 
+    override fun receive(what: ComponentMessage, payload: Any?) = Unit
+
     interface ContactListener {
         fun onContactBegin(other: GameObject)
         fun onContactEnd(other: GameObject)
+    }
+
+
+}
+
+interface PhysicsShape
+class Square(val width: Float, val height: Float) : PhysicsShape
+class Circle(val radius: Float) : PhysicsShape
+
+class PhysicsBodyData(init: (PhysicsBodyData.() -> Unit)? = null) {
+
+    enum class Type {
+        DYNAMIC, STATIC, KINEMATIC
+    }
+
+    val position = Vector2()
+    var shape: PhysicsShape? = null
+    var mass: Float = 0.0f
+    var bodyType: Type = Type.STATIC
+    var linearDampening = 0.0f
+    var angularDampening = 0.0f
+    var restitution = 0.5f
+    var fixedRotation = false
+    var isSensor = false
+
+    init {
+        if (init != null) {
+            init()
+        }
     }
 }
 
