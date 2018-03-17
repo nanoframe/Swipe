@@ -33,6 +33,7 @@ interface Component {
     fun receive(what: ComponentMessage, payload: Any? = null)
 }
 
+private val identityMatrix = Matrix3()
 class TransformComponent : Component {
 
     val position = Vector2()
@@ -54,14 +55,15 @@ class TransformComponent : Component {
 
         if (dirty) {
             dirty = false
-            val parent = gameObject.parent!!
+            val parentTransformMatrix =
+                    gameObject.parent?.transform?.transformMatrix ?: identityMatrix
 
             transformMatrix.apply {
                 idt()
                 scale(_scale)
                 rotateRad(rotation)
                 translate(_position)
-                mulLeft(parent.transform.transformMatrix)
+                mulLeft(parentTransformMatrix)
             }
         }
     }
