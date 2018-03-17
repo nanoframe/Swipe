@@ -61,9 +61,9 @@ abstract class PhysicsScene(
     }
 
     override fun update(delta: Float) {
-        super.update(delta)
-
         physicsWorld.step(delta, 6, 2)
+
+        super.update(delta)
     }
 
     protected fun debugRender(camera: Camera) {
