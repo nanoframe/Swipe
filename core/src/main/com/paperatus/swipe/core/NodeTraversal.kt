@@ -6,7 +6,10 @@ class NodeTraversal {
 
     fun traverse(callback: Callback, root: GameObject, data: Any = Unit) {
         nodeCallback = callback
+
+        nodeCallback!!.onTraverse(root, data)
         traverse(root, data)
+
         nodeCallback = null
     }
 
