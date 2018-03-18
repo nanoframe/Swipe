@@ -17,6 +17,11 @@ private val COMPONENT_ORDER: Array<KClass<out Component>> = arrayOf(
         RenderComponent::class
 )
 
+/**
+ * Updates the GameObject on every traversal.
+ *
+ * The data of the callback is the delta time of the game.
+ */
 open class NodeUpdater : NodeTraversal.Callback {
 
     override fun onTraverse(gameObject: GameObject, data: Any) {
@@ -36,19 +41,15 @@ open class NodeUpdater : NodeTraversal.Callback {
     override fun canTraverse(gameObject: GameObject) = gameObject.parent != null
 }
 
-class NodePhysicsUpdater(private val world: World) : NodeUpdater() {
-    override fun onTraverse(gameObject: GameObject, data: Any) {
-        gameObject.getComponent<PhysicsComponent>()?.let {
-            it.takeIf { !it.initialized }?.let {
-                it.init(world)
-                it.physicsBody.userData = gameObject
-            }
-        }
-
-        super.onTraverse(gameObject, data)
-    }
-}
-
+/**
+ * Removes GameObjects from its parent.
+ *
+ * The status determining if the GameObject should be removed is based
+ * on if the GameObject contains a parent. The parent is set to null
+ * upon calling [GameObject.requestRemove].
+ *
+ * This callback does not have a payload data.
+ */
 open class NodeRemover : NodeTraversal.Callback {
 
     private val temp = GdxArray<GameObject>()
@@ -68,16 +69,12 @@ open class NodeRemover : NodeTraversal.Callback {
     override fun canTraverse(gameObject: GameObject) = true
 }
 
-class NodePhysicsRemover(private val world: World) : NodeRemover() {
-    override fun onTraverse(gameObject: GameObject, data: Any) {
-        super.onTraverse(gameObject, data)
-        if (gameObject.parent == null) {
-            gameObject.getComponent<PhysicsComponent>()?.destroy(world)
-        }
-    }
-}
-
-class NodeRenderer(val game: Game) : NodeTraversal.Callback {
+/**
+ * Callback for rendering GameObjects onto the screen.
+ *
+ * This callback has a SpriteBatch as its data.
+ */
+open class NodeRenderer(val game: Game) : NodeTraversal.Callback {
 
     override fun onTraverse(gameObject: GameObject, data: Any) {
         val batch = data as SpriteBatch
@@ -141,4 +138,26 @@ class NodeRenderer(val game: Game) : NodeTraversal.Callback {
     }
 
     override fun canTraverse(gameObject: GameObject) = true
+}
+
+class NodePhysicsUpdater(private val world: World) : NodeUpdater() {
+    override fun onTraverse(gameObject: GameObject, data: Any) {
+        gameObject.getComponent<PhysicsComponent>()?.let {
+            it.takeIf { !it.initialized }?.let {
+                it.init(world)
+                it.physicsBody.userData = gameObject
+            }
+        }
+
+        super.onTraverse(gameObject, data)
+    }
+}
+
+class NodePhysicsRemover(private val world: World) : NodeRemover() {
+    override fun onTraverse(gameObject: GameObject, data: Any) {
+        super.onTraverse(gameObject, data)
+        if (gameObject.parent == null) {
+            gameObject.getComponent<PhysicsComponent>()?.destroy(world)
+        }
+    }
 }

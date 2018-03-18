@@ -21,9 +21,9 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     }
 
     /**
-     * Renders every GameObject in [gameObjects].
+     * Begins the traversal of the first node for rendering
      *
-     * Calling [render] will retrieve the [RenderComponent.spriteName] of the object
+     * Calling [render] will retrieve the [RenderComponent.sprite] of the object
      * and render the image onto the screen. The asset should be loaded in
      * [com.paperatus.swipe.Game.assets].
      *
@@ -38,33 +38,20 @@ abstract class ObjectScene(protected val game: Game) : Scene {
     }
 
     /**
-     * Adds a GameObject to the ObjectScene.
+     * Adds a GameObject to the root GameObject.
      *
      * @param gameObject the GameObject to add.
      */
     open fun addObject(gameObject: GameObject) = root.addChild(gameObject)
 
     /**
-     * Removes the GameObject from the ObjectScene.
+     * Removes the GameObject to the root GameObject.
      *
      * @param gameObject the GameObject to remove.
      * @param identity true will use == to compare, false will use .equals().
      */
     open fun removeObject(gameObject: GameObject, identity: Boolean = true) =
             root.removeChild(gameObject, identity)
-
-    //open fun queueRemove(gameObject: GameObject) {
-        //removeQueue.add(gameObject)
-    //}
-
-    // TODO: Implement a map for each order for faster updates
-//    private fun updateComponents(order: Component.Order) {
-//        gameObjects.forEach { gameObject ->
-//            gameObject.getComponents().values().forEach { component ->
-//                if (component.order == order) component.update(componentDelta, gameObject)
-//            }
-//        }
-//    }
 
     inline fun <T : Any> GdxArray<T>.operate(action: GdxArray<T>.() -> Unit) = action()
 }
