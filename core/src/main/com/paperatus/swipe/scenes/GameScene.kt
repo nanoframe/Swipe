@@ -64,8 +64,8 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             addObserver(particles)
         }
 
-        addObject(player)
         addObject(particles)
+        addObject(player)
         addObject(pathObjects)
     }
 

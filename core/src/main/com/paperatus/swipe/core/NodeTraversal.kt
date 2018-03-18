@@ -1,24 +1,22 @@
 package com.paperatus.swipe.core
 
-import com.badlogic.gdx.utils.Queue
-
 class NodeTraversal {
 
-    private var updateQueue = Queue<GameObject>()
+    private var traversalCallback: Callback? = null
 
     fun traverse(callback: Callback, root: GameObject, data: Any = Unit) {
-        callback.onTraverse(root, data)
+        //callback.onTraverse(root, data)
 
-        updateQueue.clear()
-        root.children.forEach { updateQueue.addLast(it) }
+        traversalCallback = callback
+        root.children.forEach { traverse(it, data) }
+        traversalCallback = null
+    }
 
-        while (updateQueue.size > 0) {
-            val node = updateQueue.removeFirst()
-            callback.onTraverse(node, data)
+    fun traverse(node: GameObject, data: Any) {
+        traversalCallback!!.onTraverse(node, data)
 
-            node.children.takeIf { callback.canTraverse(node) }?.forEach {
-                updateQueue.addLast(it)
-            }
+        node.children.takeIf { traversalCallback!!.canTraverse(node) }?.forEach {
+            traverse(it, data)
         }
     }
 
