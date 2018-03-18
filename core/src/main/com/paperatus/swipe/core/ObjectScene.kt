@@ -17,7 +17,6 @@ abstract class ObjectScene(protected val game: Game) : Scene {
 
     override fun update(delta: Float) {
         nodeTraversal.traverse(nodeUpdater, root, delta)
-        nodeTraversal.traverse(nodeRemover, root)
     }
 
     /**
@@ -34,6 +33,7 @@ abstract class ObjectScene(protected val game: Game) : Scene {
      * @param batch the SpriteBatch to render onto.
      */
     override fun render(batch: SpriteBatch) {
+        nodeTraversal.traverse(nodeRemover, root)
         nodeTraversal.traverse(nodeRenderer, root, batch)
     }
 

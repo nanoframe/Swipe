@@ -109,15 +109,10 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         camera.update(delta, player)
 
-//        gameObjects.filterBy { it is RoadBlock || it is Destructible }.forEach {
-//            val shouldRemove = when {
-//                it.transform.position.y < gameMap.getLimit() -> true
-//                else -> false
-//            }
-//
-//            // FIX: The program may crash if the object has been requested to be removed
-//            if (shouldRemove) queueRemove(it)
-//        }
+        pathObjects.children.forEach {
+            // Remove objects below the map limit
+            it.takeIf{ it.transform.position.y < gameMap.getLimit() }?.requestRemove()
+        }
     }
 
     override fun render(batch: SpriteBatch) {
