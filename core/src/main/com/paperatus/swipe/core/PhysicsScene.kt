@@ -15,7 +15,11 @@ abstract class PhysicsScene(
     gravity: Vector2,
     doSleep: Boolean = true
 ) : ObjectScene(game) {
+
     protected val physicsWorld = World(gravity, doSleep)
+
+    override val nodeUpdater = NodePhysicsUpdater(physicsWorld)
+    override val nodeRemover = NodePhysicsRemover(physicsWorld)
 
     init {
         physicsWorld.setContactListener(object : ContactListener {
@@ -57,31 +61,12 @@ abstract class PhysicsScene(
     }
 
     override fun update(delta: Float) {
-        super.update(delta)
-
         physicsWorld.step(delta, 6, 2)
+
+        super.update(delta)
     }
 
     protected fun debugRender(camera: Camera) {
         debugRenderer.render(physicsWorld, camera.combined)
-    }
-
-    override fun addObject(gameObject: GameObject) {
-        super.addObject(gameObject)
-
-        val component = gameObject.getComponent<PhysicsComponent>()
-        if (component != null) {
-            component.init(physicsWorld)
-            component.onInit?.invoke(component.getBody())
-            component.getBody().userData = gameObject
-        }
-    }
-
-    override fun removeObject(gameObject: GameObject, identity: Boolean): Boolean {
-        val status = super.removeObject(gameObject, identity)
-
-        gameObject.getComponent<PhysicsComponent>()?.destroy(physicsWorld)
-
-        return status
     }
 }

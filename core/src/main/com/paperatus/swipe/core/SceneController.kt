@@ -105,18 +105,10 @@ class SceneController : Disposable {
 
         if (!paused) activeScene?.let {
             val delta = min(Gdx.graphics.deltaTime, maxDeltaTime)
-            it.preUpdate(delta)
             it.update(delta)
-            it.postUpdate(delta)
         }
 
-        activeScene?.let {
-            it.preRender(batch)
-            batch.begin()
-            it.render(batch)
-            batch.end()
-            it.postRender(batch)
-        }
+        activeScene?.render(batch)
     }
 
     /**

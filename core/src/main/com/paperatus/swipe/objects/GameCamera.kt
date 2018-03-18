@@ -39,8 +39,8 @@ class GameCamera(width: Float, height: Float) :
     }
 
     private fun updatePosition(delta: Float, player: GameObject) {
-        val deltaX = player.position.x - (position.x + POSITION_X_OFFSET)
-        val deltaY = player.position.y - (position.y + POSITION_Y_OFFSET)
+        val deltaX = player.transform.position.x - (position.x + POSITION_X_OFFSET)
+        val deltaY = player.transform.position.y - (position.y + POSITION_Y_OFFSET)
 
         // Position interpolation
         tempPosition.apply {
@@ -70,7 +70,7 @@ class GameCamera(width: Float, height: Float) :
     private fun updateZoom(delta: Float, player: GameObject) {
         val physicsComponent = player.getComponent<PhysicsComponent>()!!
 
-        val velocity = MathUtils.clamp(physicsComponent.getBody().linearVelocity.len(),
+        val velocity = MathUtils.clamp(physicsComponent.physicsBody.linearVelocity.len(),
                 VELOCITY_MIN, VELOCITY_MAX)
 
         // Project the value from the range [VELOCITY_MIN, VELOCITY_MAX] to

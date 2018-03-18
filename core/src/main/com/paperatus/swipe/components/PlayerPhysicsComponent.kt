@@ -1,43 +1,28 @@
 package com.paperatus.swipe.components
 
+import Message
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.World
+import com.paperatus.swipe.core.Circle
 import com.paperatus.swipe.core.ComponentMessage
 import com.paperatus.swipe.core.GameObject
+import com.paperatus.swipe.core.PhysicsBodyData
 import com.paperatus.swipe.core.PhysicsComponent
-import ktx.box2d.body
 import ktx.math.times
 import ktx.math.unaryMinus
 
 const val MAX_VELOCITY = 27.0f
 
-class PlayerPhysicsComponent : PhysicsComponent() {
+private val playerPhysicsData = PhysicsBodyData {
+    shape = Circle(0.7f)
+    position.set(0.0f, 10.0f)
+    bodyType = PhysicsBodyData.Type.DYNAMIC
+    mass = 0.3f
+    fixedRotation = true
+    linearDampening = 0.8f
+}
 
-    private lateinit var physicsBody: Body
-    private val radius = 0.7f
-
-    override fun init(world: World) {
-        physicsBody = world.body(BodyDef.BodyType.DynamicBody) {
-            // TODO: Dispose created shape
-            circle(radius) {
-                density = 0.3f / (MathUtils.PI * radius * radius)
-            }
-
-            fixedRotation = true
-            linearDamping = 0.8f
-        }
-
-        physicsBody.setTransform(0.0f, 2.0f, 0.0f)
-    }
-
-    override fun destroy(world: World) {
-        world.destroyBody(physicsBody)
-    }
-
-    override fun getBody(): Body = physicsBody
+class PlayerPhysicsComponent : PhysicsComponent(playerPhysicsData) {
 
     override fun update(delta: Float, gameObject: GameObject) {
         super.update(delta, gameObject)
@@ -47,7 +32,7 @@ class PlayerPhysicsComponent : PhysicsComponent() {
         val velocityLen2 = velocity.len2()
 
         if (!MathUtils.isEqual(velocityLen2, 0.0f)) {
-            gameObject.rotation = (MathUtils.atan2(
+            gameObject.transform.rotation = (MathUtils.atan2(
                     velocity.y, velocity.x) -
                     MathUtils.PI / 2.0f) * MathUtils.radDeg
         }

@@ -25,6 +25,8 @@ import com.paperatus.swipe.map.ProceduralMapGenerator
 import com.paperatus.swipe.objects.Destructible
 import com.paperatus.swipe.objects.RoadBlock
 import com.paperatus.swipe.objects.GameCamera
+import com.paperatus.swipe.objects.ParticleGenerator
+import com.paperatus.swipe.objects.PathObjectGenerator
 import com.paperatus.swipe.objects.Player
 import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
@@ -34,18 +36,19 @@ const val WORLD_SIZE = 50.0f // World height
 
 class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
-    private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
     private val player: GameObject = Player()
-    private lateinit var gameMap: GameMap
+    private val particles = ParticleGenerator()
+    private val pathObjects = PathObjectGenerator()
 
+    private val camera = GameCamera(WORLD_SIZE, WORLD_SIZE)
+    private lateinit var gameMap: GameMap
     private lateinit var background: TiledTexture
 
     init {
-        debug { "Created GameScene instance" }
-
         player.apply {
-            anchor.set(0.5f, 0.5f)
-            size.set(2.0f, 2.0f)
+            transform.worldSize.set(2.0f, 2.0f)
+            transform.anchor.set(0.5f, 0.5f)
+
             attachComponent<InputComponent>(
                     when (Gdx.app.type) {
                         Application.ApplicationType.Desktop -> KeyInputComponent()
@@ -58,29 +61,31 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
             })
             attachComponent<RenderComponent>(RenderComponent(sprite = "player.png"))
 
-            addObserver(ParticleSpawner())
+            addObserver(particles)
         }
 
+        addObject(particles)
         addObject(player)
+        addObject(pathObjects)
     }
 
     override fun create() {
+        debug { "Created GameScene instance" }
+
         background = TiledTexture(game.assets["background.png"])
         background.direction = TiledTexture.Direction.Y
-
         background.repeatCount = 640.0f / 15.0f
 
-        val mapData = MapData(
-                Color(
-                        204.0f / 255.0f,
-                        230.0f / 255.0f,
-                        228.0f / 255.0f,
-                        1.0f),
+        val mapData = MapData(Color(
+                204.0f / 255.0f,
+                230.0f / 255.0f,
+                228.0f / 255.0f,
+                1.0f),
                 game.assets["edge.png"]
         )
         val mapGenerator = ProceduralMapGenerator()
         gameMap = GameMap(mapData, mapGenerator)
-        gameMap.addObserver(PathObjectSpawner())
+        gameMap.addObserver(pathObjects)
         gameMap.create()
     }
 
@@ -96,7 +101,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         background.position.set(
                 -background.width / 2.0f,
                 -background.height / 2.0f +
-                        (player.position.y / backgroundTileSize).toInt() *
+                        (player.transform.position.y / backgroundTileSize).toInt() *
                         backgroundTileSize
         )
 
@@ -104,22 +109,16 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         camera.update(delta, player)
 
-        gameObjects.filterBy { it is RoadBlock || it is Destructible }.forEach {
-            val shouldRemove = when {
-                it.position.y < gameMap.getLimit() -> true
-                else -> false
-            }
-
-            // FIX: The program may crash if the object has been requested to be removed
-            if (shouldRemove) queueRemove(it)
+        pathObjects.children.forEach {
+            // Remove objects below the map limit
+            it.takeIf{ it.transform.position.y < gameMap.getLimit() }?.requestRemove()
         }
     }
 
-    override fun preRender(batch: SpriteBatch) {
-        batch.projectionMatrix = camera.combined
-    }
-
     override fun render(batch: SpriteBatch) {
+        batch.projectionMatrix = camera.combined
+
+        batch.begin()
         background.draw(batch)
         batch.end()
         gameMap.renderPath()
@@ -127,11 +126,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
         super.render(batch)
         batch.end()
         gameMap.renderEdge()
-        batch.begin()
-    }
 
-    override fun postRender(batch: SpriteBatch) {
-        super.postRender(batch)
         debugRender(camera)
     }
 
@@ -157,63 +152,5 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
     }
 
     override fun dispose() {
-    }
-
-    inner class ParticleSpawner : Observer {
-
-        override fun receive(what: Int, payload: Any?) {
-            if (what != Notification.PARTICLE_SPAWN) return
-            addObject(createParticle(player.position))
-        }
-
-        private fun createParticle(p: Vector2) = GameObject().apply {
-            val startSize = MathUtils.random(0.09f, 0.21f)
-            val endSize = MathUtils.random(0.8f, 1.7f)
-            val duration = MathUtils.random(0.5f, 1.2f)
-            val positionOffset = Vector2(
-                    MathUtils.random(-0.5f, 0.5f),
-                    0.0f
-            )
-
-            position.set(p + positionOffset)
-            size.set(startSize, startSize)
-            anchor.set(0.5f, 0.5f)
-            attachComponent<RenderComponent>(RenderComponent(sprite="particle.png"))
-
-            runAction(Actions.sequence {
-                spawn {
-                    sizeTo(endSize, duration, Interpolation.pow2Out)
-                    fade(1.5f)
-                }
-                execute { requestRemove() }
-            })
-        }
-    }
-
-    inner class PathObjectSpawner : Observer {
-        override fun receive(what: Int, payload: Any?) {
-
-            val pathObject: GameObject = when (what) {
-                Notification.BLOCKADE_SPAWN -> {
-                    val d = Destructible()
-                    d.attachComponent<RenderComponent>(
-                            RenderComponent(sprite = "blockade.png"))
-                    d
-                }
-
-                Notification.DESTRUCTIBLE_SPAWN -> {
-                    val r = RoadBlock()
-                    r.attachComponent<RenderComponent>(
-                            RenderComponent(sprite = "blockade.png"))
-                    r
-                }
-                else -> return
-            }
-
-            addObject(pathObject.apply {
-                size.set(3.0f, 2.789f)
-                position.set(payload as Vector2)
-            })
-        }
     }
 }

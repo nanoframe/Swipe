@@ -1,7 +1,7 @@
 import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.InvalidActionException
-import com.paperatus.swipe.core.Size
+import com.paperatus.swipe.core.Scale
 import io.kotlintest.TestCaseContext
 import io.kotlintest.matchers.shouldThrow
 import io.kotlintest.specs.BehaviorSpec
@@ -27,7 +27,7 @@ class ActionTest : BehaviorSpec() {
 
                 then("it should move to (5, 2)") {
                     act(gameObject, movement)
-                    assertEquals(gameObject.position, Vector2(5.0f, 2.0f))
+                    assertEquals(Vector2(5.0f, 2.0f), gameObject.transform.position)
                 }
             }
 
@@ -36,21 +36,25 @@ class ActionTest : BehaviorSpec() {
 
                 then("it should be at (5, 2)") {
                     act(gameObject, movement)
-                    assertEquals(gameObject.position, Vector2(5.0f, 1.0f))
+                    assertEquals(Vector2(5.0f, 1.0f), gameObject.transform.position)
                 }
             }
         }
 
         given("a Sequence") {
-            `when`("a Sequence of sizeTo and scaleTo is applied") {
+            `when`("a Sequence of moveTo and scaleTo is applied") {
                 val sequence = Actions.sequence {
-                    sizeTo(7.0f, 5.0f, 0.5f)
-                    scaleTo(3.0f, 0.5f)
+                    moveTo(7.0f, 5.0f, 0.5f)
+                    scaleTo(5.0f, 3.0f, 0.5f)
                 }
 
-                then("the size will be (21, 15)") {
-                    act(gameObject, sequence)
-                    assertEquals(gameObject.size, Size(21.0f, 15.0f))
+                act(gameObject, sequence)
+
+                then("the position will be (7, 5)") {
+                    assertEquals(Vector2(7.0f, 5.0f), gameObject.transform.position)
+                }
+                then("the scale will be (5, 3)") {
+                    assertEquals(Vector2(5.0f, 3.0f), gameObject.transform.scale)
                 }
             }
         }
@@ -58,25 +62,26 @@ class ActionTest : BehaviorSpec() {
         given("a Spawn") {
             `when`("a Spawn of sizeTo and moveTo is applied") {
                 val spawn = Actions.spawn {
-                    sizeTo(25.0f, 12.0f, 1.0f)
                     moveTo(12.0f, 1.0f, 1.0f)
+                    scaleTo(2.0f, 5.0f, 1.0f)
                 }
                 act(gameObject, spawn)
 
                 then("the position should be (12, 1)") {
-                    assertEquals(gameObject.position, Vector2(12.0f, 1.0f))
+                    assertEquals(Vector2(12.0f, 1.0f), gameObject.transform.position)
                 }
 
-                then("the size should be (25, 12)") {
-                    assertEquals(gameObject.size, Size(25.0f, 12.0f))
+                then("the scale should be (2, 5)") {
+                    assertEquals(Scale(2.0f, 5.0f), gameObject.transform.scale)
                 }
             }
         }
     }
 
     override fun interceptTestCase(context: TestCaseContext, test: () -> Unit) {
-        gameObject.position.set(POSITION_X, POSITION_Y)
-        gameObject.size.set(WIDTH, HEIGHT)
+        gameObject.transform.position.set(POSITION_X, POSITION_Y)
+        gameObject.transform.worldSize.set(WIDTH, HEIGHT)
+        gameObject.transform.scale.set(1.0f, 1.0f)
 
         test()
     }

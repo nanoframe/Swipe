@@ -1,5 +1,6 @@
 package com.paperatus.swipe.objects
 
+import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 
@@ -13,7 +14,7 @@ class Player : GameObject() {
     override fun update(delta: Float) {
         elapsed = (elapsed + delta).coerceAtMost(2.0f)
 
-        val velocity = getComponent<PhysicsComponent>()!!.getBody().linearVelocity.len()
+        val velocity = getComponent<PhysicsComponent>()!!.physicsBody.linearVelocity.len()
         val frequency =
                 (PARTICLE_INITIAL_FREQUENCY *
                 velocity *
@@ -22,7 +23,7 @@ class Player : GameObject() {
         val spawnTimes = 1.0f / frequency
         if (elapsed >= spawnTimes) {
             elapsed -= spawnTimes
-            post(Notification.PARTICLE_SPAWN)
+            post(Notification.PARTICLE_SPAWN, transform.position)
         }
     }
 }

@@ -1,10 +1,14 @@
 package com.paperatus.swipe.objects
 
-import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.PolygonShape
-import com.paperatus.swipe.components.StaticPhysicsComponent
 import com.paperatus.swipe.core.GameObject
+import com.paperatus.swipe.core.PhysicsBodyData
 import com.paperatus.swipe.core.PhysicsComponent
+import com.paperatus.swipe.core.Square
+
+private val staticPhysicsData = PhysicsBodyData().apply {
+    shape = Square(3.0f, 3.0f)
+    bodyType = PhysicsBodyData.Type.STATIC
+}
 
 const val DAMAGE_PER_VELOCITY = 2.0f
 class RoadBlock : GameObject(), PhysicsComponent.ContactListener {
@@ -12,16 +16,14 @@ class RoadBlock : GameObject(), PhysicsComponent.ContactListener {
     private var health = 100.0f
 
     init {
-        anchor.set(0.5f, 0.5f)
-        val shape = PolygonShape()
-        shape.setAsBox(1.5f, 1.5f)
-        attachComponent<PhysicsComponent>(StaticPhysicsComponent(shape).apply {
-            addContactListener(this@RoadBlock)
-            onInit = fun(body: Body) {
-                body.fixtureList[0].restitution = 0.8f
-            }
-            positioning = PhysicsComponent.Positioning.BODY_TO_OBJECT
-        })
+        val physicsComponent = PhysicsComponent(staticPhysicsData)
+        physicsComponent.positioning = PhysicsComponent.Positioning.BODY_TO_OBJECT
+        physicsComponent.addContactListener(this)
+
+        attachComponent<PhysicsComponent>(physicsComponent)
+
+        transform.worldSize.set(3.0f, 2.789f)
+        transform.anchor.set(0.5f, 0.5f)
     }
 
     override fun update(delta: Float) {
@@ -30,7 +32,7 @@ class RoadBlock : GameObject(), PhysicsComponent.ContactListener {
 
     // TODO: Check if GameObject is a Player
     override fun onContactBegin(other: GameObject) {
-        val body = other.getComponent<PhysicsComponent>()!!.getBody()
+        val body = other.getComponent<PhysicsComponent>()!!.physicsBody
         val velocity = body.linearVelocity.len()
         health -= DAMAGE_PER_VELOCITY * velocity
     }

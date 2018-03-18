@@ -41,17 +41,6 @@ object Actions {
                 interpolation: Interpolation = Interpolation.linear) =
             scaleTo(scl, scl, duration, interpolation)
 
-    fun sizeTo(width: Float,
-               height: Float,
-               duration: Float,
-               interpolation: Interpolation = Interpolation.linear) =
-            SizeTo(width, height, duration, interpolation)
-
-    fun sizeTo(square: Float,
-               duration: Float,
-               interpolation: Interpolation = Interpolation.linear) =
-            sizeTo(square, square, duration, interpolation)
-
     fun fade(duration: Float,
              interpolation: Interpolation = Interpolation.linear) =
             FadeAction(duration, interpolation)
@@ -109,17 +98,6 @@ abstract class ActionGroup : Action() {
                 duration: Float,
                 interpolation: Interpolation = Interpolation.linear) =
             scaleTo(scl, scl, duration, interpolation)
-
-    fun sizeTo(width: Float,
-               height: Float,
-               duration: Float,
-               interpolation: Interpolation = Interpolation.linear) =
-            add(Actions.sizeTo(width, height, duration, interpolation))
-
-    fun sizeTo(square: Float,
-               duration: Float,
-               interpolation: Interpolation = Interpolation.linear) =
-            sizeTo(square, square, duration, interpolation)
 
     fun fade(duration: Float,
              interpolation: Interpolation = Interpolation.linear) =
@@ -237,18 +215,18 @@ class MoveTo internal constructor(val x: Float,
     private var startY: Float = 0.0f
 
     override fun start() {
-        startX = gameObject.position.x
-        startY = gameObject.position.y
+        startX = gameObject.transform.position.x
+        startY = gameObject.transform.position.y
     }
 
     override fun step(alpha: Float) {
         val newX = MathUtils.lerp(startX, x, alpha)
         val newY = MathUtils.lerp(startY, y, alpha)
-        gameObject.position.set(newX, newY)
+        gameObject.transform.position.set(newX, newY)
     }
 
     override fun end() {
-        gameObject.position.set(x, y)
+        gameObject.transform.position.set(x, y)
     }
 }
 
@@ -260,41 +238,18 @@ class ScaleTo internal constructor(val x: Float,
     private var startY = 0.0f
 
     override fun start() {
-        startX = gameObject.size.width
-        startY = gameObject.size.height
+        startX = gameObject.transform.scale.x
+        startY = gameObject.transform.scale.y
     }
 
     override fun step(alpha: Float) {
-        val newX = MathUtils.lerp(startX, startX * x, alpha)
-        val newY = MathUtils.lerp(startY, startY * y, alpha)
-        gameObject.size.set(newX, newY)
+        val newX = MathUtils.lerp(startX, x, alpha)
+        val newY = MathUtils.lerp(startY, y, alpha)
+        gameObject.transform.scale.set(newX, newY)
     }
 
     override fun end() {
-        gameObject.size.set(startX * x, startY * y)
-    }
-}
-
-class SizeTo internal constructor(val width: Float,
-                                  val height: Float,
-                                  duration: Float,
-                                  override var interpolation: Interpolation) : TimeAction(duration) {
-    private var startWidth = 0.0f
-    private var startHeight = 0.0f
-
-    override fun start() {
-        startWidth = gameObject.size.width
-        startHeight = gameObject.size.height
-    }
-
-    override fun step(alpha: Float) {
-        val newWidth = MathUtils.lerp(startWidth, width, alpha)
-        val newHeight = MathUtils.lerp(startHeight, height, alpha)
-        gameObject.size.set(newWidth, newHeight)
-    }
-
-    override fun end() {
-        gameObject.size.set(width, height)
+        gameObject.transform.scale.set(x, y)
     }
 }
 

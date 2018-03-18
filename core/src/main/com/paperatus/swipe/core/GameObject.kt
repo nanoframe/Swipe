@@ -4,36 +4,29 @@ import Action
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ObjectMap
+import ktx.collections.GdxArray
 import kotlin.reflect.KClass
 
 /**
  * Interface for objects that can be rendered onto the scene.
  *
  * An empty string or a nonexistent file will throw an exception.
- * @property position position of the GameObject.
- * @property size size of the GameObject to render
- * @property rotation rotation of the GameObject, in degrees CCW.
- * @property bounds the boundaries of the GameObject.
- * Provides the GameObject's size.
- * @property anchor position where all transforms are relative to.
  * @property components Components that are attached to the GameObject
  */
 open class GameObject : Subject() {
-    val position = Vector2()
-    val size = Size()
-    var rotation: Float = 0.0f
-    val bounds = Rectangle()
-        get() {
-            field.set(position.x, position.y, size.width, size.height)
-            return field
-        }
-    val anchor = Vector2()
+
+    val transform
+        get() = getComponent<TransformComponent>()!!
 
     private val components = ObjectMap<KClass<out Component>, Component>()
     private var activeAction: Action? = null
-
-    var shouldRemove = false
+    val children = GdxArray<GameObject>()
+    var parent: GameObject? = null
         private set
+
+    init {
+        attachComponent(TransformComponent())
+    }
 
     /**
      * Updates the GameObject.
@@ -44,10 +37,21 @@ open class GameObject : Subject() {
         updateAction(delta)
     }
 
+    /**
+     * Requests the GameObject to be removed from its parent.
+     *
+     * Calling this method will set its parent to null as a flag to be later
+     * removed from its parent.
+     */
     fun requestRemove() {
-        shouldRemove = true
+        parent = null
     }
 
+    /**
+     * Executes the given action
+     *
+     * @param action the action to run.
+     */
     fun runAction(action: Action) {
         activeAction?.let {
             ktx.log.info("[WARN]") {
@@ -60,17 +64,67 @@ open class GameObject : Subject() {
         activeAction = action
     }
 
+    /**
+     * Stops any active action.
+     *
+     * Calling this method with no running action will do nothing.
+     */
     fun stopAction() {
+        activeAction?.end()
         activeAction?.setGameObject(null)
         activeAction = null
     }
 
+    /**
+     * Returns whether or not an action is running.
+     *
+     * @return a Boolean indicating if an action is running.
+     */
     fun isActionActive() = activeAction != null
 
     private fun updateAction(delta: Float) = activeAction?.let {
         it.update(delta)
         if (it.isFinished()) stopAction()
     }
+
+    /**
+     * Adds a GameObject to this instance.
+     *
+     * @param child the GameObject to add.
+     */
+    fun addChild(child: GameObject) {
+        if (child.parent != null) throw RuntimeException("GameObject already has a parent!")
+        child.parent = this
+        children.add(child)
+    }
+
+    /**
+     * Adds a GameObject to this instance at a specified location
+     *
+     * @param child the GameObject to add.
+     * @param at the position to insert the GameObject to.
+     */
+    fun addChild(child: GameObject, at: Int) {
+        if (child.parent != null) throw RuntimeException("GameObject already has a parent!")
+        child.parent = this
+        children.insert(at, child)
+    }
+
+    /**
+     * Removes the given GameObject from this instance.
+     *
+     * @param child the GameObject to remove.
+     * @param identity true results in '==' comparison, false results in .equals().
+     */
+    fun removeChild(child: GameObject, identity: Boolean = true) = children.removeValue(child, identity)
+
+    /**
+     * Removes a GameObject at the given index
+     *
+     * @param index the index to remove.
+     * @return the removed GameObject instance.
+     */
+    fun removeAt(index: Int) = children.removeIndex(index)
 
 
     /**
