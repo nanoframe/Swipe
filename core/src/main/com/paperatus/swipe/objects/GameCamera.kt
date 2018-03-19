@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.PhysicsComponent
+import com.paperatus.swipe.core.components.PhysicsComponent
+import com.paperatus.swipe.core.scene.GameObject
 import com.paperatus.swipe.data.Solver
 
 private const val DISTANCE_X_MIN = 1.0f

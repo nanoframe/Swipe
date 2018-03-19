@@ -1,4 +1,4 @@
-import com.paperatus.swipe.core.ComponentMessage
+import com.paperatus.swipe.core.components.ComponentMessage
 
 object Notification {
     const val DESTRUCTIBLE_SPAWN = 0

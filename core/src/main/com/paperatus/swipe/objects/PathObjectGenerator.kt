@@ -1,9 +1,10 @@
 package com.paperatus.swipe.objects
 
+import Notification
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.Observer
-import com.paperatus.swipe.core.RenderComponent
+import com.paperatus.swipe.core.components.RenderComponent
+import com.paperatus.swipe.core.patterns.Observer
+import com.paperatus.swipe.core.scene.GameObject
 
 class PathObjectGenerator : GameObject(), Observer {
     override fun receive(what: Int, payload: Any?) {

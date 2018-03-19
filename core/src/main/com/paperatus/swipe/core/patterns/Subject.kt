@@ -1,13 +1,6 @@
-package com.paperatus.swipe.core
+package com.paperatus.swipe.core.patterns
 
 import ktx.collections.GdxArray
-
-/**
- * Allows a class to receive events without coupling code together.
- */
-interface Observer {
-    fun receive(what: Int, payload: Any?)
-}
 
 /**
  * Provides a way to post notifications to handle events without coupling classes together.

@@ -2,7 +2,9 @@ package com.paperatus.swipe.core
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
+import com.paperatus.swipe.core.scene.GameObject
 import ktx.collections.GdxArray
+import ktx.collections.lastIndex
 
 data class Size(var width: Float = 0.0f, var height: Float = 0.0f) {
     fun set(w: Float, h: Float) {
@@ -34,9 +36,11 @@ inline fun <reified T> GdxArray<*>.filterByType(): GdxArray<T> {
     return arr as GdxArray<T>
 }
 
-fun <T> GdxArray<T>.getOrNull(index: Int) : T? =
+fun <T> GdxArray<T>.getOrNull(index: Int): T? =
         if (index >= size) null else this[index]
 
 fun Body.getGameObject(): GameObject? {
     return userData as? GameObject
 }
+
+fun <T> GdxArray<T>.lastItem(offset: Int = 0): T = this[lastIndex - offset]

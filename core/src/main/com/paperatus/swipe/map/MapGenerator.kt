@@ -1,17 +1,17 @@
 package com.paperatus.swipe.map
 
-import com.badlogic.gdx.math.MathUtils
-import com.paperatus.swipe.data.PathPoint
 import Path
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.data.lastItem
+import com.paperatus.swipe.core.lastItem
+import com.paperatus.swipe.data.PathPoint
 import ktx.collections.GdxArray
 
 interface MapGenerator {
     fun generatePoints(
-        leftBound: Float,
-        rightBound: Float,
-        start: PathPoint
+            leftBound: Float,
+            rightBound: Float,
+            start: PathPoint
     ): GdxArray<PathPoint>
 
     fun shouldSpawnDestructible(positionY: Float): Boolean
@@ -45,9 +45,9 @@ class ProceduralMapGenerator : MapGenerator {
     private val tempVector = Vector2()
 
     override fun generatePoints(
-        leftBound: Float,
-        rightBound: Float,
-        start: PathPoint
+            leftBound: Float,
+            rightBound: Float,
+            start: PathPoint
     ): GdxArray<PathPoint> {
 
         tempArray.clear()
@@ -87,10 +87,10 @@ class ProceduralMapGenerator : MapGenerator {
     }
 
     private fun generateSoftCurve(
-        leftBound: Float,
-        rightBound: Float,
-        direction: Path.Direction,
-        start: PathPoint
+            leftBound: Float,
+            rightBound: Float,
+            direction: Path.Direction,
+            start: PathPoint
     ) {
         val count = randomSoftCurvePointCount()
 
@@ -118,10 +118,10 @@ class ProceduralMapGenerator : MapGenerator {
     }
 
     private fun generateHardCurve(
-        leftBound: Float,
-        rightBound: Float,
-        direction: Path.Direction,
-        start: PathPoint
+            leftBound: Float,
+            rightBound: Float,
+            direction: Path.Direction,
+            start: PathPoint
     ) {
         val count = randomHardCurvePointCount()
 
@@ -149,9 +149,9 @@ class ProceduralMapGenerator : MapGenerator {
     }
 
     private fun generateUp(
-        leftBound: Float,
-        rightBound: Float,
-        start: PathPoint
+            leftBound: Float,
+            rightBound: Float,
+            start: PathPoint
     ) {
         val count = randomUpPointCount()
 

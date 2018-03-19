@@ -1,6 +1,6 @@
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.NodeRemover
-import com.paperatus.swipe.core.NodeTraversal
+import com.paperatus.swipe.core.scene.GameObject
+import com.paperatus.swipe.core.graph.NodeRemover
+import com.paperatus.swipe.core.graph.NodeTraversal
 import io.kotlintest.TestCaseContext
 import io.kotlintest.specs.FunSpec
 import org.junit.Assert

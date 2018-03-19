@@ -3,18 +3,18 @@ package com.paperatus.swipe.components
 import Message
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.core.Circle
-import com.paperatus.swipe.core.ComponentMessage
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.PhysicsBodyData
-import com.paperatus.swipe.core.PhysicsComponent
+import com.paperatus.swipe.core.components.ComponentMessage
+import com.paperatus.swipe.core.components.PhysicsComponent
+import com.paperatus.swipe.core.physics.CircleShape
+import com.paperatus.swipe.core.physics.PhysicsBodyData
+import com.paperatus.swipe.core.scene.GameObject
 import ktx.math.times
 import ktx.math.unaryMinus
 
 const val MAX_VELOCITY = 27.0f
 
 private val playerPhysicsData = PhysicsBodyData {
-    shape = Circle(0.7f)
+    shape = CircleShape(0.7f)
     position.set(0.0f, 10.0f)
     bodyType = PhysicsBodyData.Type.DYNAMIC
     mass = 0.3f

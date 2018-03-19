@@ -2,7 +2,7 @@ package com.paperatus.swipe.data
 
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.paperatus.swipe.core.RenderParams
+import com.paperatus.swipe.core.graphics.RenderParams
 
 class ExplosionParticleBlending : RenderParams {
     private var src = 0
@@ -20,5 +20,5 @@ class ExplosionParticleBlending : RenderParams {
     }
 
     override fun resetParams(batch: SpriteBatch) =
-        batch.setBlendFunctionSeparate(src, dst, srcAlpha, dstAlpha)
+            batch.setBlendFunctionSeparate(src, dst, srcAlpha, dstAlpha)
 }

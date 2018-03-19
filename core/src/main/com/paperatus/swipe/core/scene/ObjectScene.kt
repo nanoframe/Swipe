@@ -1,7 +1,11 @@
-package com.paperatus.swipe.core
+package com.paperatus.swipe.core.scene
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.paperatus.swipe.Game
+import com.paperatus.swipe.core.Game
+import com.paperatus.swipe.core.graph.NodeRemover
+import com.paperatus.swipe.core.graph.NodeRenderer
+import com.paperatus.swipe.core.graph.NodeTraversal
+import com.paperatus.swipe.core.graph.NodeUpdater
 import ktx.collections.GdxArray
 
 /**

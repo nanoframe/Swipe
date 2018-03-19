@@ -4,6 +4,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 
 data class MapData(
-    val backgroundColor: Color,
-    val edgeTexture: Texture
+        val backgroundColor: Color,
+        val edgeTexture: Texture
 )

@@ -1,76 +1,14 @@
-package com.paperatus.swipe.core
+package com.paperatus.swipe.core.graph
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.World
-import com.paperatus.swipe.Game
-import ktx.collections.GdxArray
-import kotlin.reflect.KClass
-
-private val COMPONENT_ORDER: Array<KClass<out Component>> = arrayOf(
-        InputComponent::class,
-        Component::class, // Used to update the GameObject itself
-        PhysicsComponent::class,
-        TransformComponent::class,
-        RenderComponent::class
-)
-
-/**
- * Updates the GameObject on every traversal.
- *
- * The data of the callback is the delta time of the game.
- */
-open class NodeUpdater : NodeTraversal.Callback {
-
-    override fun onTraverse(gameObject: GameObject, data: Any) {
-        val delta = data as Float
-
-        for (i in 0 until COMPONENT_ORDER.size) {
-            val order = COMPONENT_ORDER[i]
-            if (order == Component::class) {
-                gameObject.update(delta)
-                continue
-            }
-
-            gameObject.getComponent(order)?.update(delta, gameObject)
-        }
-    }
-
-    override fun canTraverse(gameObject: GameObject) = gameObject.parent != null
-}
-
-/**
- * Removes GameObjects from its parent.
- *
- * The status determining if the GameObject should be removed is based
- * on if the GameObject contains a parent. The parent is set to null
- * upon calling [GameObject.requestRemove].
- *
- * This callback does not have a payload data.
- */
-open class NodeRemover : NodeTraversal.Callback {
-
-    private val temp = GdxArray<GameObject>()
-    override fun onTraverse(gameObject: GameObject, data: Any) {
-        gameObject.children.forEach {
-            if (it.parent == null) {
-                temp.add(it)
-            }
-        }
-
-        temp.forEach {
-            onRemoval(it)
-            gameObject.removeChild(it)
-        }
-        temp.clear()
-    }
-
-    open fun onRemoval(gameObject: GameObject) = Unit
-
-    override fun canTraverse(gameObject: GameObject) = true
-}
+import com.paperatus.swipe.core.AssetNotLoadedException
+import com.paperatus.swipe.core.Game
+import com.paperatus.swipe.core.RenderException
+import com.paperatus.swipe.core.components.RenderComponent
+import com.paperatus.swipe.core.scene.GameObject
 
 /**
  * Callback for rendering GameObjects onto the screen.
@@ -141,24 +79,4 @@ open class NodeRenderer(val game: Game) : NodeTraversal.Callback {
     }
 
     override fun canTraverse(gameObject: GameObject) = true
-}
-
-class NodePhysicsUpdater(private val world: World) : NodeUpdater() {
-    override fun onTraverse(gameObject: GameObject, data: Any) {
-        gameObject.getComponent<PhysicsComponent>()?.let {
-            it.takeIf { !it.initialized }?.let {
-                it.init(world)
-                it.physicsBody.userData = gameObject
-            }
-        }
-
-        super.onTraverse(gameObject, data)
-    }
-}
-
-class NodePhysicsRemover(private val world: World) : NodeRemover() {
-    override fun onRemoval(gameObject: GameObject) {
-        super.onRemoval(gameObject)
-        gameObject.getComponent<PhysicsComponent>()?.destroy(world)
-    }
 }

@@ -1,10 +1,11 @@
 package com.paperatus.swipe.components
 
-import com.paperatus.swipe.core.ComponentMessage
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.InputComponent
+import Message
+import com.paperatus.swipe.core.components.ComponentMessage
+import com.paperatus.swipe.core.components.InputComponent
+import com.paperatus.swipe.core.scene.GameObject
 
-abstract class GameInputComponent : InputComponent() {
+abstract class GameInputComponent : InputComponent {
 
     private var disabledEnd = 0L
 

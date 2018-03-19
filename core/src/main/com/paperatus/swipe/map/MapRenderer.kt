@@ -14,8 +14,8 @@ import com.paperatus.swipe.data.Solver
 import kotlin.math.sqrt
 
 class MapRenderer(
-    var pathColor: Color,
-    var edgeTexture: Texture
+        var pathColor: Color,
+        var edgeTexture: Texture
 ) {
 
     private val edgeRenderer = EdgeRenderer(this, 120)
@@ -39,8 +39,8 @@ class MapRenderer(
 }
 
 private class EdgeRenderer(
-    val mapRenderer: MapRenderer,
-    maxVertices: Int = 60
+        val mapRenderer: MapRenderer,
+        maxVertices: Int = 60
 ) {
 
     var projectionMatrix: Matrix4? = null
@@ -148,8 +148,8 @@ private class EdgeRenderer(
 }
 
 private class PathRenderer(
-    val mapRenderer: MapRenderer,
-    maxVertices: Int = 24
+        val mapRenderer: MapRenderer,
+        maxVertices: Int = 24
 ) {
 
     var projectionMatrix: Matrix4? = null

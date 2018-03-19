@@ -4,33 +4,25 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.math.Interpolation
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.Game
 import com.paperatus.swipe.components.KeyInputComponent
 import com.paperatus.swipe.components.PlayerPhysicsComponent
 import com.paperatus.swipe.components.TouchInputComponent
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.InputComponent
-import com.paperatus.swipe.core.Observer
-import com.paperatus.swipe.core.PhysicsComponent
-import com.paperatus.swipe.core.PhysicsScene
-import com.paperatus.swipe.core.RenderComponent
-import com.paperatus.swipe.core.TiledTexture
-import com.paperatus.swipe.core.filterBy
+import com.paperatus.swipe.core.Game
+import com.paperatus.swipe.core.components.InputComponent
+import com.paperatus.swipe.core.components.PhysicsComponent
+import com.paperatus.swipe.core.components.RenderComponent
+import com.paperatus.swipe.core.graphics.TiledTexture
+import com.paperatus.swipe.core.scene.GameObject
+import com.paperatus.swipe.core.scene.PhysicsScene
 import com.paperatus.swipe.map.GameMap
 import com.paperatus.swipe.map.MapData
 import com.paperatus.swipe.map.ProceduralMapGenerator
-import com.paperatus.swipe.objects.Destructible
-import com.paperatus.swipe.objects.RoadBlock
 import com.paperatus.swipe.objects.GameCamera
 import com.paperatus.swipe.objects.ParticleGenerator
 import com.paperatus.swipe.objects.PathObjectGenerator
 import com.paperatus.swipe.objects.Player
-import com.paperatus.swipe.objects.PlayerCollisionResponse
 import ktx.log.debug
-import ktx.math.plus
 
 const val WORLD_SIZE = 50.0f // World height
 
@@ -109,7 +101,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
 
         pathObjects.children.forEach {
             // Remove objects below the map limit
-            it.takeIf{ it.transform.position.y < gameMap.getLimit() }?.requestRemove()
+            it.takeIf { it.transform.position.y < gameMap.getLimit() }?.requestRemove()
         }
     }
 

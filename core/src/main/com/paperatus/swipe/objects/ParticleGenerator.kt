@@ -1,11 +1,13 @@
 package com.paperatus.swipe.objects
 
+import Actions
+import Notification
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.Observer
-import com.paperatus.swipe.core.RenderComponent
+import com.paperatus.swipe.core.components.RenderComponent
+import com.paperatus.swipe.core.patterns.Observer
+import com.paperatus.swipe.core.scene.GameObject
 import ktx.math.plus
 
 class ParticleGenerator : GameObject(), Observer {
@@ -29,7 +31,7 @@ class ParticleGenerator : GameObject(), Observer {
         transform.worldSize.set(1.7f, 1.7f)
         transform.scale.set(startScale)
         transform.anchor.set(0.5f, 0.5f)
-        attachComponent<RenderComponent>(RenderComponent(sprite="particle.png"))
+        attachComponent<RenderComponent>(RenderComponent(sprite = "particle.png"))
 
         runAction(Actions.sequence {
             spawn {

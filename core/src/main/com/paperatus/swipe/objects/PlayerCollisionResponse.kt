@@ -1,8 +1,9 @@
 package com.paperatus.swipe.objects
 
-import com.paperatus.swipe.core.ComponentMessage
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.PhysicsComponent
+import Message
+import com.paperatus.swipe.core.components.ComponentMessage
+import com.paperatus.swipe.core.components.PhysicsComponent
+import com.paperatus.swipe.core.scene.GameObject
 
 // Similar to an extension function of the player GameObject
 class PlayerCollisionResponse(private val player: GameObject) : PhysicsComponent.ContactListener {

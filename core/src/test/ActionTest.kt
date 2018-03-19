@@ -1,5 +1,5 @@
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.core.GameObject
+import com.paperatus.swipe.core.scene.GameObject
 import com.paperatus.swipe.core.InvalidActionException
 import com.paperatus.swipe.core.Scale
 import io.kotlintest.TestCaseContext

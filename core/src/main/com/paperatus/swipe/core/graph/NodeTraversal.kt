@@ -1,4 +1,6 @@
-package com.paperatus.swipe.core
+package com.paperatus.swipe.core.graph
+
+import com.paperatus.swipe.core.scene.GameObject
 
 class NodeTraversal {
 

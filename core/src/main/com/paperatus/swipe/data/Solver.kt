@@ -5,13 +5,13 @@ import com.badlogic.gdx.math.Vector2
 
 object Solver {
     fun solveIntersection(
-        m1: Float,
-        x1: Float,
-        y1: Float,
-        m2: Float,
-        x2: Float,
-        y2: Float,
-        out: Vector2
+            m1: Float,
+            x1: Float,
+            y1: Float,
+            m2: Float,
+            x2: Float,
+            y2: Float,
+            out: Vector2
     ) {
         val x: Float
         val y: Float

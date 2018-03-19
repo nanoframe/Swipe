@@ -1,4 +1,4 @@
-package com.paperatus.swipe.core
+package com.paperatus.swipe.core.scene
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20

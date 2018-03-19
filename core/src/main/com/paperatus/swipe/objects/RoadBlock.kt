@@ -1,16 +1,17 @@
 package com.paperatus.swipe.objects
 
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.PhysicsBodyData
-import com.paperatus.swipe.core.PhysicsComponent
-import com.paperatus.swipe.core.Square
+import com.paperatus.swipe.core.components.PhysicsComponent
+import com.paperatus.swipe.core.physics.PhysicsBodyData
+import com.paperatus.swipe.core.physics.RectangleShape
+import com.paperatus.swipe.core.scene.GameObject
 
 private val staticPhysicsData = PhysicsBodyData().apply {
-    shape = Square(3.0f, 3.0f)
+    shape = RectangleShape(3.0f, 3.0f)
     bodyType = PhysicsBodyData.Type.STATIC
 }
 
 const val DAMAGE_PER_VELOCITY = 2.0f
+
 class RoadBlock : GameObject(), PhysicsComponent.ContactListener {
 
     private var health = 100.0f

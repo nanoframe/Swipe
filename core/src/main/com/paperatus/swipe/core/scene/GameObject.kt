@@ -1,9 +1,12 @@
-package com.paperatus.swipe.core
+package com.paperatus.swipe.core.scene
 
-import Action
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.ObjectMap
+import com.paperatus.swipe.core.ComponentException
+import com.paperatus.swipe.core.actions.Action
+import com.paperatus.swipe.core.components.Component
+import com.paperatus.swipe.core.components.ComponentMessage
+import com.paperatus.swipe.core.components.TransformComponent
+import com.paperatus.swipe.core.patterns.Subject
 import ktx.collections.GdxArray
 import kotlin.reflect.KClass
 
@@ -150,7 +153,7 @@ open class GameObject : Subject() {
         if (components.containsKey(type)) {
             throw ComponentException(
                     "A component of type ${type.java.simpleName}" +
-                    "is currently attached to this instance!")
+                            "is currently attached to this instance!")
         }
 
         components.put(type, component)

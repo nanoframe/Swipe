@@ -1,4 +1,4 @@
-package com.paperatus.swipe.core
+package com.paperatus.swipe.core.scene
 
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Vector2
@@ -8,12 +8,16 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse
 import com.badlogic.gdx.physics.box2d.ContactListener
 import com.badlogic.gdx.physics.box2d.Manifold
 import com.badlogic.gdx.physics.box2d.World
-import com.paperatus.swipe.Game
+import com.paperatus.swipe.core.Game
+import com.paperatus.swipe.core.components.PhysicsComponent
+import com.paperatus.swipe.core.getGameObject
+import com.paperatus.swipe.core.graph.NodePhysicsRemover
+import com.paperatus.swipe.core.graph.NodePhysicsUpdater
 
 abstract class PhysicsScene(
-    game: Game,
-    gravity: Vector2,
-    doSleep: Boolean = true
+        game: Game,
+        gravity: Vector2,
+        doSleep: Boolean = true
 ) : ObjectScene(game) {
 
     protected val physicsWorld = World(gravity, doSleep)

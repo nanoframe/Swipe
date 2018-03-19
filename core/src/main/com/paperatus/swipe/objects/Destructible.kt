@@ -1,11 +1,12 @@
 package com.paperatus.swipe.objects
 
-import com.paperatus.swipe.core.AnimationRenderComponent
-import com.paperatus.swipe.core.GameObject
-import com.paperatus.swipe.core.PhysicsBodyData
-import com.paperatus.swipe.core.PhysicsComponent
-import com.paperatus.swipe.core.RenderComponent
-import com.paperatus.swipe.core.Square
+import Message
+import com.paperatus.swipe.core.components.AnimationRenderComponent
+import com.paperatus.swipe.core.components.PhysicsComponent
+import com.paperatus.swipe.core.components.RenderComponent
+import com.paperatus.swipe.core.physics.PhysicsBodyData
+import com.paperatus.swipe.core.physics.RectangleShape
+import com.paperatus.swipe.core.scene.GameObject
 import com.paperatus.swipe.data.ExplosionParticleBlending
 
 private val explosionAnimation = Array(127) {
@@ -13,7 +14,7 @@ private val explosionAnimation = Array(127) {
 }
 
 private val staticPhysicsData = PhysicsBodyData().apply {
-    shape = Square(2.0f, 1.859f)
+    shape = RectangleShape(2.0f, 1.859f)
     bodyType = PhysicsBodyData.Type.STATIC
     isSensor = true
 }
@@ -44,7 +45,7 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
                 false,
                 *explosionAnimation)
         animation.apply {
-            onFinish = fun () {
+            onFinish = fun() {
                 requestRemove()
             }
             addRenderParams(ExplosionParticleBlending())

@@ -1,8 +1,8 @@
 package com.paperatus.swipe.scenes
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.paperatus.swipe.Game
-import com.paperatus.swipe.core.Scene
+import com.paperatus.swipe.core.Game
+import com.paperatus.swipe.core.scene.Scene
 
 class SplashScene(private val game: Game) : Scene {
 

@@ -1,8 +1,9 @@
 package com.paperatus.swipe.components
 
+import Message
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Vector2
-import com.paperatus.swipe.core.GameObject
+import com.paperatus.swipe.core.scene.GameObject
 import ktx.math.times
 
 /**

@@ -1,14 +1,13 @@
-package com.paperatus.swipe
+package com.paperatus.swipe.core
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
-import com.paperatus.swipe.core.Assets
-import com.paperatus.swipe.core.SceneController
+import com.paperatus.swipe.core.scene.SceneController
 import com.paperatus.swipe.scenes.GameScene
 import com.paperatus.swipe.scenes.SplashScene
 
-class Game : ApplicationListener {
+abstract class Game : ApplicationListener {
 
     val sceneController = SceneController()
     val assets = Assets()

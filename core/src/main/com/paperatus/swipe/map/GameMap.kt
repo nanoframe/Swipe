@@ -1,15 +1,16 @@
 package com.paperatus.swipe.map
 
+import Notification
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.EdgeShape
 import com.badlogic.gdx.physics.box2d.World
+import com.paperatus.swipe.core.lastItem
+import com.paperatus.swipe.core.patterns.Subject
 import com.paperatus.swipe.data.PathPoint
 import com.paperatus.swipe.data.Solver
-import com.paperatus.swipe.data.lastItem
-import com.paperatus.swipe.core.Subject
 import ktx.collections.GdxArray
 import ktx.collections.lastIndex
 import ktx.log.Logger
@@ -23,8 +24,8 @@ private const val CHUNK_DISPOSAL_DISTANCE = 150.0f
 
 // TODO: Dispose object and renderer
 class GameMap(
-    var mapData: MapData,
-    var mapGenerator: MapGenerator
+        var mapData: MapData,
+        var mapGenerator: MapGenerator
 ) : Subject() {
 
     companion object {
@@ -210,9 +211,9 @@ class GameMap(
 
     private val sides = SidePoints()
     private fun generatePathSide(
-        point1: PathPoint,
-        point2: PathPoint,
-        point3: PathPoint
+            point1: PathPoint,
+            point2: PathPoint,
+            point3: PathPoint
     ): SidePoints {
         // Point data
         val direction12 = PathPoint.obtain()
@@ -291,8 +292,8 @@ class GameMap(
      * @param chunk points of the map.
      */
     private fun createBodyChunk(
-        world: World,
-        chunk: Chunk
+            world: World,
+            chunk: Chunk
     ) {
         val restitution = 0.7f
 
@@ -328,10 +329,10 @@ private class SidePoints {
     }
 
     fun set(
-        lx: Float,
-        ly: Float,
-        rx: Float,
-        ry: Float
+            lx: Float,
+            ly: Float,
+            rx: Float,
+            ry: Float
     ) {
         left.set(lx, ly)
         right.set(rx, ry)
