@@ -61,10 +61,13 @@ open class NodeRemover : NodeTraversal.Callback {
         }
 
         temp.forEach {
+            onRemoval(it)
             gameObject.removeChild(it)
         }
         temp.clear()
     }
+
+    open fun onRemoval(gameObject: GameObject) = Unit
 
     override fun canTraverse(gameObject: GameObject) = true
 }
@@ -154,10 +157,8 @@ class NodePhysicsUpdater(private val world: World) : NodeUpdater() {
 }
 
 class NodePhysicsRemover(private val world: World) : NodeRemover() {
-    override fun onTraverse(gameObject: GameObject, data: Any) {
-        super.onTraverse(gameObject, data)
-        if (gameObject.parent == null) {
-            gameObject.getComponent<PhysicsComponent>()?.destroy(world)
-        }
+    override fun onRemoval(gameObject: GameObject) {
+        super.onRemoval(gameObject)
+        gameObject.getComponent<PhysicsComponent>()?.destroy(world)
     }
 }
