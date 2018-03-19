@@ -1,6 +1,5 @@
 package com.paperatus.swipe.objects
 
-import com.badlogic.gdx.math.Vector2
 import com.paperatus.swipe.core.GameObject
 import com.paperatus.swipe.core.PhysicsComponent
 

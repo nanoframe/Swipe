@@ -13,12 +13,14 @@ private val explosionAnimation = Array(127) {
 }
 
 private val staticPhysicsData = PhysicsBodyData().apply {
-    shape = Square(3.0f, 3.0f)
+    shape = Square(2.0f, 1.859f)
     bodyType = PhysicsBodyData.Type.STATIC
     isSensor = true
 }
 
 class Destructible : GameObject(), PhysicsComponent.ContactListener {
+    var isDestructing = false
+        private set
 
     init {
         val physicsComponent = PhysicsComponent(staticPhysicsData)
@@ -27,10 +29,13 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
 
         attachComponent<PhysicsComponent>(physicsComponent)
         transform.anchor.set(0.5f, 0.5f)
-        transform.worldSize.set(3.0f, 2.789f)
+        transform.worldSize.set(2.0f, 1.859f)
     }
 
     override fun onContactBegin(other: GameObject) {
+        if (other !is Player || isDestructing) return
+        isDestructing = true
+
         detachComponent<RenderComponent>()
 
         transform.worldSize.set(10.0f, 10.0f)
@@ -46,6 +51,9 @@ class Destructible : GameObject(), PhysicsComponent.ContactListener {
             start()
         }
         attachComponent<RenderComponent>(animation)
+
+        // Disabled input
+        other.messageComponent(Message.BLOCKADE_COLLISION)
     }
 
     override fun onContactEnd(other: GameObject) {

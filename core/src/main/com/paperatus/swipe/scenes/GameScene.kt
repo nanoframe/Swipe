@@ -56,9 +56,7 @@ class GameScene(game: Game) : PhysicsScene(game, Vector2.Zero) {
                         Application.ApplicationType.iOS -> TouchInputComponent()
                         else -> TouchInputComponent()
                     })
-            attachComponent<PhysicsComponent>(PlayerPhysicsComponent().apply {
-                addContactListener(PlayerCollisionResponse(player))
-            })
+            attachComponent<PhysicsComponent>(PlayerPhysicsComponent())
             attachComponent<RenderComponent>(RenderComponent(sprite = "player.png"))
 
             addObserver(particles)
