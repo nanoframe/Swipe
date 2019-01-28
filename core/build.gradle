@@ -3,9 +3,12 @@ apply plugin: "kotlin"
 sourceCompatibility = 1.6
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-sourceSets.main.java.srcDirs = [ "src/" ]
 
+sourceSets {
+    main.kotlin.srcDirs = [ "src/main" ]
+    test.kotlin.srcDirs = [ "src/test" ]
+}
 
-eclipse.project {
-    name = appName + "-core"
+dependencies {
+    testCompile 'io.kotlintest:kotlintest:2.0.7'
 }
